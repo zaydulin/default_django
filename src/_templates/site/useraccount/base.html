@@ -1,4 +1,4 @@
-{% load static generals_tag i18n %}
+{% load static generals_tag user_tags  i18n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,33 +15,16 @@
     {{settings.yandex_metrica}}
     {{settings.google_analitic}}
     <!-- Style link -->
-    <link href="{% static 'site/website/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap.rtl.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-grid.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-grid.rtl.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-reboot.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-reboot.rtl.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-utilities.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/bootstrap/css/bootstrap-utilities.rtl.css' %}" rel="stylesheet">
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/fontawesome.css' %}" rel="stylesheet" />
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/brands.css' %}" rel="stylesheet" />
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/solid.css' %}" rel="stylesheet" />
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/sharp-thin.css' %}" rel="stylesheet" />
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/duotone-thin.css' %}" rel="stylesheet" />
-    <link href="{% static 'site/website/fontawesome-free-6.7.1-web/css/sharp-duotone-thin.css' %}" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block head %}{% endblock head %}
 
 </head>
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light py-3">
     <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="{% if settings.logo %}{{settings.logo.url}}{% endif %}"  width="120">
-        </a>
-        <!-- Кнопка категорий -->
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-            Категории
-        </button>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -49,32 +32,67 @@
             {% with app_name=request.resolver_match.namespace url_name=request.resolver_match.url_name %}
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'home' %}active{% endif %}" href="{% url 'webmain:home' %}">Главная</a>
+                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'home' %}active{% endif %}" href="{% url 'webmain:home' %}">Выплаты</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'about' %}active{% endif %}" href="{% url 'webmain:about' %}">О нас</a>
+                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'about' %}active{% endif %}" href="{% url 'webmain:about' %}">Тикеты</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'faqs' %}active{% endif %}" href="{% url 'webmain:faqs' %}">ЧаВо</a>
+                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'faqs' %}active{% endif %}" href="{% url 'webmain:faqs' %}">Закладки</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'blogs' %}active{% endif %}" href="{% url 'webmain:blogs' %}">Новости</a>
+                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'blogs' %}active{% endif %}" href="{% url 'webmain:blogs' %}">Лента</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'contacts' %}active{% endif %}" href="{% url 'webmain:contacts' %}">Контакты</a>
-                </li>
-
             </ul>
             {% endwith %}
-            <!-- Поиск -->
-            <form method="get" class="d-flex" action="{% url 'webmain:search' %}">
-                <div class="search-form position-relative">
-                    <input class="form-control me-2" id="search-input" name="q" type="text"value="{{ query }}" placeholder="Введи поисковую фразу..." aria-describedby="button-addon2">
-                    <button class="btn btn-outline-primary" type="submit" id="button-addon2"></button>
-                </div>
-            </form>
+
+        </div>
+        <!-- Right-side content -->
+        <!-- Правая часть: уведомления и профиль -->
+        <div class="d-flex align-items-center">
+            <!-- Уведомления -->
+            <div class="dropdown me-3">
+                <button class="btn btn-light dropdown-toggle position-relative" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {% get_notifications_count request.user %}
+                        <span class="visually-hidden">новых уведомлений</span>
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                    {% get_unread_notifications user as notifications %}
+                    {% for notification in notifications %}
+                    <li>
+                        <div class="timeline-panel">
+                            <div class="media-body">
+                                <h6 class="mb-1">{{ notification.message|slice:":100" }}{% if notification.message|length > 100 %}...{% endif %}</h6>
+                                <small class="d-block">{{ notification.created_at|date:"d M Y" }}</small>
+                            </div>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <p>{% trans 'Нет уведомлений' %}.</p>
+                    {% endfor %}
+                    <li><a class="dropdown-item text-center text-primary" href="{% url 'useraccount:notification' %}">Показать все</a></li>
+                </ul>
+            </div>
+
+            <!-- Профиль -->
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://via.placeholder.com/30" alt="Profile" class="rounded-circle me-2">
+                    <span>Имя Пользователя</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                    <li><a class="dropdown-item" href="{% url 'useraccount:edit_profile' %}">Мой профиль</a></li>
+                    <li><a class="dropdown-item" href="{% url 'useraccount:edit_profile' %}">Время работы</a></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'useraccount:logout' %}">Выйти</a></li>
+                </ul>
+            </div>
+
         </div>
     </div>
+
 </nav>
 <!-- Выпадающий список категорий -->
 <div class="collapse" id="collapseExample">
@@ -154,16 +172,9 @@
     </div>
 </footer>
 {% block footertop %}{% endblock footertop %}
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/brands.js' %}"></script>
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/solid.js' %}"></script>
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/fontawesome.js' %}"></script>
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/sharp-thin.js' %}"></script>
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/duotone-thin.js' %}"></script>
-<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/sharp-duotone-thin.js' %}"></script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="{% static 'site/website/bootstrap/js/bootstrap.bundle.js' %}"></script>
-<script src="{% static 'site/website/bootstrap/js/bootstrap.esm.js' %}"></script>
-<script src="{% static 'site/website/bootstrap/js/bootstrap.js' %}"></script>
 {% block footerbottom %}{% endblock footerbottom %}
 </body>
 </html>

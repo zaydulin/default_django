@@ -10,7 +10,7 @@ urlpatterns = [
     path('developer_management/', admin.site.urls),
     path('', include('webmain.urls', namespace='webmain')),
     #path('', include('moderation.urls', namespace='moderation')),
-    #path('', include('useraccount.urls', namespace='useraccount')),
+    path('', include('useraccount.urls', namespace='useraccount')),
 ]
 
 if settings.DEBUG:
