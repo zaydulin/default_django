@@ -22,7 +22,6 @@ urlpatterns = [
     # Вылпаты
     path('withdraw/', views.WithdrawPage.as_view(), name='withdraw'),
     path('withdraw/create/', views.WithdrawCreateView.as_view(), name='withdraw_create'),
-    path('expense/create/', views.ExpenseCreateView.as_view(), name='expense_create'),
     # Карта
     path('card/create/', views.CardsCreateView.as_view(), name='cards_create'),
     path('card/update/<int:pk>/', views.CardsUpdateView.as_view(), name='cards_update'),

@@ -242,14 +242,12 @@ class CategorysForm(forms.ModelForm):
             instance.save()
         return instance
 
-
-
 class WithdrawForm(forms.ModelForm):
     class Meta:
         model = Withdrawal
         fields = ['amount']
         widgets = {
-            'amount': forms.NumberInput(attrs={'class': 'form-control input-default', 'placeholder': 'Сумма', 'max': '{{ available_amount }}'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control input-default', 'placeholder': 'Сумма'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -258,14 +256,18 @@ class WithdrawForm(forms.ModelForm):
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
-        balance = float(self.user.balance)  # баланс пользователя
-        debt = float(self.user.debt)  # задолженность пользователя
-        available_amount = balance - debt
 
-        if amount > available_amount:
-            raise forms.ValidationError(f"Вы не можете списать больше {available_amount}.")
+        # Проверка на баланс пользователя
+        if self.user:
+            balance = float(self.user.balance)
+            if amount > balance:
+                # Используем форматирование для вывода ошибки без лишней точки
+                raise forms.ValidationError(f"Вы не можете списать больше {balance:.2f}.")
 
         return amount
+
+
+
 
 class TicketWithCommentForm(forms.ModelForm):
     content = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Написать комментарий'}))

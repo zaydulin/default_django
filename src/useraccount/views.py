@@ -47,7 +47,7 @@ class CustomLoginView(auth_views.LoginView):
 
     def get_success_url(self):
         type = self.request.user.type
-        if type == 2:
+        if type == 0:
             success_url = reverse('moderation:edit_profile')
         else:
             success_url = reverse('useraccount:edit_profile')
@@ -496,88 +496,84 @@ class WithdrawPage(LoginRequiredMixin, TemplateView):
         context['types'] = Withdrawal.TYPE_CHOICES
         context['balance'] = user.balance
         context['cards'] = user.cardowner.first()
+        # Добавляем форму вывода
+        context['withdraw_form'] = WithdrawForm()
+        # Добавляем форму
+        context['cards_form'] = CardsForm()
+        # Форма для редактирования карты (если карта существует)
+        if context['cards']:
+            context['edit_cards_form'] = CardsForm(instance=context['cards'])
+
         return context
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class WithdrawCreateView(CreateView, LoginRequiredMixin):
+class WithdrawCreateView(CreateView):
     model = Withdrawal
     form_class = WithdrawForm
-    template_name = 'site/useraccount/iframe/withdraw_form.html'
-    success_url = reverse_lazy('useraccount:withdraw')
-    context_object_name = 'withdraw'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['balance'] = user.balance
-        return context
+    def post(self, request, *args, **kwargs):
+        # Создаем экземпляр формы с переданными данными
+        form = self.form_class(data=request.POST, user=request.user)
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+        if form.is_valid():
+            # Получаем сумму, которую пользователь хочет вывести
+            amount = form.cleaned_data['amount']
+
+            # Получаем пользователя
+            user = request.user
+
+            # Проверка, что у пользователя достаточно средств
+            if amount > user.balance:
+                return JsonResponse({'success': False, 'errors': {'amount': ['Недостаточно средств.']}}, status=400)
+
+            # Обновляем баланс пользователя, списывая сумму
+            user.balance -= amount
+            user.save()
+
+            # Сохраняем запрос на вывод
+            withdrawal = form.save(commit=False)
+            withdrawal.user = user  # Устанавливаем пользователя
+            withdrawal.save()
+
+            return JsonResponse({'success': True, 'message': 'Запрос на вывод успешно создан.'}, status=201)
+        else:
+            # Если есть ошибки валидации, возвращаем их
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
 
+
+@method_decorator(csrf_exempt, name='dispatch')  # Для защиты CSRF можно убрать в будущем, если запросы из тех же источников
 @method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class ExpenseCreateView(CreateView, LoginRequiredMixin):
-    model = Withdrawal
-    form_class = WithdrawForm
-    template_name = 'site/useraccount/iframe/withdraw_form.html'
-    success_url = reverse_lazy('useraccount:withdraw')
-    context_object_name = 'withdraw'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        context['balance'] = user.balance
-
-        balance = float(user.balance)
-        debt = float(user.debt)
-
-        available_amount = round(balance - debt)
-
-        context['balance'] = balance
-        context['available_amount'] = available_amount if available_amount > 0 else 0
-
-        return context
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        form.instance.type = 1
-        withdrawal = form.save()
-
-        user = self.request.user
-        user.balance = float(user.balance) - withdrawal.amount
-        user.save()
-        return super().form_valid(form)
-
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class CardsCreateView(CreateView, LoginRequiredMixin):
+class CardsCreateView(CreateView):
     model = Cards
     form_class = CardsForm
-    template_name = 'site/useraccount/iframe/cards_form.html'
     success_url = reverse_lazy('useraccount:withdraw')
-    context_object_name = 'cards'
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.instance.user = self.request.user
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Карта успешно добавлена'}, status=201)
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class CardsUpdateView(UpdateView, LoginRequiredMixin):
+class CardsUpdateView(UpdateView):
     model = Cards
     form_class = CardsForm
-    template_name = 'site/useraccount/iframe/cards_form.html'
     success_url = reverse_lazy('useraccount:withdraw')
-    context_object_name = 'cards'
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            form.instance.user = self.request.user
+            form.save()
+            return JsonResponse({'success': True, 'message': 'Карта успешно обновлена'}, status=200)
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)

@@ -17,6 +17,9 @@
     <!-- Style link -->
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+
 {% block head %}{% endblock head %}
 
 </head>
@@ -32,10 +35,10 @@
             {% with app_name=request.resolver_match.namespace url_name=request.resolver_match.url_name %}
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'home' %}active{% endif %}" href="{% url 'webmain:home' %}">Выплаты</a>
+                    <a class="nav-link  {% if app_name == 'useraccount' and url_name == 'withdraw' %}active{% endif %}" href="{% url 'useraccount:withdraw' %}">Выплаты</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link  {% if app_name == 'webmain' and url_name == 'about' %}active{% endif %}" href="{% url 'webmain:about' %}">Тикеты</a>
+                    <a class="nav-link  {% if app_name == 'useraccount' and url_name == 'tickets' %}active{% endif %}" href="{% url 'useraccount:tickets' %}">Тикеты</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link  {% if app_name == 'webmain' and url_name == 'faqs' %}active{% endif %}" href="{% url 'webmain:faqs' %}">Закладки</a>
@@ -173,6 +176,8 @@
 </footer>
 {% block footertop %}{% endblock footertop %}
 <!-- Bootstrap Bundle with Popper -->
+<script defer src="{% static 'site/website/fontawesome-free-6.7.1-web/js/brands.js' %}"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 {% block footerbottom %}{% endblock footerbottom %}
