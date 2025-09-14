@@ -2,9 +2,9 @@ from ckeditor.fields import RichTextField
 from django import forms
 from django.forms import Textarea
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
-from slugify import slugify
 import json
 from django.core.validators import FileExtensionValidator
+from django.utils.text import slugify
 from multiupload.fields import MultiFileField
 from ckeditor.widgets import CKEditorWidget
 from django_ace import AceWidget
