@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     # Library (Бибилиотеки)
     'ckeditor',
     'ckeditor_uploader',
-    # 'debug_toolbar',
     "ipware",
     'crispy_forms',
     'nested_admin',
@@ -56,7 +55,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
 ]
 
@@ -78,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = '_project.wsgi.application'
+ASGI_APPLICATION = '_project.asgi.application'
 
 
 # Database
