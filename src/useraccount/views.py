@@ -28,12 +28,15 @@ from django.contrib import messages
 
 # Models
 from webmain.models import Seo
-from moderation.models import Ticket, TicketComment, TicketCommentMedia
+from ticket.models import Ticket, TicketComment, TicketCommentMedia
 from useraccount.models import Profile, Notification, Withdrawal, Cards
 
 # Forms
 from useraccount.forms import SignUpForm, UserProfileForm, PasswordResetEmailForm, SetPasswordFormCustom, CardsForm
-from moderation.forms import TicketCommentForm, WithdrawForm,  TicketWithCommentForm
+from ticket.forms import TicketCommentForm,   TicketWithCommentForm
+
+from moderation.forms import WithdrawForm
+User = get_user_model()
 
 
 def custom_logout(request):
@@ -42,22 +45,50 @@ def custom_logout(request):
 
 """Регистрация/Авторизация"""
 
-class CustomLoginView(auth_views.LoginView):
-    template_name = 'site/useraccount/login.html'
+class CustomLoginView(View):
+    template_name = "login.html"
 
-    def get_success_url(self):
-        type = self.request.user.type
-        if type == 0:
-            success_url = reverse('moderation:edit_profile')
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        identifier = request.POST.get("username")  # может быть username/email/phone
+        password = request.POST.get("password")
+
+        user = None
+
+        # 1) Пробуем найти по username
+        try:
+            user_obj = User.objects.get(username=identifier)
+            user = authenticate(request, username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            pass
+
+        # 2) Пробуем найти по email
+        if user is None:
+            try:
+                user_obj = User.objects.get(email=identifier)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                pass
+
+        # 3) Пробуем найти по телефону (если есть поле phone)
+        if user is None:
+            try:
+                user_obj = User.objects.get(phone=identifier)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                pass
+
+        if user is not None:
+            login(request, user)
+            if request.headers.get("Hx-Request") == "true":
+                return render(request, "partials/login_success.html")
+            return redirect("home")
         else:
-            success_url = reverse('useraccount:edit_profile')
-
-        return success_url
-
-    def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
-            return redirect(self.get_success_url())
-        return super().dispatch(request, *args, **kwargs)
+            return render(request, "partials/login_error.html", {
+                "error": "Неверные данные для входа"
+            })
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -130,6 +161,68 @@ class SignUpView(CreateView):
             })
         return context
 
+class CheckUsernameView(View):
+    def post(self, request):
+        username = request.POST.get("username")
+        exists = User.objects.filter(username=username).exists()
+        return render(request, "partials/register_username_check.html", {"exists": exists})
+
+
+class CheckEmailView(View):
+    def post(self, request):
+        email = request.POST.get("email")
+        exists = User.objects.filter(email=email).exists()
+        return render(request, "partials/register_email_check.html", {"exists": exists})
+
+
+class CheckPhoneView(View):
+    def post(self, request):
+        phone = request.POST.get("phone")
+        exists = User.objects.filter(phone=phone).exists()
+        return render(request, "partials/register_phone_check.html", {"exists": exists})
+
+class RegisterView(View):
+    template_name = "register.html"
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        phone = request.POST.get("phone")
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        # Валидация
+        if not all([username, email, phone, password1, password2]):
+            return render(request, "partials/register_error.html", {"code": "empty_fields"})
+
+        if password1 != password2:
+            return render(request, "partials/register_error.html", {"code": "password_mismatch"})
+
+        if User.objects.filter(username=username).exists():
+            return render(request, "partials/register_error.html", {"code": "username_exists"})
+
+        if User.objects.filter(email=email).exists():
+            return render(request, "partials/register_error.html", {"code": "email_exists"})
+
+        if User.objects.filter(phone=phone).exists():
+            return render(request, "partials/register_error.html", {"code": "phone_exists"})
+
+        # Создание пользователя
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            phone=phone,
+            password=password1,
+        )
+        login(request, user)
+
+        if request.headers.get("Hx-Request") == "true":
+            return render(request, "partials/register_success.html")
+
+        return redirect("home")
 
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'site/useraccount/restore_access.html'

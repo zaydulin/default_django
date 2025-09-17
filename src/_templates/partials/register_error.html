@@ -1,0 +1,15 @@
+{% load i18n %}
+
+{% if code == "empty_fields" %}
+  <div class="alert alert-danger">{% trans "Все поля обязательны" %}</div>
+{% elif code == "password_mismatch" %}
+  <div class="alert alert-danger">{% trans "Пароли не совпадают" %}</div>
+{% elif code == "username_exists" %}
+  <div class="alert alert-danger">{% trans "Такой логин уже существует" %}</div>
+{% elif code == "email_exists" %}
+  <div class="alert alert-danger">{% trans "Этот Email уже зарегистрирован" %}</div>
+{% elif code == "phone_exists" %}
+  <div class="alert alert-danger">{% trans "Этот телефон уже зарегистрирован" %}</div>
+{% else %}
+  <div class="alert alert-danger">{% trans "Ошибка регистрации" %}</div>
+{% endif %}

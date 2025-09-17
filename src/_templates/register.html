@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+{% block title %}{{ seo_title }}{% endblock %}
+{% block description %}{{ seo_description }}{% endblock %}
+{% block head %}
+
+<style>
+  .auth-card {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 1rem;
+  }
+  @media (max-width: 576px) {
+    body { background: #fff; }
+    .auth-card {
+      box-shadow: none;
+      border-radius: 0;
+      max-width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .btn-primary {
+      font-size: 1.1rem;
+      padding: 1rem;
+      border-radius: .75rem;
+    }
+  }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card p-4 shadow auth-card">
+    <h2 class="text-center mb-3">{% trans "Регистрация" %}</h2>
+    <form hx-post="{% url 'useraccount:register' %}" hx-target="#register-result" hx-swap="innerHTML">
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label">{% trans "Имя пользователя" %}</label>
+        <input type="text" name="username" class="form-control"
+               hx-post="{% url 'useraccount:check_username' %}"
+               hx-trigger="blur"
+               hx-target="#username-check"
+               required>
+        <div id="username-check" class="mt-1"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control"
+               hx-post="{% url 'useraccount:check_email' %}"
+               hx-trigger="blur"
+               hx-target="#email-check"
+               required>
+        <div id="email-check" class="mt-1"></div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">{% trans "Телефон" %}</label>
+        <input type="text" name="phone" class="form-control"
+               hx-post="{% url 'useraccount:check_phone' %}"
+               hx-trigger="blur"
+               hx-target="#phone-check"
+               required>
+        <div id="phone-check" class="mt-1"></div>
+      </div>
+
+      <div class="mb-3 position-relative">
+        <label class="form-label">{% trans "Пароль" %}</label>
+        <input type="password" id="password1" name="password1" class="form-control" required>
+        <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 mt-4 me-2"
+                onclick="togglePassword('password1')">{% trans "Показать" %}</button>
+      </div>
+
+      <div class="mb-3 position-relative">
+        <label class="form-label">{% trans "Повторите пароль" %}</label>
+        <input type="password" id="password2" name="password2" class="form-control" required>
+        <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-0 end-0 mt-4 me-2"
+                onclick="togglePassword('password2')">{% trans "Показать" %}</button>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">{% trans "Зарегистрироваться" %}</button>
+    </form>
+    <div id="register-result" class="mt-3"></div>
+    <div class="d-flex justify-content-center mt-3">
+      <a href="/login/">{% trans "Уже есть аккаунт? Войти" %}</a>
+    </div>
+  </div>
+</div>
+<script>
+  document.body.addEventListener("htmx:configRequest", (event) => {
+    const token = document.querySelector('meta[name="csrf-token"]')?.content;
+    if (token) {
+      event.detail.headers["X-CSRFToken"] = token;
+    }
+  });
+</script>
+
+
+<script>
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
+</script>
+{% endblock %}
