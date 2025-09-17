@@ -1,0 +1,13 @@
+{% if page_obj.has_next %}
+  <div class="d-flex justify-content-center mt-4">
+    <button class="btn btn-outline-primary"
+            hx-get="{% url 'blogs:list' %}?page={{ page_obj.next_page_number }}"
+            hx-target="#blog-items"
+            hx-swap="beforeend"
+            hx-indicator="#loading-indicator"
+            hx-select="#blog-items, #pagination-container"
+            id="load-more-btn">
+      Загрузить ещё
+    </button>
+  </div>
+{% endif %}

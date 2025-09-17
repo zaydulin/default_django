@@ -11,6 +11,7 @@ urlpatterns = [
     path('', include('webmain.urls', namespace='webmain')),
     #path('', include('moderation.urls', namespace='moderation')),
     path('', include('useraccount.urls', namespace='useraccount')),
+    path('', include('blogs.urls', namespace='blogs')),
 ]
 
 if settings.DEBUG:

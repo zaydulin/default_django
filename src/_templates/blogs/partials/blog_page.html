@@ -1,0 +1,9 @@
+<!-- Добавляем новые статьи в конец списка -->
+<div id="blog-items" hx-swap-oob="beforeend">
+  {% include "blogs/partials/blog_list.html" %}
+</div>
+
+<!-- Обновляем кнопку -->
+<div id="pagination-container" hx-swap-oob="true">
+  {% include "blogs/partials/blog_pagination.html" %}
+</div>

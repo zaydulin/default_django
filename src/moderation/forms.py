@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 
 
 from .models import  Notificationgroups
-from webmain.models import SettingsGlobale, HomePage, AboutPage, ContactPage, Faqs, Blogs, CategorysBlogs, TagsBlogs, Pages, Seo
+from webmain.models import SettingsGlobale, HomePage, AboutPage, ContactPage, Faqs, Pages, Seo
 from useraccount.models import  Notification, Withdrawal
 
 
@@ -95,48 +95,6 @@ class FaqsForm(forms.ModelForm):
             'answer': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Введите ответ'}),
         }
 
-class BlogsForm(forms.ModelForm):
-    category = forms.ModelMultipleChoiceField(
-        queryset=CategorysBlogs.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'default-select form-control wide', 'id': 'id_category', 'aria-label': 'Выберите категории' }),
-    )
-    tags = forms.ModelMultipleChoiceField(
-        queryset=TagsBlogs.objects.all(),
-        widget=forms.SelectMultiple(attrs={'class': 'default-select form-control wide', 'id': 'id_category',
-                                           'aria-label': 'Выберите Тэг'}),
-    )
-    publishet = forms.BooleanField(
-        required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-        label='Черновик'
-    )
-    class Meta:
-        model = Blogs
-        fields = ['name', 'description', 'title', 'metadescription', 'author', 'resource',
-                  'category', 'slug', 'propertytitle', 'propertydescription',
-                  'previev', 'cover', 'publishet']
-        widgets = {
-            'author': forms.Select(attrs={'class': 'default-select form-control wide', 'placeholder': 'Автор'}),
-            'name': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Название'}),
-            'resource': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Источник'}),
-            'description': forms.CharField(widget=CKEditorWidget(),),
-            'title': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Заголовок'}),
-            'metadescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Содержимое'}),
-            'category': forms.SelectMultiple(attrs={'class': 'default-select form-control wide', 'id': 'id_category', 'aria-label': 'Выберите категории', 'name': 'category' }),
-            'slug': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Slug'}),
-            'propertytitle': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Заголовок свойства'}),
-            'propertydescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Описание свойства'}),
-            'previev': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-            'cover': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-        }
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        # Генерация slug из name с помощью slugify
-        instance.slug = slugify(instance.name)  # Используем slugify для генерации slug
-        if commit:
-            instance.save()
-        return instance
 
 class PagesForm(forms.ModelForm):
     class Meta:
@@ -197,31 +155,6 @@ class NotificationForm(forms.ModelForm):
 
 
 
-class CategorysForm(forms.ModelForm):
-    class Meta:
-        model = CategorysBlogs
-        fields = ['name', 'slug', 'description', 'parent', 'cover', 'icon', 'image','previev', 'title', 'metadescription', 'publishet' ]
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Название'}),
-            'slug': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Slug'}),
-            'description': Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Описание'}),
-            'title': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Заголовок'}),
-            'metadescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Мета-описание'}),
-            'propertytitle': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Заголовок'}),
-            'propertydescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Мета-описание'}),
-            'parent': forms.Select(attrs={'class': 'default-select form-control wide', 'placeholder': 'Родитель'}),
-            'icon': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-            'image': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-            'cover': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-        }
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        # Генерация slug из name с помощью slugify
-        instance.slug = slugify(instance.name)  # Используем slugify для генерации slug
-        if commit:
-            instance.save()
-        return instance
 
 class WithdrawForm(forms.ModelForm):
     class Meta:

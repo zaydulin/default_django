@@ -9,9 +9,11 @@ from django.urls import reverse
 
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
-from webmain.models import Faqs, SettingsGlobale,ContactPageInformation, ContactPage, TagsBlogs, AboutPage, HomePage, Seo, Pages, CategorysBlogs, Blogs
+from webmain.models import Faqs, SettingsGlobale,ContactPageInformation, ContactPage, AboutPage, HomePage, Seo, Pages
 from django.http import Http404
 import logging
+
+from blogs.models import Blogs
 
 logger = logging.getLogger(__name__)
 
@@ -169,84 +171,6 @@ class PageDetailView(DetailView):
             context['pageinformation'] = None
         return context
 
-
-"""Новости"""
-class BlogView(ListView):
-    model = Blogs
-    template_name = 'site/website/blogs.html'
-    context_object_name = 'blogs'
-    paginate_by = 10
-
-    def get_queryset(self):
-        # Основной QuerySet для опубликованных блогов
-        queryset = Blogs.objects.filter(publishet=True)
-
-        # Получение параметров фильтрации из GET-запроса
-        category = self.request.GET.get('category')
-        tag = self.request.GET.get('tag')
-
-        # Фильтрация по категории, если она выбрана
-        if category:
-            queryset = queryset.filter(category__id=category)
-
-        # Фильтрация по тегу, если он выбран
-        if tag:
-            queryset = queryset.filter(tags__id=tag)
-
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # Передача списка категорий и тегов в контекст
-        context['categorys'] = CategorysBlogs.objects.filter(publishet=True)
-        context['tags'] = TagsBlogs.objects.filter(publishet=True)
-
-        # Передача текущих фильтров в контекст
-        context['selected_category'] = self.request.GET.get('category')
-        context['selected_tag'] = self.request.GET.get('tag')
-
-        try:
-            seo_data = Seo.objects.get(pagetype=1)
-            context['seo_previev'] = seo_data.previev
-            context['seo_title'] = seo_data.title
-            context['seo_description'] = seo_data.metadescription
-            context['seo_propertytitle'] = seo_data.propertytitle
-            context['seo_propertydescription'] = seo_data.propertydescription
-        except Seo.DoesNotExist:
-            context['seo_previev'] = None
-            context['seo_title'] = None
-            context['seo_description'] = None
-            context['seo_propertytitle'] = None
-            context['seo_propertydescription'] = None
-
-        return context
-
-class BlogDetailView(DetailView):
-    """Страница новости"""
-    model = Blogs
-    template_name = 'site/website/blog_detail.html'
-    context_object_name = 'blog'
-    slug_field = "slug"
-
-    def get_queryset(self):
-        return Blogs.objects.filter(publishet=True)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categorys'] = CategorysBlogs.objects.all().filter(publishet=True)
-        context['tags'] = TagsBlogs.objects.all().filter(publishet=True)
-        blog = context['blog']
-        if blog:
-            context['pageinformation'] = blog.description
-            context['seo_previev'] = blog.previev
-            context['seo_title'] = blog.title
-            context['seo_description'] = blog.metadescription
-            context['seo_propertytitle'] = blog.propertytitle
-            context['seo_propertydescription'] = blog.propertydescription
-        else:
-            context['pageinformation'] = None
-        return context
 
 
 """Подписка"""

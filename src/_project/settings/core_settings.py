@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'moderation.apps.ModerationConfig',
     'useraccount.apps.UseraccountConfig',
     'ticket.apps.TicketConfig',
+    'blogs.apps.BlogsConfig',
 
 ]
 
