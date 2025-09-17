@@ -46,7 +46,7 @@ def custom_logout(request):
 """Регистрация/Авторизация"""
 
 class CustomLoginView(View):
-    template_name = "login.html"
+    template_name = "useraccount/login.html"
 
     def get(self, request):
         return render(request, self.template_name)
@@ -83,10 +83,10 @@ class CustomLoginView(View):
         if user is not None:
             login(request, user)
             if request.headers.get("Hx-Request") == "true":
-                return render(request, "partials/login_success.html")
+                return render(request, "useraccount/partials/login_success.html")
             return redirect("home")
         else:
-            return render(request, "partials/login_error.html", {
+            return render(request, "useraccount/partials/login_error.html", {
                 "error": "Неверные данные для входа"
             })
     def get_context_data(self, **kwargs):
@@ -109,80 +109,28 @@ class CustomLoginView(View):
         return context
 
 
-class SignUpView(CreateView):
-    form_class = SignUpForm
-    template_name = 'site/useraccount/signup.html'
-    success_url = reverse_lazy('useraccount:login')  # URL для редиректа после успешной регистрации
-
-    def get_success_url(self):
-        # Возвращаем success_url, можно переопределить логику, если нужно
-        return self.success_url
-
-    def get_form_kwargs(self):
-        # Передаем дополнительные аргументы в форму, если требуется
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user  # Убедитесь, что форма поддерживает user
-        return kwargs
-
-    def form_valid(self, form):
-        # Сохраняем пользователя
-        user = form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-
-        # Аутентифицируем пользователя
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            # Входим в систему
-            login(self.request, user)
-            return redirect(self.get_success_url())
-        else:
-            # Возвращаем ошибку, если аутентификация не удалась
-            return HttpResponseServerError('Ошибка аутентификации')
-
-    def get_context_data(self, **kwargs):
-        # Добавляем данные для SEO
-        context = super().get_context_data(**kwargs)
-        try:
-            seo_data = Seo.objects.get(pagetype=6)
-            context['seo_previev'] = seo_data.previev
-            context['seo_title'] = seo_data.title
-            context['seo_description'] = seo_data.metadescription
-            context['seo_propertytitle'] = seo_data.propertytitle
-            context['seo_propertydescription'] = seo_data.propertydescription
-        except Seo.DoesNotExist:
-            # Добавляем пустые значения, если SEO данных нет
-            context.update({
-                'seo_previev': None,
-                'seo_title': None,
-                'seo_description': None,
-                'seo_propertytitle': None,
-                'seo_propertydescription': None,
-            })
-        return context
-
 class CheckUsernameView(View):
     def post(self, request):
         username = request.POST.get("username")
         exists = User.objects.filter(username=username).exists()
-        return render(request, "partials/register_username_check.html", {"exists": exists})
+        return render(request, "useraccount/partials/register_username_check.html", {"exists": exists})
 
 
 class CheckEmailView(View):
     def post(self, request):
         email = request.POST.get("email")
         exists = User.objects.filter(email=email).exists()
-        return render(request, "partials/register_email_check.html", {"exists": exists})
+        return render(request, "useraccount/partials/register_email_check.html", {"exists": exists})
 
 
 class CheckPhoneView(View):
     def post(self, request):
         phone = request.POST.get("phone")
         exists = User.objects.filter(phone=phone).exists()
-        return render(request, "partials/register_phone_check.html", {"exists": exists})
+        return render(request, "useraccount/partials/register_phone_check.html", {"exists": exists})
 
 class RegisterView(View):
-    template_name = "register.html"
+    template_name = "useraccount/register.html"
 
     def get(self, request):
         return render(request, self.template_name)
@@ -246,11 +194,9 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'site/useraccount/password_reset_complete.html'
 
 
-"""Личный кабинет"""
-
 @method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
 class EditMyProfileView(TemplateView, LoginRequiredMixin):
-    template_name = 'site/useraccount/profile_edit.html'
+    template_name = 'useraccount/profile_edit.html'
 
     def get(self, request, *args, **kwargs):
         initial_data = {'birthday': request.user.birthday.strftime('%Y-%m-%d') if request.user.birthday else None}
@@ -300,373 +246,3 @@ class EditMyProfileView(TemplateView, LoginRequiredMixin):
             context['seo_propertytitle'] = None
             context['seo_propertydescription'] = None
         return context
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class NotificationView(ListView):
-    model = Notification
-    template_name = 'site/useraccount/notification_list.html'
-    context_object_name = 'notificationes'
-    paginate_by = 30
-
-    def get_queryset(self):
-        queryset = Notification.objects.filter(user=self.request.user).order_by('-created_at')
-        print(f"Notifications for user {self.request.user}: {queryset}")
-        return queryset
-
-    def get(self, request, *args, **kwargs):
-        # Обновляем статус уведомлений перед отображением страницы
-        with transaction.atomic():
-            updated_rows = Notification.objects.filter(
-                user=self.request.user,
-                status=1  # Статус "Не прочитан"
-            ).update(status=2)  # Меняем на "Прочитан"
-        print(
-            f"Updated {updated_rows} notifications to read status.")  # Выводим количество обновленных строк для отладки
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            seo_data = Seo.objects.get(pagetype=11)
-            context['seo_previev'] = seo_data.previev
-            context['seo_title'] = seo_data.title
-            context['seo_description'] = seo_data.description
-            context['seo_propertytitle'] = seo_data.propertytitle
-            context['seo_propertydescription'] = seo_data.propertydescription
-        except Seo.DoesNotExist:
-            context['seo_previev'] = None
-            context['seo_title'] = None
-            context['seo_description'] = None
-            context['seo_propertytitle'] = None
-            context['seo_propertydescription'] = None
-
-        print(f"Context data: {context}")  # Выводим контекст для отладки
-
-        return context
-
-"""Тикеты"""
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class TicketsView(LoginRequiredMixin, ListView):
-    model = Ticket
-    template_name = 'site/useraccount/tickets.html'
-    context_object_name = 'tickets'
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        ticket = Ticket.objects.order_by('-date').filter(author=user)
-        context['statuses'] = Ticket.STATUS_CHOICES
-
-        search_name = self.request.GET.get('search_name', '')
-        if search_name:
-            ticket = ticket.filter(themas__icontains=search_name)
-
-        search_id = self.request.GET.get('search_id', '')
-        if search_id:
-            ticket = ticket.filter(id__icontains=search_id)
-
-        search_type = self.request.GET.get('search_type', '')
-        if search_type:
-            ticket = ticket.filter(status=search_type)
-
-        search_date = self.request.GET.get('search_date', '')
-        if search_date:
-            # Преобразуем строку даты в объект datetime
-            try:
-                search_date = timezone.datetime.strptime(search_date, '%Y-%m-%d').date()
-                ticket = ticket.filter(date__date=search_date)
-            except ValueError:
-                pass
-
-        # Пагинация
-        paginator = Paginator(ticket, 10)  # 20 элементов на страницу
-        page = self.request.GET.get('page')
-        try:
-            ticket_list = paginator.page(page)
-        except PageNotAnInteger:
-            ticket_list = paginator.page(1)
-        except EmptyPage:
-            ticket_list = paginator.page(paginator.num_pages)
-
-        try:
-            seo_data = Seo.objects.get(pagetype=6)
-            context['seo_previev'] = seo_data.previev
-            context['seo_title'] = seo_data.title
-            context['seo_description'] = seo_data.description
-            context['seo_propertytitle'] = seo_data.propertytitle
-            context['seo_propertydescription'] = seo_data.propertydescription
-        except Seo.DoesNotExist:
-            context['seo_previev'] = None
-            context['seo_title'] = None
-            context['seo_description'] = None
-            context['seo_propertytitle'] = None
-            context['seo_propertydescription'] = None
-
-        context['ticket_list'] = ticket_list  # Передаем отфильтрованные задачи
-        context['paginator'] = paginator
-        context['page_obj'] = ticket_list
-        return context
-
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class TicketCreateView(LoginRequiredMixin, CreateView):
-    model = Ticket
-    form_class = TicketWithCommentForm
-    template_name = 'site/useraccount/ticket_form.html'
-    context_object_name = 'ticket'
-
-    @transaction.atomic
-    def form_valid(self, form):
-        ticket = form.save(commit=False)
-        ticket.author = self.request.user
-
-        User = get_user_model()
-        managers = User.objects.filter(type=2).annotate(ticket_count=Count('ticket_manager'))
-
-        if managers.exists():
-            ticket.manager = min(managers, key=lambda x: x.ticket_count)
-
-        ticket.save()
-
-        # Создаем первый комментарий, связанный с тикетом
-        comment = TicketComment.objects.create(
-            ticket=ticket,
-            author=self.request.user,
-            content=form.cleaned_data['content']
-        )
-
-        files = form.cleaned_data.get('files')
-        if files:
-            for file in files:
-                TicketCommentMedia.objects.create(comment=comment, file=file)
-
-        return redirect(reverse('useraccount:tickets'))
-
-    def form_invalid(self, form):
-        print(form.errors)  # Для отладки
-        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
-
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class TicketMessageView(LoginRequiredMixin, DetailView):
-    model = Ticket
-    template_name = 'site/useraccount/tickets_messages.html'
-    context_object_name = 'ticket'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        ticket = self.object
-
-        # Get all comments related to the ticket
-        comments = TicketComment.objects.filter(ticket=ticket).prefetch_related('media').all()
-
-        # Setup pagination
-        paginator = Paginator(comments, 10)  # Show 10 comments per page
-        page = self.request.GET.get('page')
-
-        try:
-            comments_paginated = paginator.page(page)
-        except PageNotAnInteger:
-            comments_paginated = paginator.page(1)
-        except EmptyPage:
-            comments_paginated = paginator.page(paginator.num_pages)
-
-        context['ticket_comments'] = comments_paginated
-        context['form'] = TicketCommentForm()
-        context['ticket'] = ticket
-        context['paginator'] = paginator
-        context['page_obj'] = comments_paginated
-
-        try:
-            seo_data = Seo.objects.get(pagetype=6)
-            context.update({
-                'seo_previev': seo_data.previev,
-                'seo_title': seo_data.title,
-                'seo_description': seo_data.description,
-                'seo_propertytitle': seo_data.propertytitle,
-                'seo_propertydescription': seo_data.propertydescription,
-            })
-        except Seo.DoesNotExist:
-            context.update({
-                'seo_previev': None,
-                'seo_title': None,
-                'seo_description': None,
-                'seo_propertytitle': None,
-                'seo_propertydescription': None,
-            })
-
-        return context
-
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class TicketDeleteView(LoginRequiredMixin, View):
-    success_url = reverse_lazy('useraccount:tickets')
-
-    def post(self, request):
-        data = json.loads(request.body)
-        ticket_ids = data.get('ticket_ids', [])
-        if ticket_ids:
-            Ticket.objects.filter(id__in=ticket_ids).delete()
-        return JsonResponse({'status': 'success', 'redirect': self.success_url})
-
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class TicketCommentCreateView(LoginRequiredMixin, CreateView):
-    model = TicketComment
-    form_class = TicketCommentForm
-
-    @transaction.atomic
-    def form_valid(self, form):
-        ticket_id = self.kwargs['ticket_id']
-        ticket = get_object_or_404(Ticket, id=ticket_id)
-        comment = form.save(commit=False)
-        comment.ticket = ticket
-        comment.author = self.request.user
-        comment.save()
-
-        files = self.request.FILES.getlist('files')
-        for file in files:
-            TicketCommentMedia.objects.create(comment=comment, file=file)
-
-        return JsonResponse({
-            'status': 'success',
-            'comment': {
-                'id': comment.id,
-                'author': comment.author.username,
-                'content': comment.content,
-                'date': comment.date.strftime('%Y-%m-%d %H:%M:%S'),
-                'files': [{'name': media.file.name, 'url': media.file.url} for media in comment.media.all()]
-            }
-        })
-
-    def form_invalid(self, form):
-        print(form.errors)  # Для отладки
-        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
-
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class WithdrawPage(LoginRequiredMixin, TemplateView):
-    template_name = 'site/useraccount/withdraw.html'
-    model = Withdrawal
-    context_object_name = 'withdraw'
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
-        withdraw = Withdrawal.objects.filter(user=user).order_by('-pk')
-
-        search_id = self.request.GET.get('search_id', '')
-        if search_id:
-            withdraw = withdraw.filter(pk=search_id)
-
-        search_type = self.request.GET.get('search_type', '')
-        if search_type:
-            withdraw = withdraw.filter(type=search_type)
-
-        search_date = self.request.GET.get('search_date', '')
-        if search_date:
-            # Преобразуем строку даты в объект datetime
-            try:
-                search_date = timezone.datetime.strptime(search_date, '%Y-%m-%d').date()
-                withdraw = withdraw.filter(create=search_date)
-            except ValueError:
-                pass
-
-        # Пагинация
-        paginator = Paginator(withdraw, 10)
-        page = self.request.GET.get('page')
-        try:
-            withdraw_list = paginator.page(page)
-        except PageNotAnInteger:
-            withdraw_list = paginator.page(1)
-        except EmptyPage:
-            withdraw_list = paginator.page(paginator.num_pages)
-
-        context['withdraw_list'] = withdraw_list  # Передаем отфильтрованные задачи
-        context['paginator'] = paginator
-        context['page_obj'] = withdraw_list
-        context['types'] = Withdrawal.TYPE_CHOICES
-        context['balance'] = user.balance
-        context['cards'] = user.cardowner.first()
-        # Добавляем форму вывода
-        context['withdraw_form'] = WithdrawForm()
-        # Добавляем форму
-        context['cards_form'] = CardsForm()
-        # Форма для редактирования карты (если карта существует)
-        if context['cards']:
-            context['edit_cards_form'] = CardsForm(instance=context['cards'])
-
-        return context
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class WithdrawCreateView(CreateView):
-    model = Withdrawal
-    form_class = WithdrawForm
-
-    def post(self, request, *args, **kwargs):
-        # Создаем экземпляр формы с переданными данными
-        form = self.form_class(data=request.POST, user=request.user)
-
-        if form.is_valid():
-            # Получаем сумму, которую пользователь хочет вывести
-            amount = form.cleaned_data['amount']
-
-            # Получаем пользователя
-            user = request.user
-
-            # Проверка, что у пользователя достаточно средств
-            if amount > user.balance:
-                return JsonResponse({'success': False, 'errors': {'amount': ['Недостаточно средств.']}}, status=400)
-
-            # Обновляем баланс пользователя, списывая сумму
-            user.balance -= amount
-            user.save()
-
-            # Сохраняем запрос на вывод
-            withdrawal = form.save(commit=False)
-            withdrawal.user = user  # Устанавливаем пользователя
-            withdrawal.save()
-
-            return JsonResponse({'success': True, 'message': 'Запрос на вывод успешно создан.'}, status=201)
-        else:
-            # Если есть ошибки валидации, возвращаем их
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
-
-
-@method_decorator(csrf_exempt, name='dispatch')  # Для защиты CSRF можно убрать в будущем, если запросы из тех же источников
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class CardsCreateView(CreateView):
-    model = Cards
-    form_class = CardsForm
-    success_url = reverse_lazy('useraccount:withdraw')
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            form.instance.user = self.request.user
-            form.save()
-            return JsonResponse({'success': True, 'message': 'Карта успешно добавлена'}, status=201)
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-@method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
-class CardsUpdateView(UpdateView):
-    model = Cards
-    form_class = CardsForm
-    success_url = reverse_lazy('useraccount:withdraw')
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            form.instance.user = self.request.user
-            form.save()
-            return JsonResponse({'success': True, 'message': 'Карта успешно обновлена'}, status=200)
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)

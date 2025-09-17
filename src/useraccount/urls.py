@@ -3,7 +3,6 @@ app_name = 'useraccount'
 from . import views
 
 urlpatterns = [
-    path('edit_profile/', views.EditMyProfileView.as_view(), name='edit_profile'),
     path("register/", views.RegisterView.as_view(), name="register"),
     path("register/check-username/", views.CheckUsernameView.as_view(), name="check_username"),
     path("register/check-email/", views.CheckEmailView.as_view(), name="check_email"),
@@ -16,19 +15,7 @@ urlpatterns = [
     path('password_reset/done/', views.CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', views.CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('notification/', views.NotificationView.as_view(), name='notification'),
 
-    # Тикеты
-    path('tickets/', views.TicketsView.as_view(), name='tickets'),
-    path('tickets/create/', views.TicketCreateView.as_view(), name='ticket_create'),
-    path('tickets/delete/', views.TicketDeleteView.as_view(), name='ticket_delete'),
-    path('tickets/<uuid:ticket_id>/add_comment/', views.TicketCommentCreateView.as_view(), name='add_comment'),
-    path('tickets/<slug:pk>/', views.TicketMessageView.as_view(), name='ticket_message'),
-    # Вылпаты
-    path('withdraw/', views.WithdrawPage.as_view(), name='withdraw'),
-    path('withdraw/create/', views.WithdrawCreateView.as_view(), name='withdraw_create'),
-    # Карта
-    path('card/create/', views.CardsCreateView.as_view(), name='cards_create'),
-    path('card/update/<int:pk>/', views.CardsUpdateView.as_view(), name='cards_update'),
+    path('edit_profile/', views.EditMyProfileView.as_view(), name='edit_profile'),
 
 ]
