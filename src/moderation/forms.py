@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 
 
 from .models import  Notificationgroups
-from webmain.models import SettingsGlobale, HomePage, AboutPage, ContactPage, Faqs, Pages, Seo
+from webmain.models import SettingsGlobale, HomePage, AboutPage, ContactPage, Faqs,  Seo
 from useraccount.models import  Notification, Withdrawal
 
 
@@ -96,29 +96,6 @@ class FaqsForm(forms.ModelForm):
         }
 
 
-class PagesForm(forms.ModelForm):
-    class Meta:
-        model = Pages
-        fields = ['pagetype', 'name', 'description', 'title', 'metadescription', 'slug', 'propertytitle', 'propertydescription', 'previev', 'publishet']
-        widgets = {
-            'pagetype': forms.Select(attrs={'class': 'default-select form-control wide', 'placeholder': 'Тип страницы'}),
-            'name': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Название'}),
-            'description': forms.CharField(widget=CKEditorWidget(),),
-            'slug': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Slug'}),
-            'previev': forms.FileInput(attrs={'class': 'form-file-input form-control'}),
-            'title': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Заголовок'}),
-            'metadescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Мета-описание'}),
-            'propertytitle': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Мета-заголовок ссылки'}),
-            'propertydescription': forms.Textarea(attrs={'class': 'form-control input-default', 'placeholder': 'Мета-описание ссылки'}),
-        }
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        # Генерация slug из name с помощью slugify
-        instance.slug = slugify(instance.name)  # Используем slugify для генерации slug
-        if commit:
-            instance.save()
-        return instance
 
 class SeoForm(forms.ModelForm):
     class Meta:

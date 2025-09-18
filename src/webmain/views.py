@@ -9,7 +9,7 @@ from django.urls import reverse
 
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
-from webmain.models import Faqs, SettingsGlobale,ContactPageInformation, ContactPage, AboutPage, HomePage, Seo, Pages
+from webmain.models import Faqs, SettingsGlobale,ContactPageInformation, ContactPage, AboutPage, HomePage, Seo
 from django.http import Http404
 import logging
 
@@ -148,28 +148,6 @@ class FaqsView(ListView):
 
         return context
 
-
-"""Страницы"""
-class PageDetailView(DetailView):
-    """Страница"""
-    model = Pages
-    template_name = 'site/website/page_detail.html'
-    context_object_name = 'page'
-    slug_field = "slug"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        page = context['page']
-        if page:
-            context['pageinformation'] = page.description
-            context['seo_previev'] = page.previev
-            context['seo_title'] = page.title
-            context['seo_description'] = page.metadescription
-            context['seo_propertytitle'] = page.propertytitle
-            context['seo_propertydescription'] = page.propertydescription
-        else:
-            context['pageinformation'] = None
-        return context
 
 
 

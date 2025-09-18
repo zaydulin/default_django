@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ seo_title }}{% endblock title %}
+{% block description %}{{ seo_description }}{% endblock description %}
+{% block propertytitle %}{% if seo_previev %}{{ seo_previev.url }} {% endif %} {% endblock propertytitle %}
+{% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
+{% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
+{% block head %}
+{% endblock head %}
+
+{% block content %}
+<ul class="nav nav-tabs" id="profileTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button" role="tab">
+            Основная информация
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="passport-tab" data-bs-toggle="tab" data-bs-target="#passport" type="button" role="tab">
+            Паспортные данные
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="driver-tab" data-bs-toggle="tab" data-bs-target="#driver" type="button" role="tab">
+            Водительские права
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab">
+            Безопасность
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content mt-3" id="profileTabContent">
+    <div class="tab-pane fade show active" id="main" role="tabpanel">
+        <div class="container my-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0 rounded-4">
+                        <div class="card-body p-4">
+                            <h4 class="mb-4 text-center">Редактирование профиля</h4>
+
+                            <!-- Аватар -->
+                            <div class="text-center mb-4">
+                                <img src="https://via.placeholder.com/120" class="rounded-circle border mb-3" alt="Аватар">
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary">Загрузить новое фото</button>
+                                </div>
+                            </div>
+
+                            <form>
+                                <div class="row g-3">
+                                    <!-- Логин -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Логин</label>
+                                        <input type="text" class="form-control" placeholder="Введите логин">
+                                    </div>
+                                    <!-- Email -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">E-mail</label>
+                                        <input type="email" class="form-control" placeholder="example@mail.com">
+                                    </div>
+
+                                    <!-- Имя -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">Имя</label>
+                                        <input type="text" class="form-control" placeholder="Введите имя">
+                                    </div>
+                                    <!-- Фамилия -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">Фамилия</label>
+                                        <input type="text" class="form-control" placeholder="Введите фамилию">
+                                    </div>
+                                    <!-- Отчество -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">Отчество</label>
+                                        <input type="text" class="form-control" placeholder="Введите отчество">
+                                    </div>
+
+                                    <!-- Пол -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Пол</label>
+                                        <select class="form-select">
+                                            <option selected disabled>Выберите пол</option>
+                                            <option value="male">Мужской</option>
+                                            <option value="female">Женский</option>
+                                        </select>
+                                    </div>
+                                    <!-- Телефон -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Телефон</label>
+                                        <input type="tel" class="form-control" placeholder="+7 (999) 123-45-67">
+                                    </div>
+
+                                    <!-- Дата рождения -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Дата рождения</label>
+                                        <input type="date" class="form-control">
+                                    </div>
+                                    <!-- Город -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">Город</label>
+                                        <input type="text" class="form-control" placeholder="Введите город">
+                                    </div>
+                                </div>
+
+                                <!-- Кнопки -->
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <button type="reset" class="btn btn-outline-secondary">Отмена</button>
+                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="tab-pane fade" id="passport" role="tabpanel">
+        <!-- Паспортные данные -->
+    </div>
+    <div class="tab-pane fade" id="driver" role="tabpanel">
+        <!-- Водительские права -->
+    </div>
+    <div class="tab-pane fade" id="security" role="tabpanel">
+
+    </div>
+</div>
+
+{% endblock content %}
