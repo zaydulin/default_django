@@ -7,34 +7,22 @@
 {% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
 {% block head %}
 {% endblock head %}
+            {% block menu_right %}
+<div class="position-relative">
+                <button class="toggle-btn">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <span class="notification-badge">3</span>
+            </div>
+
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+{% endblock menu_right %}
+
+
+
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <button type="button" id="sidebarCollapse" class="btn btn-primary">
-      <i class="fa fa-bars"></i>
-      <span class="sr-only">Toggle Menu</span>
-    </button>
-    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <i class="fa fa-bars"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="nav navbar-nav ml-auto">
-        <li class="nav-item active">
-          <a class="nav-link" id="demo-tab" data-bs-toggle="tab" href="#demo">Демострация</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="info-tab" data-bs-toggle="tab" href="#info">Информация</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="template-tab" data-bs-toggle="tab" href="#templates">Шаблоны</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="edit-tab" data-bs-toggle="tab" href="#edit">Редактирование</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
 <div class="container mt-4">
   <div class="tab-content">
     <div class="tab-pane fade show active" id="demo">
