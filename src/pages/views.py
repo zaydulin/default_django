@@ -6,7 +6,7 @@ from pages.models import Pages
 class PageDetailView(DetailView):
     """Страница"""
     model = Pages
-    template_name = 'site/website/page_detail.html'
+    template_name = 'page_detail.html'
     context_object_name = 'page'
     slug_field = "slug"
 

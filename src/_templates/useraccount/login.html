@@ -6,95 +6,74 @@
 {% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
 {% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
 {% block head %}
-<style>
-  body {
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .auth-card {
-    background: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    width: 100%;
-    max-width: 400px;
-    padding: 2rem;
-  }
-  .auth-card h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .btn-primary {
-    border-radius: .75rem;
-    padding: .75rem;
-    font-weight: 600;
-  }
-  .auth-links {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-  .auth-links a {
-    font-size: .9rem;
-    text-decoration: none;
-  }
-
-  /* Мобильный вид как в приложении */
-  @media (max-width: 576px) {
-    body {
-      background: #fff;
-    }
-    .auth-card {
-      box-shadow: none;
-      border-radius: 0;
-      max-width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .auth-card h1 {
-      font-size: 1.75rem;
-    }
-    .btn-primary {
-      font-size: 1.1rem;
-      padding: 1rem;
-    }
-    .auth-links {
-      flex-direction: column;
-      align-items: center;
-      gap: .5rem;
-    }
-  }
-</style>
 {% endblock head %}
-
 {% block content %}
-
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-  <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
-    <h2 class="text-center mb-3">Вход</h2>
-    <form hx-post="{% url 'useraccount:login' %}" hx-target="#login-result" hx-swap="innerHTML">
-      {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Имя пользователя</label>
-        <input type="text" name="username" class="form-control" required>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button type="button" id="sidebarCollapse" class="btn btn-primary">
+      <i class="fa fa-bars"></i>
+      <span class="sr-only">Toggle Menu</span>
+    </button>
+    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="nav navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" id="demo-tab" data-bs-toggle="tab" href="#demo">Демострация</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="info-tab" data-bs-toggle="tab" href="#info">Информация</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="template-tab" data-bs-toggle="tab" href="#templates">Шаблоны</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="edit-tab" data-bs-toggle="tab" href="#edit">Редактирование</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+  <div class="tab-content">
+    <div class="tab-pane fade show active" id="demo">
+      <div class="container d-flex justify-content-center align-items-center">
+        <div class="card p-4 shadow">
+          <h2 class="text-center mb-3">Вход</h2>
+          <form hx-post="{% url 'useraccount:login' %}" hx-target="#login-result" hx-swap="innerHTML">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Имя пользователя</label>
+              <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Пароль</label>
+              <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Войти</button>
+          </form>
+          <div id="login-result" class="mt-3"></div>
+          <div class="d-flex justify-content-between mt-3">
+            <a href="{% url 'useraccount:password_reset' %}">Забыли пароль?</a>
+            <a href="{% url 'useraccount:register' %}">Регистрация</a>
+          </div>
+        </div>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Пароль</label>
-        <input type="password" name="password" class="form-control" required>
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Войти</button>
-    </form>
-    <div id="login-result" class="mt-3"></div>
-    <div class="d-flex justify-content-between mt-3">
-      <a href="{% url 'useraccount:password_reset' %}">Забыли пароль?</a>
-      <a href="{% url 'useraccount:register' %}">Регистрация</a>
+    </div>
+    <div class="tab-pane fade" id="info">
+      <h3>Информация</h3>
+      <p>Контент для Информации...</p>
+    </div>
+    <div class="tab-pane fade" id="templates">
+      <h3>Шаблоны</h3>
+      <p>Контент для Шаблонов...</p>
+    </div>
+    <div class="tab-pane fade" id="edit">
+      <h3>Редактирование</h3>
+      <p>Контент для Редактирования...</p>
     </div>
   </div>
 </div>
+
 {% endblock content %}
