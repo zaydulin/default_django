@@ -51,19 +51,35 @@ class CustomHtmxMixin:
         }
 
 """Новости"""
+
+
 class BlogView(CustomHtmxMixin, ListView):
     model = Blogs
     template_name = "blogs/blogs.html"
     context_object_name = "blogs"
     paginate_by = 6
 
+    def get_template_names(self):
+        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
+
+        # Для пагинационных запросов возвращаем другой шаблон
+        if is_htmx and self.request.GET.get('page'):
+            return ["blogs/partials/blog_page_content.html"]
+
+        return super().get_template_names()
+
     def render_to_response(self, context, **response_kwargs):
-        if self.request.headers.get("HX-Request") == "true":
-            return render(self.request, "blogs/partials/blog_page.html", context)
+        # Для HTMX пагинации возвращаем только контент
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            return render(self.request, "blogs/partials/blog_page_content.html", context)
         return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Для пагинационных запросов добавляем флаг
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            context['is_pagination_request'] = True
 
         # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
         try:
@@ -113,6 +129,17 @@ class BlogView(CustomHtmxMixin, ListView):
                 'block_propertyimage': '',
                 'block_head': '<meta name="robots" content="noindex">'
             }
+
+class BlogPaginationView(ListView):
+    model = Blogs
+    template_name = "blogs/partials/blog_items.html"  # Только элементы
+    context_object_name = "blogs"
+    paginate_by = 6
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_pagination_request'] = True
+        return context
 
 class BlogDetailView(CustomHtmxMixin, DetailView):
     model = Blogs

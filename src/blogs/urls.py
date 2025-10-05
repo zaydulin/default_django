@@ -5,6 +5,8 @@ from . import views
 
 urlpatterns = [
     path("blogs/", views.BlogView.as_view(), name="list"),
+    path('page/<int:page>/', views.BlogPaginationView.as_view(), name='pagination'),
+
     path("<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
 
 ]
