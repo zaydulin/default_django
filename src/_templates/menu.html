@@ -1,3 +1,5 @@
+{% load static generals_tag i18n  %}
+
 <div class="sidebar" id="sidebar">
     <div class="sidebar-nav">
         <nav class="nav flex-column">
@@ -11,24 +13,24 @@
                     <i class="fas fa-shopping-bag"></i>SH0P
                 </a>
                 <div class="submenu nav flex-column">
-                     <a class="nav-link" href="#">Каталог товаров</a>
+                    <a class="nav-link" href="#">Каталог товаров</a>
                     <a class="nav-link" href="#">Деталка товара</a>
-                     <a class="nav-link" href="#">-Отзывы</a>
+                    <a class="nav-link" href="#">-Отзывы</a>
                     <a class="nav-link" href="#">-Следить за ценой</a>
                     <a class="nav-link" href="#">-Вопросы</a>
                     <a class="nav-link" href="#">-Вариации</a>
                     <a class="nav-link" href="#">Корзина покупателя</a>
-                     <a class="nav-link" href="#">Акции и распродажи</a>
+                    <a class="nav-link" href="#">Акции и распродажи</a>
                     <a class="nav-link" href="#">Новинки</a>
                     <a class="nav-link" href="#">Доставка и оплата</a>
-<hr>
-                                        <a class="nav-link" href="#">Мои заказы</a>
+                    <hr>
+                    <a class="nav-link" href="#">Мои заказы</a>
                     <a class="nav-link" href="#">Мои адреса доставки</a>
                     <a class="nav-link" href="#">Мои бонусы</a>
-                     <a class="nav-link" href="#">Избранное</a>
+                    <a class="nav-link" href="#">Избранное</a>
                 </div>
             </div>
-             <div class="nav-item has-submenu">
+            <div class="nav-item has-submenu">
                 <a class="nav-link" href="#">
                     <i class="fas fa-shopping-bag"></i>WEBSITE
                 </a>
@@ -47,24 +49,20 @@
                     <a class="nav-link" href="#">Мои заказы</a>
                     <a class="nav-link" href="#">Мои адреса доставки</a>
                     <a class="nav-link" href="#">Мои бонусы</a>
-                     <a class="nav-link" href="#">Избранное</a>
+                    <a class="nav-link" href="#">Избранное</a>
                     <a class="nav-link" href="#">Политика конфиденциальности</a>
                     <a class="nav-link" href="#">Пользовательское соглашение</a>
                     <a class="nav-link" href="#">Страница 404 («Не найдено»)</a>
                 </div>
             </div>
-                 <div class="nav-item has-submenu">
+            <div class="nav-item has-submenu">
                 <a class="nav-link" href="#">
                     <i class="fas fa-users"></i>Блог
                 </a>
                 <div class="submenu nav flex-column">
-                   <a class="nav-link" href="#"></a>
+                    <a class="nav-link" href="#"></a>
                     <a class="nav-link" href="{% url 'blogs:list' %}" hx-get="{% url 'blogs:list' %}" hx-target="#content-body" hx-push-url="true">Новости</a>
-
-                    <a class="nav-link" href="#">Детальная страница новости</a>
-<hr>
-                    <a class="nav-link" href="#">Благотворительность</a>
-
+                    <a class="nav-link"{% if blogs.0 %}  href="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-get="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-target="#content-body" hx-push-url="true" {% endif %}>Детальная страница новости</a>
                 </div>
             </div>
             <div class="nav-item has-submenu">
