@@ -78,7 +78,9 @@
                     <i class="fas fa-users"></i>Блог
                 </a>
                 <div class="submenu nav flex-column">
-                   <a class="nav-link" href="#">Новости</a>
+                   <a class="nav-link" href="#"></a>
+                    <a class="nav-link" href="{% url 'blogs:list' %}" hx-get="{% url 'blogs:list' %}" hx-target="#content-body" hx-push-url="true">Новости</a>
+
                     <a class="nav-link" href="#">Детальная страница новости</a>
 <hr>
                     <a class="nav-link" href="#">Благотворительность</a>
