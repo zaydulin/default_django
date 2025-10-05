@@ -7,7 +7,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ blog.name }}</h5>
         <p class="card-text">{{ blog.description|truncatewords:20 }}</p>
-        <a href="{% url 'blogs:blog_detail' blog.slug %}" class="btn btn-primary">Читать</a>
+        <a href="{% url 'blogs:blog_detail' blog.slug %}"  hx-get="{% url 'blogs:blog_detail' blog.slug %}" hx-target="#content-body" hx-push-url="true" class="btn btn-primary">Читать</a>
       </div>
     </div>
   </div>
