@@ -24,6 +24,7 @@ from django.db.models import Count
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
+import time
 
 
 # Models
@@ -39,20 +40,36 @@ from moderation.forms import WithdrawForm
 User = get_user_model()
 
 
+class CustomHtmxMixin:
+    def get_template_names(self):
+        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
+        if is_htmx:
+            return [self.template_name]
+        else:
+            return ['include_block.html']
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['template_htmx'] = self.template_name
+        print(f"Template HTMX: {self.template_name}")  # Для отладки
+        return context
+
+
 def custom_logout(request):
     logout(request)
     return redirect('useraccount:login')
 
 """Регистрация/Авторизация"""
 
-class CustomLoginView(View):
+class CustomLoginView(CustomHtmxMixin, TemplateView):
     template_name = "useraccount/login.html"
 
-    def get(self, request):
-        return render(request, self.template_name)
+    def get(self, request, *args, **kwargs):
+        # Убедитесь, что вызываем родительский get, который использует миксин
+        return super().get(request, *args, **kwargs)
 
-    def post(self, request):
-        identifier = request.POST.get("username")  # может быть username/email/phone
+    def post(self, request, *args, **kwargs):  # Добавьте *args, **kwargs
+        identifier = request.POST.get("username")
         password = request.POST.get("password")
 
         user = None
@@ -86,9 +103,17 @@ class CustomLoginView(View):
                 return render(request, "useraccount/partials/login_success.html")
             return redirect("home")
         else:
-            return render(request, "useraccount/partials/login_error.html", {
-                "error": "Неверные данные для входа"
-            })
+            # Для HTMX запросов возвращаем частичный шаблон
+            if request.headers.get("Hx-Request") == "true":
+                return render(request, "useraccount/partials/login_error.html", {
+                    "error": "Неверные данные для входа"
+                })
+            else:
+                # Для обычных запросов показываем форму с ошибкой
+                context = self.get_context_data()
+                context['error'] = "Неверные данные для входа"
+                return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -107,7 +132,6 @@ class CustomLoginView(View):
             context['seo_propertydescription'] = None
 
         return context
-
 
 class CheckUsernameView(View):
     def post(self, request):
@@ -129,7 +153,7 @@ class CheckPhoneView(View):
         exists = User.objects.filter(phone=phone).exists()
         return render(request, "useraccount/partials/register_phone_check.html", {"exists": exists})
 
-class RegisterView(View):
+class RegisterView(CustomHtmxMixin, View):
     template_name = "useraccount/register.html"
 
     def get(self, request):
