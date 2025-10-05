@@ -1,11 +1,4 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}{{ seo_title }}{% endblock title %}
-{% block description %}{{ seo_description }}{% endblock description %}
-{% block propertytitle %}{% if seo_previev %}{{ seo_previev.url }} {% endif %} {% endblock propertytitle %}
-{% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
-{% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
-{% block head %}{% endblock head %}
+
 {% block content %}
 <section class="page_banner" style="background-image: url('assets/images/shapes/tyre_print_3.svg');">
   <div class="container">
@@ -183,4 +176,3 @@
 </div>
 
 {% endblock content %}
-{% block footer %}{% endblock footer %}
