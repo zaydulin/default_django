@@ -1,21 +1,14 @@
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, TemplateView, FormView
-from django.views.generic.list import MultipleObjectMixin
-from django.contrib import messages
-from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.urls import reverse
-
+from django.views import View
+from django.views.generic import ListView, DetailView, TemplateView
+from django.shortcuts import render, get_object_or_404
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
 from blogs.models import TagsBlogs,  CategorysBlogs, Blogs
-from django.http import Http404
-import logging
-
+from django.utils.text import slugify
+from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from useraccount.models import Profile
 from webmain.models import Seo
-
-logger = logging.getLogger(__name__)
 
 
 class CustomHtmxMixin:
@@ -145,3 +138,144 @@ class BlogDetailView(CustomHtmxMixin, DetailView):
     model = Blogs
     template_name = "blogs/blog_detail.html"
     context_object_name = "blog"
+
+
+class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):
+    template_name = 'blogs/blog_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.kwargs.get('pk')
+        users = Profile.objects.all()
+
+        if pk:
+            blog = get_object_or_404(Blogs, pk=pk)
+            context.update({
+                'blog': blog,
+                'categories': CategorysBlogs.objects.all(),
+                'tags': TagsBlogs.objects.all(),
+                'users': users
+            })
+        else:
+            context.update({
+                'categories': CategorysBlogs.objects.all(),
+                'tags': TagsBlogs.objects.all(),
+                'users': users
+            })
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        # TemplateView автоматически использует get_template_names() из миксина
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, pk=None):
+        # Получаем данные из формы
+        name = request.POST.get('name')
+        resource = request.POST.get('resource', '')
+        category_ids = request.POST.getlist('category')
+        tag_ids = request.POST.getlist('tags')
+        description = request.POST.get('description', '')
+        title = request.POST.get('title', '')
+        metadescription = request.POST.get('metadescription', '')
+        propertytitle = request.POST.get('propertytitle', '')
+        propertydescription = request.POST.get('propertydescription', '')
+        publishet = request.POST.get('publishet', 'off') == 'on'
+
+        previev = request.FILES.get('previev', None)
+        cover = request.FILES.get('cover', None)
+        image = request.FILES.get('image', None)
+
+        # Получаем выбранного автора
+        author_id = request.POST.get('author')
+        author = get_object_or_404(Profile, pk=author_id)
+
+        # Генерация slug
+        slug = slugify(name)  # Применяем slugify для преобразования в sluggable строку
+
+        # Если редактируем блог, то slug не меняем
+        if pk:
+            blog = get_object_or_404(Blogs, pk=pk)
+            # Если slug не изменяется, оставляем старый
+            slug = blog.slug
+        else:
+            # Генерация уникального slug для нового блога
+            count = 1
+            original_slug = slug
+            while Blogs.objects.filter(slug=slug).exists():
+                slug = f"{original_slug}-{count}"
+                count += 1
+
+        # Если редактируем существующий блог
+        if pk:
+            blog = get_object_or_404(Blogs, pk=pk)
+            blog.name = name
+            blog.resource = resource
+            blog.description = description
+            blog.title = title
+            blog.metadescription = metadescription
+            blog.propertytitle = propertytitle
+            blog.propertydescription = propertydescription
+            blog.slug = slug  # Оставляем существующий slug при редактировании
+            blog.publishet = publishet
+            blog.author = author
+
+            # Обработка файлов
+            if previev:
+                blog.previev = previev
+            if cover:
+                blog.cover = cover
+            if image:
+                blog.image = image
+
+            # Обновляем категории и теги
+            blog.category.set(CategorysBlogs.objects.filter(id__in=category_ids))
+            blog.tags.set(TagsBlogs.objects.filter(id__in=tag_ids))
+
+            blog.save()
+
+            if 'HX-Request' in request.META:
+                return JsonResponse({'success': True, 'message': 'Blog updated successfully!'})
+            else:
+                return render(request, self.template_name, {'blog': blog, 'categories': CategorysBlogs.objects.all(), 'tags': TagsBlogs.objects.all(), 'users': Profile.objects.all()})
+
+        # Если создаем новый блог (pk не передан)
+        else:
+            try:
+                blog = Blogs.objects.create(
+                    author=author,
+                    name=name,
+                    resource=resource,
+                    description=description,
+                    title=title,
+                    metadescription=metadescription,
+                    propertytitle=propertytitle,
+                    propertydescription=propertydescription,
+                    slug=slug,  # Используем уникальный slug
+                    publishet=publishet,
+                )
+
+                # Обработка файлов
+                if previev:
+                    blog.previev = previev
+                if cover:
+                    blog.cover = cover
+                if image:
+                    blog.image = image
+
+                # Сохранение категорий и тегов
+                blog.category.set(CategorysBlogs.objects.filter(id__in=category_ids))
+                blog.tags.set(TagsBlogs.objects.filter(id__in=tag_ids))
+
+                blog.save()
+
+                if 'HX-Request' in request.META:
+                    return JsonResponse({'success': True, 'message': 'Blog created successfully!'})
+
+                return render(request, self.template_name, {'blog': blog, 'categories': CategorysBlogs.objects.all(), 'tags': TagsBlogs.objects.all(), 'users': Profile.objects.all()})
+
+            except ValidationError as e:
+                if 'HX-Request' in request.META:
+                    return JsonResponse({'success': False, 'error': str(e)})
+
+                return render(request, self.template_name, {'error': str(e)})

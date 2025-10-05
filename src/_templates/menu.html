@@ -56,9 +56,10 @@
                     <i class="fas fa-newspaper"></i>Блог
                 </a>
                 <div class="submenu nav flex-column">
-                    <a class="nav-link" href="#"></a>
                     <a class="nav-link" href="{% url 'blogs:list' %}" hx-get="{% url 'blogs:list' %}" hx-target="#content-body" hx-push-url="true">Новости</a>
-                    <a class="nav-link"{% if blogs.0 %}  href="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-get="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-target="#content-body" hx-push-url="true" {% endif %}>Детальная страница новости</a>
+                    <a class="nav-link"{% if blogs.0 %} href="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-get="{% url 'blogs:blog_detail' blogs.1.slug %}" hx-target="#content-body" hx-push-url="true" {% endif %}>Детальная страница новости</a>
+                    <a class="nav-link"{% if blogs.0 %} href="{#% url 'blogs:blog_detail' blogs.1.slug %#}" hx-get="{#% url 'blogs:blog_detail' blogs.1.slug %#}" hx-target="#content-body" hx-push-url="true" {% endif %}>Комментарии</a>
+                    <a class="nav-link" href="{% url 'blogs:blog_edit' 1 %}" hx-get="{% url 'blogs:blog_edit' 1 %}" hx-target="#content-body" hx-push-url="true" >Редактирование</a>
                 </div>
             </div>
             <div class="nav-item has-submenu">

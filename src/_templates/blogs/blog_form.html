@@ -1,0 +1,109 @@
+
+{% block content %}
+  <div class="container">
+    <h1>{{ blog.name|default:"Создание блога" }}</h1>
+
+    <form method="POST" enctype="multipart/form-data" hx-post="{% url 'blogs:blog_edit' blog.pk %}" hx-target="#content-body">
+      {% csrf_token %}
+
+      {% if blog.pk %}
+        <input type="hidden" name="pk" value="{{ blog.pk }}">
+      {% endif %}
+
+      <div class="mb-3">
+        <label for="id_name" class="form-label">Название</label>
+        <input type="text" name="name" class="form-control" id="id_name" value="{{ blog.name|default:'' }}" required>
+      </div>
+<!-- Выбор автора -->
+      <div class="mb-3">
+        <label for="id_author" class="form-label">Автор</label>
+        <select name="author" id="id_author" class="form-select">
+          {% for user in users %}
+            <option value="{{ user.id }}" {% if user.id == blog.author.id %}selected{% endif %}>{{ user.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_resource" class="form-label">Источник</label>
+        <input type="text" name="resource" class="form-control" id="id_resource" value="{{ blog.resource|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="id_category" class="form-label">Категории</label>
+        <select name="category" id="id_category" class="form-select" multiple>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if category in blog.category.all %}selected{% endif %}>{{ category.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_tags" class="form-label">Метки</label>
+        <select name="tags" id="id_tags" class="form-select" multiple>
+          {% for tag in tags %}
+            <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>{{ tag.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_description" class="form-label">Описание</label>
+        <textarea name="description" class="form-control" id="id_description">{{ blog.description|default:'' }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_title" class="form-label">Мета-заголовок</label>
+        <input type="text" name="title" class="form-control" id="id_title" value="{{ blog.title|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="id_metadescription" class="form-label">Мета-описание</label>
+        <textarea name="metadescription" class="form-control" id="id_metadescription">{{ blog.metadescription|default:'' }}</textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_propertytitle" class="form-label">Мета-заголовок ссылки</label>
+        <input type="text" name="propertytitle" class="form-control" id="id_propertytitle" value="{{ blog.propertytitle|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="id_propertydescription" class="form-label">Мета-описание ссылки</label>
+        <input type="text" name="propertydescription" class="form-control" id="id_propertydescription" value="{{ blog.propertydescription|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label for="id_previev" class="form-label">Превью</label>
+        <input type="file" name="previev" class="form-control" id="id_previev">
+        {% if blog.previev %}
+          <img src="{{ blog.previev.url }}" alt="Превью" width="100">
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_cover" class="form-label">Обложка</label>
+        <input type="file" name="cover" class="form-control" id="id_cover">
+        {% if blog.cover %}
+          <img src="{{ blog.cover.url }}" alt="Обложка" width="100">
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_image" class="form-label">Изображение</label>
+        <input type="file" name="image" class="form-control" id="id_image">
+        {% if blog.image %}
+          <img src="{{ blog.image.url }}" alt="Изображение" width="100">
+        {% endif %}
+      </div>
+
+      <div class="mb-3 form-check">
+        <input type="checkbox" name="publishet" class="form-check-input" id="id_publishet" {% if blog.publishet %}checked{% endif %}>
+        <label class="form-check-label" for="id_publishet">Опубликовано</label>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        {% if blog.pk %} Обновить {% else %} Создать {% endif %}
+      </button>
+    </form>
+  </div>
+{% endblock %}
