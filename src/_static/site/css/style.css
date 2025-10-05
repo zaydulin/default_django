@@ -199,7 +199,7 @@
         }
 
         .nav-item.has-submenu.active .submenu {
-            max-height: 500px;
+            max-height: 100%;
         }
 
         .sidebar .submenu .nav-link {
