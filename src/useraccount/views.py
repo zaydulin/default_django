@@ -51,9 +51,26 @@ class CustomHtmxMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['template_htmx'] = self.template_name
-        print(f"Template HTMX: {self.template_name}")  # Для отладки
+
+        # Получаем SEO данные из View и передаем их для блоков
+        seo_context = self.get_seo_context()
+        context.update(seo_context)
+
         return context
 
+    def get_seo_context(self):
+        """
+        Переопределите этот метод в дочерних классах
+        чтобы вернуть SEO данные для этой страницы
+        """
+        return {
+            'block_title': 'Заголовок по умолчанию',
+            'block_description': 'Описание по умолчанию',
+            'block_propertytitle': 'Property Title по умолчанию',
+            'block_propertydescription': 'Property Description по умолчанию',
+            'block_propertyimage': '',
+            'block_head': ''
+        }
 
 def custom_logout(request):
     logout(request)
@@ -61,8 +78,61 @@ def custom_logout(request):
 
 """Регистрация/Авторизация"""
 
+
 class CustomLoginView(CustomHtmxMixin, TemplateView):
     template_name = "useraccount/login.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
+        try:
+            seo_data_from_db = Seo.objects.get(pagetype=5)
+
+            # Передаем данные из модели в контекст
+            context['seo_previev'] = seo_data_from_db.previev
+            context['seo_title'] = seo_data_from_db.title
+            context['seo_description'] = seo_data_from_db.metadescription
+            context['seo_propertytitle'] = seo_data_from_db.propertytitle
+            context['seo_propertydescription'] = seo_data_from_db.propertydescription
+            context['seo_head'] = seo_data_from_db.setting  # Если нужно добавлять дополнительные теги
+        except Seo.DoesNotExist:
+            # Если данных нет, используем значения по умолчанию
+            context['seo_previev'] = None
+            context['seo_title'] = 'Вход в систему - МойСайт'
+            context['seo_description'] = 'Войдите в свою учетную запись для доступа к персональным данным'
+            context['seo_propertytitle'] = 'og:title - Вход в систему'
+            context['seo_propertydescription'] = 'og:description - Страница входа в личный кабинет'
+            context['seo_head'] = '''
+                <link rel="stylesheet" href="/static/css/login.css">
+                <meta name="robots" content="noindex">
+            '''
+
+        return context
+
+    def get_seo_context(self):
+        """
+        Просто возвращаем SEO данные для блоков
+        """
+        try:
+            seo_data = Seo.objects.get(pagetype=5)
+            return {
+                'block_title': seo_data.title,
+                'block_description': seo_data.metadescription,
+                'block_propertytitle': seo_data.propertytitle,
+                'block_propertydescription': seo_data.propertydescription,
+                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
+                'block_head': seo_data.setting or ''
+            }
+        except Seo.DoesNotExist:
+            return {
+                'block_title': 'Вход в систему',
+                'block_description': 'Страница входа в аккаунт',
+                'block_propertytitle': 'Вход в систему',
+                'block_propertydescription': 'Страница входа',
+                'block_propertyimage': '',
+                'block_head': '<meta name="robots" content="noindex">'
+            }
 
     def get(self, request, *args, **kwargs):
         # Убедитесь, что вызываем родительский get, который использует миксин
@@ -114,24 +184,7 @@ class CustomLoginView(CustomHtmxMixin, TemplateView):
                 context['error'] = "Неверные данные для входа"
                 return self.render_to_response(context)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
 
-        try:
-            seo_data = Seo.objects.get(pagetype=5)
-            context['seo_previev'] = seo_data.previev
-            context['seo_title'] = seo_data.title
-            context['seo_description'] = seo_data.description
-            context['seo_propertytitle'] = seo_data.propertytitle
-            context['seo_propertydescription'] = seo_data.propertydescription
-        except Seo.DoesNotExist:
-            context['seo_previev'] = None
-            context['seo_title'] = None
-            context['seo_description'] = None
-            context['seo_propertytitle'] = None
-            context['seo_propertydescription'] = None
-
-        return context
 
 class CheckUsernameView(View):
     def post(self, request):
@@ -153,11 +206,33 @@ class CheckPhoneView(View):
         exists = User.objects.filter(phone=phone).exists()
         return render(request, "useraccount/partials/register_phone_check.html", {"exists": exists})
 
-class RegisterView(CustomHtmxMixin, View):
+class RegisterView(CustomHtmxMixin, TemplateView):  # Используем TemplateView
     template_name = "useraccount/register.html"
 
-    def get(self, request):
-        return render(request, self.template_name)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_seo_context(self):
+        """SEO данные для страницы регистрации"""
+        try:
+            seo_data = Seo.objects.get(pagetype=6)  # pagetype для регистрации
+            return {
+                'block_title': seo_data.title,
+                'block_description': seo_data.metadescription,
+                'block_propertytitle': seo_data.propertytitle,
+                'block_propertydescription': seo_data.propertydescription,
+                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
+                'block_head': seo_data.setting or ''
+            }
+        except Seo.DoesNotExist:
+            return {
+                'block_title': 'Регистрация - МойСайт',
+                'block_description': 'Создайте новый аккаунт на нашем сайте',
+                'block_propertytitle': 'Регистрация',
+                'block_propertydescription': 'Страница регистрации',
+                'block_propertyimage': '',
+                'block_head': '<meta name="robots" content="noindex">'
+            }
 
     def post(self, request):
         username = request.POST.get("username")
