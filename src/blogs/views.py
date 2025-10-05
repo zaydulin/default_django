@@ -1,3 +1,5 @@
+import json
+
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView
 from django.shortcuts import render, get_object_or_404
@@ -5,10 +7,11 @@ from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
 from blogs.models import TagsBlogs,  CategorysBlogs, Blogs
 from django.utils.text import slugify
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError
 from useraccount.models import Profile
 from webmain.models import Seo
+from django.template.loader import render_to_string
 
 
 class CustomHtmxMixin:
@@ -138,6 +141,79 @@ class BlogDetailView(CustomHtmxMixin, DetailView):
     model = Blogs
     template_name = "blogs/blog_detail.html"
     context_object_name = "blog"
+
+
+class CreateCategoryView(View):
+    def post(self, request):
+        new_category_name = request.POST.get('new_category_name', '').strip()
+        current_categories = request.POST.get('current_categories', '')
+
+        if not new_category_name:
+            categories = CategorysBlogs.objects.all()
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_category_ids': current_categories.split(',') if current_categories else [],
+                'error': 'Название категории не может быть пустым.'
+            })
+            return HttpResponse(html, status=400)
+
+        try:
+            # Создаем новую категорию
+            category = CategorysBlogs.objects.create(
+                name=new_category_name,
+                description=request.POST.get('new_category_description', ''),
+                parent_id=request.POST.get('new_category_parent') or None,
+                title=request.POST.get('new_category_title', ''),
+                metadescription=request.POST.get('new_category_metadescription', ''),
+                propertytitle=request.POST.get('new_category_propertytitle', ''),
+                propertydescription=request.POST.get('new_category_propertydescription', ''),
+                publishet=request.POST.get('new_category_publishet') == 'on'
+            )
+
+            # Обработка файлов
+            if 'new_category_cover' in request.FILES:
+                category.cover = request.FILES['new_category_cover']
+            if 'new_category_icon' in request.FILES:
+                category.icon = request.FILES['new_category_icon']
+            if 'new_category_previev' in request.FILES:
+                category.previev = request.FILES['new_category_previev']
+
+            category.save()
+
+            # Подготавливаем список выбранных категорий (старые + новая)
+            selected_category_ids = []
+            if current_categories:
+                selected_category_ids = [int(id) for id in current_categories.split(',') if id]
+            selected_category_ids.append(category.id)
+
+            # Возвращаем обновленный список категорий
+            categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(id__in=selected_category_ids)
+
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_categories': selected_categories
+            })
+
+            response = HttpResponse(html)
+            # Добавляем триггеры для закрытия модального окна и очистки формы
+            response['HX-Trigger'] = json.dumps({
+                'closeCategoryModal': True,
+                'clearCategoryForm': True
+            })
+            return response
+
+        except Exception as e:
+            categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(
+                id__in=current_categories.split(',')) if current_categories else []
+
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_categories': selected_categories,
+                'error': str(e)
+            })
+            return HttpResponse(html, status=400)
 
 
 class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):

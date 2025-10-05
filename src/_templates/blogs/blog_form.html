@@ -1,109 +1,242 @@
 
 {% block content %}
-  <div class="container">
+<div class="container">
     <h1>{{ blog.name|default:"Создание блога" }}</h1>
 
     <form method="POST" enctype="multipart/form-data" hx-post="{% url 'blogs:blog_edit' blog.pk %}" hx-target="#content-body">
-      {% csrf_token %}
+        {% csrf_token %}
 
-      {% if blog.pk %}
+        {% if blog.pk %}
         <input type="hidden" name="pk" value="{{ blog.pk }}">
-      {% endif %}
-
-      <div class="mb-3">
-        <label for="id_name" class="form-label">Название</label>
-        <input type="text" name="name" class="form-control" id="id_name" value="{{ blog.name|default:'' }}" required>
-      </div>
-<!-- Выбор автора -->
-      <div class="mb-3">
-        <label for="id_author" class="form-label">Автор</label>
-        <select name="author" id="id_author" class="form-select">
-          {% for user in users %}
-            <option value="{{ user.id }}" {% if user.id == blog.author.id %}selected{% endif %}>{{ user.username }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_resource" class="form-label">Источник</label>
-        <input type="text" name="resource" class="form-control" id="id_resource" value="{{ blog.resource|default:'' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="id_category" class="form-label">Категории</label>
-        <select name="category" id="id_category" class="form-select" multiple>
-          {% for category in categories %}
-            <option value="{{ category.id }}" {% if category in blog.category.all %}selected{% endif %}>{{ category.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_tags" class="form-label">Метки</label>
-        <select name="tags" id="id_tags" class="form-select" multiple>
-          {% for tag in tags %}
-            <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>{{ tag.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_description" class="form-label">Описание</label>
-        <textarea name="description" class="form-control" id="id_description">{{ blog.description|default:'' }}</textarea>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_title" class="form-label">Мета-заголовок</label>
-        <input type="text" name="title" class="form-control" id="id_title" value="{{ blog.title|default:'' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="id_metadescription" class="form-label">Мета-описание</label>
-        <textarea name="metadescription" class="form-control" id="id_metadescription">{{ blog.metadescription|default:'' }}</textarea>
-      </div>
-
-      <div class="mb-3">
-        <label for="id_propertytitle" class="form-label">Мета-заголовок ссылки</label>
-        <input type="text" name="propertytitle" class="form-control" id="id_propertytitle" value="{{ blog.propertytitle|default:'' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="id_propertydescription" class="form-label">Мета-описание ссылки</label>
-        <input type="text" name="propertydescription" class="form-control" id="id_propertydescription" value="{{ blog.propertydescription|default:'' }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="id_previev" class="form-label">Превью</label>
-        <input type="file" name="previev" class="form-control" id="id_previev">
-        {% if blog.previev %}
-          <img src="{{ blog.previev.url }}" alt="Превью" width="100">
         {% endif %}
-      </div>
 
-      <div class="mb-3">
-        <label for="id_cover" class="form-label">Обложка</label>
-        <input type="file" name="cover" class="form-control" id="id_cover">
-        {% if blog.cover %}
-          <img src="{{ blog.cover.url }}" alt="Обложка" width="100">
-        {% endif %}
-      </div>
+        <div class="mb-3">
+            <label for="id_name" class="form-label">Название</label>
+            <input type="text" name="name" class="form-control" id="id_name" value="{{ blog.name|default:'' }}" required>
+        </div>
+        <!-- Выбор автора -->
+        <div class="mb-3">
+            <label for="id_author" class="form-label">Автор</label>
+            <select name="author" id="id_author" class="form-select">
+                {% for user in users %}
+                <option value="{{ user.id }}" {% if user.id == blog.author.id %}selected{% endif %}>{{ user.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-      <div class="mb-3">
-        <label for="id_image" class="form-label">Изображение</label>
-        <input type="file" name="image" class="form-control" id="id_image">
-        {% if blog.image %}
-          <img src="{{ blog.image.url }}" alt="Изображение" width="100">
-        {% endif %}
-      </div>
+        <div class="mb-3">
+            <label for="id_resource" class="form-label">Источник</label>
+            <input type="text" name="resource" class="form-control" id="id_resource" value="{{ blog.resource|default:'' }}">
+        </div>
 
-      <div class="mb-3 form-check">
-        <input type="checkbox" name="publishet" class="form-check-input" id="id_publishet" {% if blog.publishet %}checked{% endif %}>
-        <label class="form-check-label" for="id_publishet">Опубликовано</label>
-      </div>
+        <!-- Категории -->
+        <!-- Скрытое поле для передачи выбранных категорий -->
+        <div id="current-selected-categories">
+            {% for category in blog.category.all %}
+            <input type="hidden" name="current_selected_categories" value="{{ category.id }}">
+            {% endfor %}
+        </div>
+        <!-- Категории -->
+        <div id="category-select-container">
+            <div class="mb-3">
+                <label for="id_category" class="form-label">Категории</label>
+                <select name="category" id="id_category" class="form-select" multiple>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category in blog.category.all %}selected{% endif %}>{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <!-- Кнопка для добавления новой категории -->
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#categoryModal"
+                onclick="updateCurrentCategories()">
+            Добавить новую категорию
+        </button>
+        <div class="mb-3">
+            <label for="id_tags" class="form-label">Метки</label>
+            <select name="tags" id="id_tags" class="form-select" multiple>
+                {% for tag in tags %}
+                <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-      <button type="submit" class="btn btn-primary">
-        {% if blog.pk %} Обновить {% else %} Создать {% endif %}
-      </button>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Описание</label>
+            <textarea name="description" class="form-control" id="id_description">{{ blog.description|default:'' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_title" class="form-label">Мета-заголовок</label>
+            <input type="text" name="title" class="form-control" id="id_title" value="{{ blog.title|default:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="id_metadescription" class="form-label">Мета-описание</label>
+            <textarea name="metadescription" class="form-control" id="id_metadescription">{{ blog.metadescription|default:'' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_propertytitle" class="form-label">Мета-заголовок ссылки</label>
+            <input type="text" name="propertytitle" class="form-control" id="id_propertytitle" value="{{ blog.propertytitle|default:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="id_propertydescription" class="form-label">Мета-описание ссылки</label>
+            <input type="text" name="propertydescription" class="form-control" id="id_propertydescription" value="{{ blog.propertydescription|default:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="id_previev" class="form-label">Превью</label>
+            <input type="file" name="previev" class="form-control" id="id_previev">
+            {% if blog.previev %}
+            <img src="{{ blog.previev.url }}" alt="Превью" width="100">
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_cover" class="form-label">Обложка</label>
+            <input type="file" name="cover" class="form-control" id="id_cover">
+            {% if blog.cover %}
+            <img src="{{ blog.cover.url }}" alt="Обложка" width="100">
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_image" class="form-label">Изображение</label>
+            <input type="file" name="image" class="form-control" id="id_image">
+            {% if blog.image %}
+            <img src="{{ blog.image.url }}" alt="Изображение" width="100">
+            {% endif %}
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="publishet" class="form-check-input" id="id_publishet" {% if blog.publishet %}checked{% endif %}>
+            <label class="form-check-label" for="id_publishet">Опубликовано</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            {% if blog.pk %} Обновить {% else %} Создать {% endif %}
+        </button>
     </form>
-  </div>
+    <!-- Модальное окно -->
+    <div class="modal fade" id="categoryModal" tabindex="-1"
+         hx-on:closeCategoryModal="const modal = bootstrap.Modal.getInstance(this); if (modal) modal.hide();"
+         hx-on:clearCategoryForm="const form = document.getElementById('categoryForm'); if (form) form.reset();">
+        <div class="modal-dialog modal-dialog-end modal-lg" style="max-width: 500px; margin: 0;">
+            <div class="modal-content" style="height: 100vh;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">Создать новую категорию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="overflow-y: auto;">
+                    <form id="categoryForm"
+                          hx-post="{% url 'blogs:create_category' %}"
+                          hx-target="#category-select-container"
+                          hx-swap="outerHTML"
+                          hx-ext="response-targets"
+                          hx-on::after-request="if (event.detail.successful) {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('categoryModal'));
+          if (modal) modal.hide();
+          this.reset();
+      }"
+                          _="on htmx:beforeRequest
+         set :currentCategories to getCurrentCategoryIds()
+         set value of #current_categories in me to :currentCategories">
+                        {% csrf_token %}
+
+                        <!-- Скрытое поле для передачи текущих выбранных категорий -->
+                        <input type="hidden" name="current_categories" id="current_categories" value="">
+
+                        <div class="mb-3">
+                            <label for="new_category_name" class="form-label">Название категории</label>
+                            <input type="text" class="form-control" id="new_category_name" name="new_category_name" required>
+                        </div>
+
+                        <!-- Остальные поля формы -->
+                        <div class="mb-3">
+                            <label for="new_category_description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="new_category_description" name="new_category_description"></textarea>
+                        </div>
+
+                        <!-- Родительская категория -->
+                        <div class="mb-3">
+                            <label for="new_category_parent" class="form-label">Родительская категория</label>
+                            <select class="form-select" id="new_category_parent" name="new_category_parent">
+                                <option value="">Нет</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Обложка -->
+                        <div class="mb-3">
+                            <label for="new_category_cover" class="form-label">Обложка категории</label>
+                            <input type="file" class="form-control" id="new_category_cover" name="new_category_cover">
+                        </div>
+
+                        <!-- Иконка -->
+                        <div class="mb-3">
+                            <label for="new_category_icon" class="form-label">Иконка категории</label>
+                            <input type="file" class="form-control" id="new_category_icon" name="new_category_icon">
+                        </div>
+
+                        <!-- Превью -->
+                        <div class="mb-3">
+                            <label for="new_category_previev" class="form-label">Превью категории</label>
+                            <input type="file" class="form-control" id="new_category_previev" name="new_category_previev">
+                        </div>
+
+                        <!-- Мета-заголовок -->
+                        <div class="mb-3">
+                            <label for="new_category_title" class="form-label">Мета-заголовок</label>
+                            <input type="text" class="form-control" id="new_category_title" name="new_category_title">
+                        </div>
+
+                        <!-- Мета-описание -->
+                        <div class="mb-3">
+                            <label for="new_category_metadescription" class="form-label">Мета-описание</label>
+                            <input type="text" class="form-control" id="new_category_metadescription" name="new_category_metadescription">
+                        </div>
+
+                        <!-- Мета-заголовок ссылки -->
+                        <div class="mb-3">
+                            <label for="new_category_propertytitle" class="form-label">Мета-заголовок ссылки</label>
+                            <input type="text" class="form-control" id="new_category_propertytitle" name="new_category_propertytitle">
+                        </div>
+
+                        <!-- Мета-описание ссылки -->
+                        <div class="mb-3">
+                            <label for="new_category_propertydescription" class="form-label">Мета-описание ссылки</label>
+                            <input type="text" class="form-control" id="new_category_propertydescription" name="new_category_propertydescription">
+                        </div>
+
+                        <!-- Опубликована -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="new_category_publishet" name="new_category_publishet">
+                            <label class="form-check-label" for="new_category_publishet">Опубликована</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Создать категорию</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getCurrentCategoryIds() {
+            const selectedOptions = document.querySelectorAll('#id_category option:checked');
+            return Array.from(selectedOptions).map(option => option.value).join(',');
+        }
+
+        function updateCurrentCategories() {
+            const currentCategories = getCurrentCategoryIds();
+            document.getElementById('current_categories').value = currentCategories;
+        }
+    </script>
+
+</div>
 {% endblock %}

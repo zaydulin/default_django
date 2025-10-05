@@ -1,0 +1,13 @@
+<div id="category-select-container">
+    <div class="mb-3">
+        <label for="id_category" class="form-label">Категории</label>
+        <select name="category" id="id_category" class="form-select" multiple>
+            {% for category in categories %}
+            <option value="{{ category.id }}"
+                    {% if category in selected_categories %}selected{% endif %}>
+                {{ category.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
