@@ -142,25 +142,28 @@ class BlogDetailView(CustomHtmxMixin, DetailView):
     template_name = "blogs/blog_detail.html"
     context_object_name = "blog"
 
-
 class CreateCategoryView(View):
     def post(self, request):
-        new_category_name = request.POST.get('new_category_name', '').strip()
-        current_categories = request.POST.get('current_categories', '')
+        """Создание категории"""
+        current_selected_ids = request.POST.getlist('category', [])
+        # Используем new_category_name вместо category_name
+        category_name = request.POST.get('new_category_name', '').strip()
 
-        if not new_category_name:
+        if not category_name:
             categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
+
             html = render_to_string('blogs/partials/category_select.html', {
                 'categories': categories,
-                'selected_category_ids': current_categories.split(',') if current_categories else [],
+                'selected_categories': selected_categories,
                 'error': 'Название категории не может быть пустым.'
             })
             return HttpResponse(html, status=400)
 
         try:
-            # Создаем новую категорию
             category = CategorysBlogs.objects.create(
-                name=new_category_name,
+                name=category_name,
+                # Используем new_ префикс для всех полей
                 description=request.POST.get('new_category_description', ''),
                 parent_id=request.POST.get('new_category_parent') or None,
                 title=request.POST.get('new_category_title', ''),
@@ -170,7 +173,7 @@ class CreateCategoryView(View):
                 publishet=request.POST.get('new_category_publishet') == 'on'
             )
 
-            # Обработка файлов
+            # Обработка файлов с new_ префиксом
             if 'new_category_cover' in request.FILES:
                 category.cover = request.FILES['new_category_cover']
             if 'new_category_icon' in request.FILES:
@@ -180,15 +183,12 @@ class CreateCategoryView(View):
 
             category.save()
 
-            # Подготавливаем список выбранных категорий (старые + новая)
-            selected_category_ids = []
-            if current_categories:
-                selected_category_ids = [int(id) for id in current_categories.split(',') if id]
-            selected_category_ids.append(category.id)
+            # Добавляем новую категорию к выбранным
+            current_selected_ids.append(str(category.id))
 
-            # Возвращаем обновленный список категорий
+            # Возвращаем обновленный список
             categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=selected_category_ids)
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
 
             html = render_to_string('blogs/partials/category_select.html', {
                 'categories': categories,
@@ -196,17 +196,16 @@ class CreateCategoryView(View):
             })
 
             response = HttpResponse(html)
-            # Добавляем триггеры для закрытия модального окна и очистки формы
             response['HX-Trigger'] = json.dumps({
-                'closeCategoryModal': True,
-                'clearCategoryForm': True
+                'closeModal': True,
+                'clearForm': True,
+                'showMessage': 'Категория успешно создана'
             })
             return response
 
         except Exception as e:
             categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(
-                id__in=current_categories.split(',')) if current_categories else []
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
 
             html = render_to_string('blogs/partials/category_select.html', {
                 'categories': categories,
@@ -216,6 +215,72 @@ class CreateCategoryView(View):
             return HttpResponse(html, status=400)
 
 
+class EditCategoryView(View):
+    def post(self, request, pk):
+        """Обновление категории"""
+        current_selected_ids = request.POST.getlist('category', [])
+        category = get_object_or_404(CategorysBlogs, pk=pk)
+        # Используем new_category_name вместо category_name
+        category_name = request.POST.get('new_category_name', '').strip()
+
+        if not category_name:
+            categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
+
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_categories': selected_categories,
+                'error': 'Название категории не может быть пустым.'
+            })
+            return HttpResponse(html, status=400)
+
+        try:
+            category.name = category_name
+            category.description = request.POST.get('new_category_description', '')
+            category.parent_id = request.POST.get('new_category_parent') or None
+            category.title = request.POST.get('new_category_title', '')
+            category.metadescription = request.POST.get('new_category_metadescription', '')
+            category.propertytitle = request.POST.get('new_category_propertytitle', '')
+            category.propertydescription = request.POST.get('new_category_propertydescription', '')
+            category.publishet = request.POST.get('new_category_publishet') == 'on'
+
+            # Обработка файлов с new_ префиксом
+            if 'new_category_cover' in request.FILES:
+                category.cover = request.FILES['new_category_cover']
+            if 'new_category_icon' in request.FILES:
+                category.icon = request.FILES['new_category_icon']
+            if 'new_category_previev' in request.FILES:
+                category.previev = request.FILES['new_category_previev']
+
+            category.save()
+
+            # Возвращаем обновленный список
+            categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
+
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_categories': selected_categories
+            })
+
+            response = HttpResponse(html)
+            response['HX-Trigger'] = json.dumps({
+                'closeModal': True,
+                'clearForm': True,
+                'showMessage': f'Категория "{category.name}" успешно обновлена'
+            })
+            return response
+
+        except Exception as e:
+            categories = CategorysBlogs.objects.all()
+            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
+
+            html = render_to_string('blogs/partials/category_select.html', {
+                'categories': categories,
+                'selected_categories': selected_categories,
+                'error': str(e)
+            })
+            return HttpResponse(html, status=400)
 class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):
     template_name = 'blogs/blog_form.html'
 

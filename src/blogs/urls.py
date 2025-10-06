@@ -10,5 +10,6 @@ urlpatterns = [
     path("<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
     path('create/category/', views.CreateCategoryView.as_view(), name='create_category'),
     path('blog/edit/<int:pk>/', views.BlogCreateUpdateView.as_view(), name='blog_edit'),
+    path('edit-category/<int:pk>/', views.EditCategoryView.as_view(), name='edit_category'),
 
 ]

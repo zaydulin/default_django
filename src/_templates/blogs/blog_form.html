@@ -1,9 +1,8 @@
-
 {% block content %}
 <div class="container">
     <h1>{{ blog.name|default:"Создание блога" }}</h1>
 
-    <form method="POST" enctype="multipart/form-data" hx-post="{% url 'blogs:blog_edit' blog.pk %}" hx-target="#content-body">
+    <form method="POST" enctype="multipart/form-data" hx-post="{% url 'blogs:blog_edit' blog.pk %}" hx-target="#content-body" hx-swap="none">
         {% csrf_token %}
 
         {% if blog.pk %}
@@ -30,33 +29,151 @@
         </div>
 
         <!-- Категории -->
-        <!-- Скрытое поле для передачи выбранных категорий -->
-        <div id="current-selected-categories">
-            {% for category in blog.category.all %}
-            <input type="hidden" name="current_selected_categories" value="{{ category.id }}">
-            {% endfor %}
-        </div>
-        <!-- Категории -->
         <div id="category-select-container">
             <div class="mb-3">
-                <label for="id_category" class="form-label">Категории</label>
-                <select name="category" id="id_category" class="form-select" multiple>
-                    {% for category in categories %}
-                    <option value="{{ category.id }}" {% if category in blog.category.all %}selected{% endif %}>{{ category.name }}</option>
-                    {% endfor %}
-                </select>
+                <label class="form-label">Категории</label>
+                <div class="d-none">
+                    <!-- Скрытый оригинальный select для формы -->
+                    <select name="category" id="id_category" class="d-none" multiple>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if category in blog.category.all %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Кастомный dropdown -->
+                <div class="custom-select-wrapper border rounded bg-white">
+                    <!-- Выбранные элементы и кнопка разворачивания -->
+                    <div class="selected-tags p-2 border-bottom d-flex flex-wrap align-items-center">
+                        {% for category in blog.category.all %}
+                        <span class="badge bg-primary me-1 mb-1">
+                            {{ category.name }}
+                            <span class="remove-tag" data-category-id="{{ category.id }}">×</span>
+                        </span>
+                        {% endfor %}
+                        <div class="flex-grow-1"></div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary toggle-options-btn ms-2">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- Поиск и options (изначально скрыты) -->
+                    <div class="dropdown-content" style="display: none;">
+                        <!-- Поле поиска -->
+                        <div class="p-2 border-bottom">
+                            <input type="text" class="form-control form-control-sm search-categories-input"
+                                   placeholder="Поиск категорий...">
+                        </div>
+
+                        <!-- Dropdown options с кнопками -->
+                        <div class="custom-options-list" style="max-height: 200px; overflow-y: auto;">
+                            {% for category in categories %}
+                            <div class="custom-option d-flex justify-content-between align-items-center p-2 border-bottom {% if category in blog.category.all %}bg-light{% endif %}"
+                                 data-category-id="{{ category.id }}" data-category-name="{{ category.name|lower }}">
+                                <div class="form-check mb-0 flex-grow-1">
+                                    <input type="checkbox" class="form-check-input category-checkbox"
+                                           value="{{ category.id }}"
+                                           {% if category in blog.category.all %}checked{% endif %}>
+                                    <label class="form-check-label">{{ category.name }}</label>
+                                </div>
+                                <div class="option-actions">
+                                    <button type="button" class="btn btn-outline-primary btn-sm me-1 edit-category-btn"
+                                            data-category-id="{{ category.id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm delete-category-btn"
+                                            data-category-id="{{ category.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Скрытое поле для передачи выбранных категорий в модальное окно -->
+                <input type="hidden" name="current_categories" id="current_categories" value="{% for cat in blog.category.all %}{{ cat.id }},{% endfor %}">
             </div>
         </div>
+
+        <style>
+            button.btn.btn-sm.toggle-options-btn.ms-2.btn-outline-secondary {
+                position: absolute;
+                right: 38px;
+                border: 0;
+            }
+            .d-none {display:none}
+            .custom-select-wrapper {
+                cursor: pointer;
+                min-height: 38px;
+                position: relative;
+            }
+
+            .custom-option {
+                transition: background-color 0.2s;
+            }
+
+            .custom-option:hover {
+                background-color: #f8f9fa !important;
+            }
+
+            .option-actions {
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            }
+
+            .custom-option:hover .option-actions {
+                opacity: 1;
+            }
+
+            .remove-tag {
+                cursor: pointer;
+                margin-left: 5px;
+            }
+
+            .remove-tag:hover {
+                color: #dc3545;
+            }
+
+            /* Стили чтобы выглядело как select */
+            .custom-select-wrapper {
+                border: 1px solid #ced4da;
+                border-radius: 0.375rem;
+            }
+
+            .custom-select-wrapper:focus-within {
+                border-color: #86b7fe;
+                outline: 0;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+            }
+
+            /* Стили для скрытых элементов при поиске */
+            .custom-option.hidden {
+                display: none !important;
+            }
+
+            .selected-tags {
+                min-height: 42px;
+                position: relative;
+            }
+        </style>
+
         <!-- Кнопка для добавления новой категории -->
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#categoryModal"
                 onclick="updateCurrentCategories()">
             Добавить новую категорию
         </button>
+
         <div class="mb-3">
             <label for="id_tags" class="form-label">Метки</label>
             <select name="tags" id="id_tags" class="form-select" multiple>
                 {% for tag in tags %}
-                <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>{{ tag.name }}</option>
+                <option value="{{ tag.id }}" {% if tag in blog.tags.all %}selected{% endif %}>
+                    {{ tag.name }}
+                </option>
                 {% endfor %}
             </select>
         </div>
@@ -119,47 +236,37 @@
             {% if blog.pk %} Обновить {% else %} Создать {% endif %}
         </button>
     </form>
+
     <!-- Модальное окно -->
-    <div class="modal fade" id="categoryModal" tabindex="-1"
-         hx-on:closeCategoryModal="const modal = bootstrap.Modal.getInstance(this); if (modal) modal.hide();"
-         hx-on:clearCategoryForm="const form = document.getElementById('categoryForm'); if (form) form.reset();">
+    <div class="modal fade" id="categoryModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-end modal-lg" style="max-width: 500px; margin: 0;">
             <div class="modal-content" style="height: 100vh;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="categoryModalLabel">Создать новую категорию</h5>
+                    <h5 class="modal-title" id="categoryModalLabel">
+                        Создать новую категорию
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" style="overflow-y: auto;">
-                    <form id="categoryForm"
-                          hx-post="{% url 'blogs:create_category' %}"
-                          hx-target="#category-select-container"
-                          hx-swap="outerHTML"
-                          hx-ext="response-targets"
-                          hx-on::after-request="if (event.detail.successful) {
-          const modal = bootstrap.Modal.getInstance(document.getElementById('categoryModal'));
-          if (modal) modal.hide();
-          this.reset();
-      }"
-                          _="on htmx:beforeRequest
-         set :currentCategories to getCurrentCategoryIds()
-         set value of #current_categories in me to :currentCategories">
-                        {% csrf_token %}
+                <form id="categoryForm"
+      hx-post="{% url 'blogs:create_category' %}"
+      hx-target="#category-select-container"
+      hx-swap="outerHTML"
+      hx-include="[name='category']"
+      enctype="multipart/form-data">
+    {% csrf_token %}
 
-                        <!-- Скрытое поле для передачи текущих выбранных категорий -->
-                        <input type="hidden" name="current_categories" id="current_categories" value="">
+                        <input type="hidden" name="current_categories" id="current_categories_modal" value="">
 
                         <div class="mb-3">
                             <label for="new_category_name" class="form-label">Название категории</label>
                             <input type="text" class="form-control" id="new_category_name" name="new_category_name" required>
                         </div>
 
-                        <!-- Остальные поля формы -->
                         <div class="mb-3">
                             <label for="new_category_description" class="form-label">Описание</label>
                             <textarea class="form-control" id="new_category_description" name="new_category_description"></textarea>
                         </div>
 
-                        <!-- Родительская категория -->
                         <div class="mb-3">
                             <label for="new_category_parent" class="form-label">Родительская категория</label>
                             <select class="form-select" id="new_category_parent" name="new_category_parent">
@@ -188,25 +295,22 @@
                             <input type="file" class="form-control" id="new_category_previev" name="new_category_previev">
                         </div>
 
-                        <!-- Мета-заголовок -->
+                        <!-- Мета-поля -->
                         <div class="mb-3">
                             <label for="new_category_title" class="form-label">Мета-заголовок</label>
                             <input type="text" class="form-control" id="new_category_title" name="new_category_title">
                         </div>
 
-                        <!-- Мета-описание -->
                         <div class="mb-3">
                             <label for="new_category_metadescription" class="form-label">Мета-описание</label>
                             <input type="text" class="form-control" id="new_category_metadescription" name="new_category_metadescription">
                         </div>
 
-                        <!-- Мета-заголовок ссылки -->
                         <div class="mb-3">
                             <label for="new_category_propertytitle" class="form-label">Мета-заголовок ссылки</label>
                             <input type="text" class="form-control" id="new_category_propertytitle" name="new_category_propertytitle">
                         </div>
 
-                        <!-- Мета-описание ссылки -->
                         <div class="mb-3">
                             <label for="new_category_propertydescription" class="form-label">Мета-описание ссылки</label>
                             <input type="text" class="form-control" id="new_category_propertydescription" name="new_category_propertydescription">
@@ -225,18 +329,251 @@
             </div>
         </div>
     </div>
-
-    <script>
-        function getCurrentCategoryIds() {
-            const selectedOptions = document.querySelectorAll('#id_category option:checked');
-            return Array.from(selectedOptions).map(option => option.value).join(',');
-        }
-
-        function updateCurrentCategories() {
-            const currentCategories = getCurrentCategoryIds();
-            document.getElementById('current_categories').value = currentCategories;
-        }
-    </script>
-
 </div>
+
+<script>
+// Функция для полного закрытия модального окна
+function closeCategoryModal() {
+    const modal = document.getElementById('categoryModal');
+    if (!modal) return;
+    
+    // Закрываем модальное окно через Bootstrap
+    const bsModal = bootstrap.Modal.getInstance(modal);
+    if (bsModal) {
+        bsModal.hide();
+    }
+    
+    // Принудительно убираем оставшиеся элементы
+    setTimeout(() => {
+        // Удаляем backdrop
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        
+        // Восстанавливаем body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        // Скрываем модальное окно на всякий случай
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+    }, 150);
+}
+
+// Инициализация кастомного select
+function initCustomSelect() {
+    // Функция переключения видимости списка
+    function toggleOptions() {
+        const dropdownContent = document.querySelector('.dropdown-content');
+        const toggleButton = document.querySelector('.toggle-options-btn');
+
+        if (dropdownContent && toggleButton) {
+            const isVisible = dropdownContent.style.display === 'block';
+            if (isVisible) {
+                dropdownContent.style.display = 'none';
+                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                toggleButton.classList.remove('btn-primary');
+                toggleButton.classList.add('btn-outline-secondary');
+            } else {
+                dropdownContent.style.display = 'block';
+                toggleButton.innerHTML = '<i class="fas fa-chevron-up"></i>';
+                toggleButton.classList.remove('btn-outline-secondary');
+                toggleButton.classList.add('btn-primary');
+                // Фокусируемся на поле поиска при открытии
+                const searchInput = document.querySelector('.search-categories-input');
+                if (searchInput) {
+                    setTimeout(() => searchInput.focus(), 100);
+                }
+            }
+        }
+    }
+
+    // Делегирование событий для кнопки разворачивания
+    document.addEventListener('click', function(e) {
+        // Обработка кнопки разворачивания
+        if (e.target.closest('.toggle-options-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleOptions();
+            return;
+        }
+
+        // Обработка кнопок редактирования
+        if (e.target.closest('.edit-category-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = e.target.closest('.edit-category-btn');
+            const categoryId = button.dataset.categoryId;
+            alert(`Редактирование категории ID: ${categoryId}`);
+            return;
+        }
+
+        // Обработка кнопок удаления
+        if (e.target.closest('.delete-category-btn')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const button = e.target.closest('.delete-category-btn');
+            const categoryId = button.dataset.categoryId;
+            alert(`Удаление категории ID: ${categoryId}`);
+            return;
+        }
+
+        // Обработка удаления тегов
+        if (e.target.closest('.remove-tag')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const removeBtn = e.target.closest('.remove-tag');
+            const categoryId = removeBtn.dataset.categoryId;
+            const checkbox = document.querySelector(`.category-checkbox[value="${categoryId}"]`);
+            if (checkbox) {
+                checkbox.checked = false;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+            return;
+        }
+
+        // Клик по option (кроме кнопок) - переключает выбор
+        if (e.target.closest('.custom-option') && !e.target.closest('.option-actions')) {
+            e.preventDefault();
+            e.stopPropagation();
+            const option = e.target.closest('.custom-option');
+            const checkbox = option.querySelector('.category-checkbox');
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+            return;
+        }
+
+        // Закрытие dropdown при клике вне его
+        if (!e.target.closest('.custom-select-wrapper')) {
+            const dropdownContent = document.querySelector('.dropdown-content');
+            const toggleButton = document.querySelector('.toggle-options-btn');
+            if (dropdownContent && toggleButton) {
+                dropdownContent.style.display = 'none';
+                toggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
+                toggleButton.classList.remove('btn-primary');
+                toggleButton.classList.add('btn-outline-secondary');
+            }
+        }
+    });
+
+    // Обработчик для поиска
+    const searchInput = document.querySelector('.search-categories-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const options = document.querySelectorAll('.custom-option');
+
+            options.forEach(option => {
+                const categoryName = option.dataset.categoryName;
+                if (categoryName.includes(searchTerm)) {
+                    option.classList.remove('hidden');
+                } else {
+                    option.classList.add('hidden');
+                }
+            });
+        });
+    }
+
+    // Обработчики для checkbox
+    document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectedCategories();
+        });
+    });
+
+    // Инициализация при загрузке
+    updateSelectedCategories();
+}
+
+// Обновление выбранных категорий
+function updateSelectedCategories() {
+    const selectedCheckboxes = document.querySelectorAll('.category-checkbox:checked');
+    const selectedTagsContainer = document.querySelector('.selected-tags');
+    const originalSelect = document.getElementById('id_category');
+
+    if (!selectedTagsContainer) return;
+
+    // Сохраняем кнопку разворачивания
+    const toggleButton = selectedTagsContainer.querySelector('.toggle-options-btn');
+
+    // Обновляем теги
+    const tagsHTML = Array.from(selectedCheckboxes).map(checkbox => {
+        const categoryId = checkbox.value;
+        const categoryName = checkbox.nextElementSibling.textContent;
+        return `<span class="badge bg-primary me-1 mb-1">
+            ${categoryName} <span class="remove-tag" data-category-id="${categoryId}">×</span>
+        </span>`;
+    }).join('');
+
+    selectedTagsContainer.innerHTML = tagsHTML;
+
+    // Добавляем кнопку разворачивания обратно
+    if (toggleButton) {
+        selectedTagsContainer.appendChild(toggleButton);
+    } else {
+        // Создаем кнопку, если её нет
+        const newToggleButton = document.createElement('button');
+        newToggleButton.type = 'button';
+        newToggleButton.className = 'btn btn-sm btn-outline-secondary toggle-options-btn ms-2';
+        newToggleButton.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        selectedTagsContainer.appendChild(newToggleButton);
+    }
+
+    // Обновляем оригинальный select
+    Array.from(originalSelect.options).forEach(option => {
+        const isChecked = Array.from(selectedCheckboxes).some(checkbox => checkbox.value === option.value);
+        option.selected = isChecked;
+    });
+
+    // Обновляем визуальное выделение
+    document.querySelectorAll('.custom-option').forEach(option => {
+        const checkbox = option.querySelector('.category-checkbox');
+        if (checkbox && checkbox.checked) {
+            option.classList.add('bg-light');
+        } else {
+            option.classList.remove('bg-light');
+        }
+    });
+
+    // Обновляем hidden поле для модального окна
+    updateCurrentCategories();
+}
+
+// Функция для обновления текущих выбранных категорий
+function updateCurrentCategories() {
+    const selectedValues = Array.from(document.querySelectorAll('.category-checkbox:checked'))
+        .map(checkbox => checkbox.value);
+    const currentCategoriesInput = document.getElementById('current_categories');
+    const currentCategoriesModalInput = document.getElementById('current_categories_modal');
+    
+    if (currentCategoriesInput) {
+        currentCategoriesInput.value = selectedValues.join(',');
+    }
+    if (currentCategoriesModalInput) {
+        currentCategoriesModalInput.value = selectedValues.join(',');
+    }
+}
+
+// Обработчик успешного создания категории
+document.addEventListener('htmx:afterOnLoad', function(event) {
+    if (event.detail.requestConfig.path.includes('/create-category/') && 
+        event.detail.xhr.status === 200) {
+        closeCategoryModal();
+    }
+});
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    initCustomSelect();
+});
+
+// Обработчик для HTMX
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'category-select-container') {
+        setTimeout(initCustomSelect, 100);
+    }
+});
+</script>
 {% endblock %}
