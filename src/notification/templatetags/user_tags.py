@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils import timezone
 from django.db.models import Q, Max, Subquery, OuterRef
-from useraccount.models import Notification
+from .models import Notification
 
 
 register = template.Library()

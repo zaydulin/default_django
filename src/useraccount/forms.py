@@ -1,5 +1,5 @@
 from django import forms
-from useraccount.models import Profile, Cards
+from useraccount.models import Profile
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import PasswordChangeForm
@@ -82,39 +82,12 @@ class UserProfileForm(forms.ModelForm):
     city = forms.CharField(required=False, max_length=64, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Город'}))
     gender = forms.ChoiceField(choices=GENDER_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
 
-    # Поля паспорта
-    passport_issued_by_whom = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Кем выдан'}))
-    passport_date_of_issue = forms.DateField(required=False, widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-    passport_the_sub_division_code = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Код подразделения'}))
-    passport_series_and_number = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Серия и номер паспорта'}))
-    passport_place_of_birth = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Место рождения'}))
-    passport_registration = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Прописка'}))
-    passport_image_1 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
-    passport_image_2 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control'}))
-
-    # Поля организации
-    company_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Название организации'}))
-    company_director = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Руководитель'}))
-    company_address = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Юридический адрес'}))
-    company_nalogovaya = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Налоговый орган'}))
-    company_ogrn = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ОГРН'}))
-    company_inn = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ИНН'}))
-    company_kpp = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'КПП'}))
-    company_data_registration = forms.DateField(required=False, widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-    company_type_activity = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Основной вид деятельности'}))
-
+    # П
     class Meta:
         model = Profile
         fields = [
             # Профиль
             'avatar', 'username', 'first_name', 'last_name', 'middle_name', 'email', 'phone', 'birthday', 'city', 'gender',
-            # Паспортные данные
-            'passport_issued_by_whom', 'passport_date_of_issue', 'passport_the_sub_division_code',
-            'passport_series_and_number', 'passport_place_of_birth', 'passport_registration',
-            'passport_image_1', 'passport_image_2',
-            # Организация
-            'company_name', 'company_director', 'company_address', 'company_nalogovaya', 'company_ogrn',
-            'company_inn', 'company_kpp', 'company_data_registration', 'company_type_activity',
         ]
 
 class PasswordChangeCustomForm(PasswordChangeForm):
@@ -135,12 +108,3 @@ class SetPasswordFormCustom(SetPasswordForm):
         self.fields['new_password1'].widget.attrs.update({'autocomplete': 'new-password'})
         self.fields['new_password2'].widget.attrs.update({'autocomplete': 'new-password'})
 
-class CardsForm(forms.ModelForm):
-    class Meta:
-        model = Cards
-        fields = ['card', 'status']
-        widgets = {
-            'card': forms.TextInput(attrs={'class': 'form-control input-default', 'placeholder': 'Номер карты'}),
-            'user': forms.Select(attrs={'class': 'default-select form-control wide', 'placeholder': 'Пользователь'}),
-            'status': forms.Select(attrs={'class': 'default-select form-control wide', 'placeholder': 'Статус'}),
-        }

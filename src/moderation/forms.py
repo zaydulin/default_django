@@ -13,7 +13,6 @@ from django.contrib.auth import get_user_model
 
 from .models import  Notificationgroups
 from webmain.models import SettingsGlobale, HomePage, AboutPage, ContactPage, Faqs,  Seo
-from useraccount.models import  Notification, Withdrawal
 
 
 
@@ -132,29 +131,5 @@ class NotificationForm(forms.ModelForm):
 
 
 
-
-class WithdrawForm(forms.ModelForm):
-    class Meta:
-        model = Withdrawal
-        fields = ['amount']
-        widgets = {
-            'amount': forms.NumberInput(attrs={'class': 'form-control input-default', 'placeholder': 'Сумма'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount')
-
-        # Проверка на баланс пользователя
-        if self.user:
-            balance = float(self.user.balance)
-            if amount > balance:
-                # Используем форматирование для вывода ошибки без лишней точки
-                raise forms.ValidationError(f"Вы не можете списать больше {balance:.2f}.")
-
-        return amount
 
 

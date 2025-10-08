@@ -16,14 +16,4 @@ class ProfileAdmin(admin.ModelAdmin):
     display_avatar.short_description = 'Аватарка'
 
 
-@admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    list_display = ['get_status_display', 'user']
 
-@admin.register(Withdrawal)
-class WithdrawalAdmin(admin.ModelAdmin):
-    list_display = ['user', 'amount', 'type', 'create']
-
-@admin.register(Cards)
-class CardsAdmin(admin.ModelAdmin):
-    list_display = ['card', 'status', 'user']

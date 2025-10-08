@@ -30,13 +30,12 @@ import time
 # Models
 from webmain.models import Seo
 from ticket.models import Ticket, TicketComment, TicketCommentMedia
-from useraccount.models import Profile, Notification, Withdrawal, Cards
+from useraccount.models import Profile
 
 # Forms
-from useraccount.forms import SignUpForm, UserProfileForm, PasswordResetEmailForm, SetPasswordFormCustom, CardsForm
+from useraccount.forms import SignUpForm, UserProfileForm, PasswordResetEmailForm, SetPasswordFormCustom
 from ticket.forms import TicketCommentForm,   TicketWithCommentForm
 
-from moderation.forms import WithdrawForm
 User = get_user_model()
 
 
