@@ -69,20 +69,3 @@ class MessagesInfo(models.Model):
     def __str__(self):
         return f"Инфо #{self.id} для сообщения #{self.message_id}"
 
-
-# Дополнительно: модель для связи чатов и сообщений (если нужно)
-class ChatMessages(models.Model):
-    """Связь чатов и сообщений"""
-    chat = models.ForeignKey(Chats, on_delete=models.CASCADE, verbose_name="Чат", related_name='messages')
-    message = models.ForeignKey(Messages, on_delete=models.CASCADE, verbose_name="Сообщение", related_name='chats')
-    sender = models.ForeignKey(Userabstracts, on_delete=models.SET_NULL, verbose_name="Отправитель", null=True)
-    create = models.DateTimeField("Дата отправки", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Сообщение в чате"
-        verbose_name_plural = "Сообщения в чатах"
-        db_table = 'chat_messages'
-        ordering = ['create']
-
-    def __str__(self):
-        return f"Сообщение #{self.message_id} в чате #{self.chat_id}"
