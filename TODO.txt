@@ -2,6 +2,7 @@ TODO: balance
 TODO: blogs
 TODO: bookmark
 TODO: cases
+TODO: connects
 TODO: gallerys
 TODO: moderation
 TODO: notification
