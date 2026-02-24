@@ -1,3 +1,15 @@
+TODO: balance
+TODO: blogs
+TODO: bookmark
+TODO: cases
+TODO: gallerys
+TODO: moderation
+TODO: notification
+TODO: prices
+TODO: projects
+TODO: services
+TODO: ticket
 TODO: useraccount
 Закладки, время работы, лента
 TODO: moderation
+TODO: webmain
