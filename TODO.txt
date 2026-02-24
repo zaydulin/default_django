@@ -3,12 +3,16 @@ TODO: blogs
 TODO: bookmark
 TODO: cases
 TODO: connects
+TODO: couse
+TODO: crm
 TODO: gallerys
+TODO: hr
 TODO: moderation
 TODO: notification
 TODO: prices
 TODO: projects
 TODO: services
+TODO: shops
 TODO: ticket
 TODO: useraccount
 Закладки, время работы, лента
