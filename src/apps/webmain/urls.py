@@ -4,6 +4,6 @@ from . import views
 
 
 urlpatterns = [
-    path("page/<slug:slug>/", views.PageDetailView.as_view(), name="page"),
+    path('subscribe/',  views.subscribe, name='subscribe'),
 
 ]

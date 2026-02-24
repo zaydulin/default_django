@@ -20,7 +20,6 @@ class Seo(models.Model):
         (9, 'Сменить пароль'),
         (10, 'Паспортные данные'),
         (11, 'Уведомление'),
-
     ]
     pagetype = models.PositiveSmallIntegerField('Странца', unique=True, choices=PAGE_CHOICE, blank=False, default=1)
     previev = models.FileField(upload_to='settings/%Y/%m/%d/', blank=True, null=True, verbose_name="Превью", default='default/imagegallery/imagegellery_images.png', validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
@@ -42,14 +41,23 @@ class SettingsGlobale(models.Model):
     logo_white = models.FileField("Логотип белый",  upload_to='settings/%Y/%m/%d/', blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
     doplogo_white = models.FileField("Дополнительный логотип белый",  upload_to='settings/%Y/%m/%d/', blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
     favicon = models.FileField("Фавикон", upload_to='settings/%Y/%m/%d/', blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
-    paymentmetod = models.FileField("Методы оплаты", upload_to='settings/%Y/%m/%d/', blank=True, null=True, validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
     name = models.CharField("Название", max_length=500, blank=True, null=True)
     content = models.CharField("Копирайт", max_length=500, blank=True, null=True)
     description = RichTextField("Описание", blank=True, null=True)
-    message_header = models.TextField("Шапка сообщения письма", blank=True, null=True)
-    message_footer = models.TextField("Подвал сообщения письма", blank=True, null=True)
     yandex_metrica = models.TextField("Яндекс метрика", blank=True, null=True)
     google_analitic = models.TextField("Гугл аналитика", blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Настройка сайта"
+        verbose_name_plural = "Настройки сайта"
+
+
+class SettingsSMTP(models.Model):
+    message_header = models.TextField("Шапка сообщения письма", blank=True, null=True)
+    message_footer = models.TextField("Подвал сообщения письма", blank=True, null=True)
     email_host = models.TextField("Email Site HOST", blank=True, null=True)
     default_from_email = models.TextField("Email Site HOST", blank=True, null=True)
     email_port = models.TextField("Email Site PORT", blank=True, null=True)
@@ -58,15 +66,13 @@ class SettingsGlobale(models.Model):
     email_use_tls = models.BooleanField("Use TLS", default=False, blank=True, null=True)
     email_use_ssl = models.BooleanField("Use SSL", default=False, blank=True, null=True)
 
-    def __str__(self):
-        return self.name
 
     def save(self, *args, **kwargs):
         # Сначала сохраняем модель
         super().save(*args, **kwargs)
 
         # Путь к файлу, куда будем сохранять данные
-        file_path = os.path.join(settings.BASE_DIR, '_media\smtp.py')
+        file_path = os.path.join(settings.BASE_DIR, '_media/smtp.py')
 
         # Сохраняем данные в текстовый файл
         with open(file_path, 'w') as f:
@@ -79,47 +85,32 @@ class SettingsGlobale(models.Model):
             f.write(f"DEFAULT_FROM_EMAIL = '{self.default_from_email}'\n")
 
     class Meta:
-        verbose_name = "Настройка сайта"
-        verbose_name_plural = "Настройки сайта"
+        verbose_name = "Настройка почты"
+        verbose_name_plural = "Настройки почты"
 
-
-class ContactPage(models.Model):
-    """Настройки контакты"""
-    image = models.FileField(upload_to='contact/%Y/%m/%d/', blank=True, null=True, verbose_name="Изображение", default='default/imagegallery/imagegellery_images.png', validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
-    title = models.CharField(verbose_name="Заголовок", max_length=350)
-    description = models.CharField(verbose_name="Описание", max_length=550)
-    setting = models.ForeignKey("SettingsGlobale", verbose_name='Настройки', on_delete=models.CASCADE, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Страница контакты"
-        verbose_name_plural = "Страницы контакты"
 
 class ContactPageInformation(models.Model):
     """Настройки контакты"""
     CONTACT_CHOICE = {
-        (
-            "Номера телефонов",
+        ("Номера телефонов",
             (
                 ('phone_default', 'Номер телефона по умолчанию',),
                 ('phone', 'Остальные номера телефонов'),
             ),
         ),
-        (
-            "Электроная почта",
+        ("Электроная почта",
             (
                 ('email_default', 'Почта по умолчанию',),
                 ('email', 'Остальные почты'),
             ),
         ),
-        (
-            "Адресса",
+        ("Адресса",
             (
                 ('address_default', 'Адресс по умолчанию',),
                 ('address', 'Остальные адресса'),
             ),
         ),
-        (
-            "Карты",
+        ("Карты",
             (
                 ('map_default', 'Карта по умолчанию',),
                 ('map', 'Остальные карты'),
@@ -132,53 +123,42 @@ class ContactPageInformation(models.Model):
     title_contact = models.CharField(verbose_name="Заголовок контактов", max_length=350)
     description_contact = models.CharField(verbose_name="Описание контактов", max_length=550)
     information_contact = models.CharField(verbose_name="Информация контактов", max_length=350)
-    contact_pages = models.ForeignKey("ContactPage", verbose_name='Настройки', related_name="contact_page", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         verbose_name = "Страница контакты (информация)"
         verbose_name_plural = "Страницы контакты (информация)"
 
 
-class AboutPage(models.Model):
-    """Страница о нас (о компании)"""
-    previev = models.FileField(upload_to='settings/%Y/%m/%d/', blank=True, null=True, verbose_name="Превью", default='default/imagegallery/imagegellery_images.png', validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
-    title = models.CharField(verbose_name="Мета-заголовок", max_length=150, blank=True, null=True,)
-    metadescription = models.CharField(verbose_name="Мета-описание", max_length=255, blank=True, null=True,)
-    propertytitle = models.CharField(verbose_name="Мета-заголовок ссылки", max_length=150, blank=True, null=True,)
-    propertydescription = models.CharField(verbose_name="Мета-описание ссылки", max_length=255, blank=True, null=True,)
-    setting = models.ForeignKey("SettingsGlobale", verbose_name='Настройки', on_delete=models.CASCADE, blank=True, null=True)
-    text = models.CharField(verbose_name="текст", max_length=255, blank=True, null=True,)
-
-    class Meta:
-        verbose_name = "Страница О нас"
-        verbose_name_plural = "Страницы О нас"
-
-
-class HomePage(models.Model):
-    """Настройки сайта"""
-    previev = models.FileField(upload_to='settings/%Y/%m/%d/', blank=True, null=True, verbose_name="Превью", default='default/imagegallery/imagegellery_images.png', validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
-    title = models.CharField(verbose_name="Мета-заголовок", max_length=150, blank=True, null=True,)
-    metadescription = models.CharField(verbose_name="Мета-описание", max_length=255, blank=True, null=True,)
-    propertytitle = models.CharField(verbose_name="Мета-заголовок ссылки", max_length=150, blank=True, null=True,)
-    propertydescription = models.CharField(verbose_name="Мета-описание ссылки", max_length=255, blank=True, null=True,)
-    setting = models.ForeignKey("SettingsGlobale", verbose_name='Настройки', on_delete=models.CASCADE, blank=True, null=True)
-    text = models.CharField(verbose_name="текст", max_length=255, blank=True, null=True,)
-
-    class Meta:
-        verbose_name = "Главная страница"
-        verbose_name_plural = "Главные страницы"
-
-
-
-class Faqs(models.Model):
-    """Часто задаваемые вопросы """
-    question = models.TextField(blank=True, null=True, verbose_name='Вопрос')
-    answer = models.TextField(blank=True, null=True, verbose_name='Ответ', default=' ')
-    create = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    update = models.DateTimeField(auto_now=True, blank=True, null=True)
+class Pages(models.Model):
+    """Страницы"""
+    PAGETYPE = [
+        (0, 'Обычная'),
+        (1, 'Главная'),
+        (2, 'О нас'),
+        (3, 'Контакты'),
+        (4, 'Пользовательское соглашение'),
+        (5, 'Политика конфедециальности'),
+        (6, 'Политика Cookie - Файлов'),
+        (7, 'Согласия на обработку персональных данных'),
+    ]
+    pagetype = models.PositiveSmallIntegerField('Тип', choices=PAGETYPE, blank=False, default=0)
+    name = models.CharField("Название", max_length=250)
+    description = RichTextField("Описание", blank=True, null=True)
+    slug = models.SlugField(max_length=140, unique=True)
     publishet = models.BooleanField("Опубликован", default=False)
+    templates = models.TextField(verbose_name="Шаблон")
+    """SEO"""
+    previev = models.FileField(upload_to='pages/%Y/%m/%d/', blank=True, null=True, verbose_name="Превью", default='default/imagegallery/imagegellery_images.png', validators=[FileExtensionValidator(allowed_extensions=['png', 'webp', 'jpeg', 'jpg', 'svg'])],)
+    title = models.CharField(verbose_name="Мета-заголовок", max_length=150, blank=True, null=True,)
+    metadescription = models.CharField(verbose_name="Мета-описание", max_length=255, blank=True, null=True,)
+    propertytitle = models.CharField(verbose_name="Мета-заголовок ссылки", max_length=150, blank=True, null=True,)
+    propertydescription = models.CharField(verbose_name="Мета-описание ссылки", max_length=255, blank=True, null=True,)
+    keywords = models.CharField(verbose_name="Ключевые слова", max_length=255, blank=True, null=True,help_text="Через запятую")
 
+    def __str__(self):
+        return self.name
 
     class Meta:
-        verbose_name = "Часто задаваемые вопросы"
-        verbose_name_plural = "Часто задаваемые вопрос"
+        verbose_name = "Страница"
+        verbose_name_plural = "Страницы"
+

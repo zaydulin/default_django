@@ -2,10 +2,11 @@ import os.path
 from pathlib import Path
 from string import  ascii_lowercase, ascii_uppercase, digits
 from environs import Env
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
+sys.path.insert(0, str(BASE_DIR / 'apps'))
 ### setting up env
 env = Env()
 env.read_env()
@@ -43,11 +44,11 @@ INSTALLED_APPS = [
     'nested_admin',
     'django_ace',
     # app (Приложения)
-    'webmain.apps.WebmainConfig',
-    'moderation.apps.ModerationConfig',
-    'useraccount.apps.UseraccountConfig',
-    'ticket.apps.TicketConfig',
-    'blogs.apps.BlogsConfig',
+    'apps.webmain.apps.WebmainConfig',
+    'apps.moderation.apps.ModerationConfig',
+    'apps.useraccount.apps.UseraccountConfig',
+    'apps.ticket.apps.TicketConfig',
+    'apps.blogs.apps.BlogsConfig',
 
 ]
 

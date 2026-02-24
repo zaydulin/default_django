@@ -3,7 +3,7 @@ from django.db.models import Count
 from django.middleware.csrf import get_token
 
 from webmain.forms import SubscriptionForm
-from webmain.models import SettingsGlobale, ContactPage
+from webmain.models import SettingsGlobale
 
 register = template.Library()
 
@@ -12,10 +12,6 @@ register = template.Library()
 def get_settings_first():
     return SettingsGlobale.objects.first()
 
-
-@register.simple_tag
-def get_contacts_first():
-    return ContactPage.objects.first()
 
 
 
