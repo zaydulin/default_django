@@ -1,0 +1,253 @@
+{% load static generals_tag i18n %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{% get_settings_first as settings %}{{settings.name}} - {% block title %}{% endblock title %}</title>
+    <meta content="{% block description %}{% endblock description %}" name="description">
+    <meta property="og:title" content="{% block propertytitle %} {% endblock propertytitle %}">
+    <meta property="og:description" content="{% block propertydescription %}{% endblock propertydescription %}">
+    <meta property="og:image" content="{% block propertyimage %}{% endblock propertyimage %}">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% if settings.favicon %}{{settings.favicon.url}}{% endif %}" />
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'site/css/style.css' %}">
+    <!-- Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+.select2-container {
+    width: 100% !important;
+}
+
+.option-with-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.option-text {
+    flex-grow: 1;
+}
+
+.option-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    color: #6c757d;
+}
+
+.action-btn:hover {
+    background-color: #f8f9fa;
+}
+
+.edit-btn:hover {
+    color: #007bff;
+}
+
+.delete-btn:hover {
+    color: #dc3545;
+}
+
+/* Скрываем кнопки в выбранном элементе */
+.select2-selection__choice .option-actions {
+    display: none;
+}
+</style>
+    {% block head %}{% endblock head %}
+</head>
+<body>
+<!-- Верхняя панель -->
+<div class="topbar" id="topbar">
+    <div class="menu-toggle">
+        <div class="logo-container">
+            <!-- Замените src на путь к вашему логотипу -->
+            <img src="{% static 'images/logo.png' %}" alt="Логотип" class="logo" onerror="this.style.display='none'">
+        </div>
+        <label class="toggle-switch">
+            <input type="checkbox" id="menuToggle">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+    <div class="topbar-actions">
+        {% block menu_right %} {% endblock menu_right %}
+    </div>
+</div>
+<!-- Боковая панель -->
+{% include 'menu.html' %}
+<!-- Основной контент -->
+<div class="content" id="content">
+    <div class="content-header"  id="content-body">
+        {% block content %} {% endblock content %}
+    </div>
+</div>
+{% block footer_top %}{% endblock footer_top %}
+<script src="{% static 'site/htmx.min.js' %}"></script>
+<!-- Bootstrap 5 JS с Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'site/js/script.js' %}"></script>
+{% block footer_bottom %}{% endblock footer_bottom %}
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<script>
+// Функции для форматирования
+function formatOption(option) {
+    if (!option.id) {
+        return option.text;
+    }
+
+    const $container = $('<div class="option-with-actions"></div>');
+    const $text = $('<span class="option-text"></span>').text(option.text);
+    $container.append($text);
+
+    const $actions = $('<div class="option-actions"></div>');
+    $actions.append(
+        $('<button type="button" class="action-btn edit-btn" title="Редактировать"><i class="fas fa-edit"></i></button>')
+            .on('click', function(e) {
+                e.stopPropagation();
+                editCategory(option.id, option.text);
+            })
+    );
+    $actions.append(
+        $('<button type="button" class="action-btn delete-btn" title="Удалить"><i class="fas fa-trash"></i></button>')
+            .on('click', function(e) {
+                e.stopPropagation();
+                deleteCategory(option.id, option.text);
+            })
+    );
+
+    $container.append($actions);
+    return $container;
+}
+
+function formatSelection(option) {
+    if (!option.id) {
+        return option.text;
+    }
+    return option.text;
+}
+
+// Функция инициализации Select2
+function initSelect2() {
+    // Категории
+    if ($('#id_category').length && !$('#id_category').hasClass('select2-hidden-accessible')) {
+        $('#id_category').select2({
+            placeholder: "Выберите категории",
+            allowClear: true,
+            templateResult: formatOption,
+            templateSelection: formatSelection
+        });
+    }
+
+    // Теги
+    if ($('#id_tags').length && !$('#id_tags').hasClass('select2-hidden-accessible')) {
+        $('#id_tags').select2({
+            placeholder: "Выберите метки",
+            allowClear: true,
+            templateResult: formatOption,
+            templateSelection: formatSelection
+        });
+    }
+}
+
+// Инициализация при загрузке страницы
+$(document).ready(function() {
+    initSelect2();
+});
+
+// Обработчик для HTMX - переинициализация после любых изменений
+document.addEventListener('htmx:afterSwap', function(event) {
+    // Если обновился контейнер с категориями
+    if (event.detail.target.id === 'category-select-container') {
+        setTimeout(initSelect2, 100);
+    }
+});
+
+// Обработчик для HTMX запросов
+document.addEventListener('htmx:beforeRequest', function(event) {
+    // Сохраняем выбранные значения перед отправкой формы
+    if ($('#id_category').length) {
+        window._savedCategoryValues = $('#id_category').val();
+    }
+    if ($('#id_tags').length) {
+        window._savedTagValues = $('#id_tags').val();
+    }
+});
+
+// Обработчик успешного ответа от сервера
+document.addEventListener('htmx:beforeOnLoad', function(event) {
+    // Если сервер возвращает JSON с триггером
+    try {
+        const response = JSON.parse(event.detail.xhr.responseText);
+        if (response.trigger_reinit) {
+            setTimeout(initSelect2, 100);
+        }
+    } catch (e) {
+        // Не JSON ответ, игнорируем
+    }
+});
+
+// Обработчик кастомного события для переинициализации
+document.addEventListener('reinitSelect2', function() {
+    setTimeout(initSelect2, 100);
+});
+
+// Заглушки функций
+function editCategory(categoryId, categoryName) {
+    console.log('Редактирование категории:', categoryId, categoryName);
+}
+
+function deleteCategory(categoryId, categoryName) {
+    if (confirm(`Удалить категорию "${categoryName}"?`)) {
+        console.log('Удаление категории:', categoryId, categoryName);
+    }
+}
+
+// Обработчик для модального окна категорий
+function updateCurrentCategories() {
+    if ($('#id_category').length) {
+        const currentCategories = $('#id_category').val() || [];
+        document.getElementById('current_categories').value = currentCategories.join(',');
+    }
+}
+</script>
+
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<script>
+    document.addEventListener('htmx:afterSwap', function (event) {
+        // При каждой смене контента обновляем URL
+        var currentUrl = window.location.href;
+        document.getElementById('back-link').href = currentUrl;
+
+    });
+
+    // Обработчик события popstate
+    window.addEventListener('popstate', function (event) {
+        // При нажатии кнопки "назад" браузера симулируем клик по ссылке "Назад"
+        document.getElementById('back-link').click();
+    });
+</script>
+</body>
+</html>
