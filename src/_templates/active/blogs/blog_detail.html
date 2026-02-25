@@ -1,0 +1,178 @@
+
+{% block content %}
+<section class="page_banner" style="background-image: url('assets/images/shapes/tyre_print_3.svg');">
+  <div class="container">
+    <ul class="breadcrumb_nav unordered_list">
+      <li><a href="{% url 'webmain:home' %}">Главная</a></li>
+      <li><a href="#">{{ blog.name }}</a></li>
+    </ul>
+    <h1 class="page_title wow" data-splitting>{{ blog.name }}</h1>
+  </div>
+</section>
+<!-- Header Section -->
+<!-- FAQ Section -->
+<section class="container my-5">
+  {{ blog.description|safe }}
+</section>
+<div class="container my-5">
+  <div class="card p-4 shadow-sm">
+    <h5 class="mb-3">Добавить комментарий</h5>
+    <form>
+      <!-- Текст комментария -->
+      <div class="mb-3">
+        <label for="commentText" class="form-label">Ваш комментарий</label>
+        <textarea class="form-control" id="commentText" rows="3" placeholder="Напишите что-нибудь..." required></textarea>
+      </div>
+
+      <!-- Вложения -->
+      <div class="mb-3">
+        <label for="commentFiles" class="form-label">Прикрепить файлы или изображения</label>
+        <input class="form-control" type="file" id="commentFiles" multiple>
+        <div class="form-text">
+          Можно загрузить несколько файлов (изображения, PDF, DOCX и др.)
+        </div>
+      </div>
+
+      <!-- Кнопки -->
+      <div class="d-flex justify-content-between align-items-center">
+        <button type="submit" class="btn btn-primary">Отправить</button>
+        <button type="reset" class="btn btn-outline-secondary">Очистить</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="container my-5">
+  <h4 class="mb-4">Комментарии (6)</h4>
+
+  <div class="comments">
+
+    <!-- Комментарий 1 с картинкой -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/48" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Иван Петров <small class="text-muted">· 2 часа назад</small></h6>
+        <p class="mb-2">Отличная статья, спасибо автору!</p>
+
+        <!-- вложения -->
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <img src="https://via.placeholder.com/150x100" class="img-fluid rounded" style="max-width:150px;" alt="attachment">
+          <img src="https://via.placeholder.com/120x120" class="img-fluid rounded" style="max-width:120px;" alt="attachment">
+        </div>
+
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+    <div class="container my-5">
+      <div class="card p-4 shadow-sm">
+        <h5 class="mb-3">Ответ на коментарий комментарий</h5>
+        <form>
+          <!-- Текст комментария -->
+          <div class="mb-3">
+            <label for="commentText" class="form-label">Ваш комментарий</label>
+            <textarea class="form-control" id="commentText" rows="3" placeholder="Напишите что-нибудь..." required></textarea>
+          </div>
+
+          <!-- Вложения -->
+          <div class="mb-3">
+            <label for="commentFiles" class="form-label">Прикрепить файлы или изображения</label>
+            <input class="form-control" type="file" id="commentFiles" multiple>
+            <div class="form-text">
+              Можно загрузить несколько файлов (изображения, PDF, DOCX и др.)
+            </div>
+          </div>
+
+          <!-- Кнопки -->
+          <div class="d-flex justify-content-between align-items-center">
+            <button type="submit" class="btn btn-primary">Отправить</button>
+            <button type="reset" class="btn btn-outline-secondary">Очистить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Ответ к комментарию 1 с файлом -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Анна Смирнова <small class="text-muted">· 1 час назад</small></h6>
+        <div class="small text-muted mb-1">
+          В ответ на <strong>Иван Петров</strong>: «Отличная статья, спасибо автору!»
+        </div>
+        <p class="mb-2">Полностью согласна! Очень полезно.</p>
+
+        <!-- вложение: файл -->
+        <div class="mb-2">
+          <a href="#" class="d-inline-flex align-items-center text-decoration-none">
+            <i class="bi bi-paperclip me-1"></i> presentation.pdf
+          </a>
+        </div>
+
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+
+    <!-- Комментарий 2 без вложений -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/48" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Мария Кузнецова <small class="text-muted">· 3 часа назад</small></h6>
+        <p class="mb-2">Очень интересно, жду продолжения.</p>
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+
+    <!-- Ответ к комментарию 2 с изображением -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Дмитрий Соколов <small class="text-muted">· 2 часа назад</small></h6>
+        <div class="small text-muted mb-1">
+          В ответ на <strong>Мария Кузнецова</strong>: «Очень интересно, жду продолжения.»
+        </div>
+        <p class="mb-2">Согласен, тема очень актуальна.</p>
+
+        <!-- вложение: изображение -->
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <img src="https://via.placeholder.com/100x100" class="img-fluid rounded" style="max-width:100px;" alt="attachment">
+        </div>
+
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+
+    <!-- Комментарий 3 -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/48" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Сергей Волков <small class="text-muted">· 5 часов назад</small></h6>
+        <p class="mb-2">Мне не совсем понятно, можно подробнее?</p>
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+
+    <!-- Ответ к комментарию 3 с файлом -->
+    <div class="d-flex align-items-start mb-4">
+      <img src="https://via.placeholder.com/40" class="rounded-circle me-3" alt="avatar">
+      <div>
+        <h6 class="mb-1">Автор статьи <small class="text-muted">· 4 часа назад</small></h6>
+        <div class="small text-muted mb-1">
+          В ответ на <strong>Сергей Волков</strong>: «Мне не совсем понятно, можно подробнее?»
+        </div>
+        <p class="mb-2">Да, конечно, скоро сделаю подробный разбор.</p>
+
+        <!-- вложение: файл -->
+        <div class="mb-2">
+          <a href="#" class="d-inline-flex align-items-center text-decoration-none">
+            <i class="bi bi-paperclip me-1"></i> notes.docx
+          </a>
+        </div>
+
+        <button class="btn btn-sm btn-link p-0">Ответить</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}

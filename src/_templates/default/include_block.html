@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ block_title }}
+{% endblock %}
+
+{% block description %}
+    {{ block_description }}
+{% endblock %}
+
+{% block propertytitle %}
+    {{ block_propertytitle }}
+{% endblock %}
+
+{% block propertydescription %}
+    {{ block_propertydescription }}
+{% endblock %}
+
+{% block propertyimage %}
+    {{ block_propertyimage }}
+{% endblock %}
+
+{% block head %}
+    {{ block_head|safe }}
+{% endblock head %}
+
+{% block content %}
+    {% if template_htmx %}
+        {% include template_htmx %}
+    {% else %}
+        <p>Error: template_htmx not provided</p>
+    {% endif %}
+{% endblock content %}
