@@ -79,7 +79,7 @@ def custom_logout(request):
 
 
 class CustomLoginView(CustomHtmxMixin, TemplateView):
-    template_name = "useraccount/login.html"
+    template_name = "moderation/useraccount/login.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -169,12 +169,12 @@ class CustomLoginView(CustomHtmxMixin, TemplateView):
         if user is not None:
             login(request, user)
             if request.headers.get("Hx-Request") == "true":
-                return render(request, "useraccount/partials/login_success.html")
+                return render(request, "moderation/useraccount/partials/login_success.html")
             return redirect("home")
         else:
             # Для HTMX запросов возвращаем частичный шаблон
             if request.headers.get("Hx-Request") == "true":
-                return render(request, "useraccount/partials/login_error.html", {
+                return render(request, "moderation/useraccount/partials/login_error.html", {
                     "error": "Неверные данные для входа"
                 })
             else:
@@ -189,24 +189,24 @@ class CheckUsernameView(View):
     def post(self, request):
         username = request.POST.get("username")
         exists = User.objects.filter(username=username).exists()
-        return render(request, "useraccount/partials/register_username_check.html", {"exists": exists})
+        return render(request, "moderation/useraccount/partials/register_username_check.html", {"exists": exists})
 
 
 class CheckEmailView(View):
     def post(self, request):
         email = request.POST.get("email")
         exists = User.objects.filter(email=email).exists()
-        return render(request, "useraccount/partials/register_email_check.html", {"exists": exists})
+        return render(request, "moderation/useraccount/partials/register_email_check.html", {"exists": exists})
 
 
 class CheckPhoneView(View):
     def post(self, request):
         phone = request.POST.get("phone")
         exists = User.objects.filter(phone=phone).exists()
-        return render(request, "useraccount/partials/register_phone_check.html", {"exists": exists})
+        return render(request, "moderation/useraccount/partials/register_phone_check.html", {"exists": exists})
 
 class RegisterView(CustomHtmxMixin, TemplateView):  # Используем TemplateView
-    template_name = "useraccount/register.html"
+    template_name = "moderation/useraccount/register.html"
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
@@ -294,7 +294,7 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
 
 @method_decorator(login_required(login_url='useraccount:login'), name='dispatch')
 class EditMyProfileView(TemplateView, LoginRequiredMixin):
-    template_name = 'useraccount/profile_edit.html'
+    template_name = 'moderation/useraccount/profile_edit.html'
 
     def get(self, request, *args, **kwargs):
         initial_data = {'birthday': request.user.birthday.strftime('%Y-%m-%d') if request.user.birthday else None}
