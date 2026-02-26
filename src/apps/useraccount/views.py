@@ -45,7 +45,7 @@ class CustomHtmxMixin:
         if is_htmx:
             return [self.template_name]
         else:
-            return ['include_block.html']
+            return ['moderation/include_block.html']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
