@@ -1682,7 +1682,7 @@
                   <div class="dropdown-divider my-1"></div>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="auth-login-cover.html" target="_blank"> <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Log Out</span> </a>
+                  <a class="dropdown-item" href="{% url 'useraccount:logout' %}" target="_blank"> <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Выйти</span> </a>
                 </li>
               </ul>
             </li>
@@ -1753,6 +1753,7 @@
 <script src="{% static 'moderation/main.js' %}"></script>
 <!-- Page JS -->
 <script src="{% static 'moderation/app-ecommerce-settings.js' %}"></script>
+<script src="{% static 'site/htmx.min.js' %}"></script>
 {% block extra_js_bottom %}{% endblock extra_js_bottom %}
 </body>
 </html>

@@ -35,6 +35,7 @@ from useraccount.models import Profile
 # Forms
 from useraccount.forms import SignUpForm, UserProfileForm, PasswordResetEmailForm, SetPasswordFormCustom
 from ticket.forms import TicketCommentForm,   TicketWithCommentForm
+from django.http import HttpResponse
 
 User = get_user_model()
 
@@ -77,112 +78,106 @@ def custom_logout(request):
 
 """Регистрация/Авторизация"""
 
-
 class CustomLoginView(CustomHtmxMixin, TemplateView):
     template_name = "moderation/useraccount/login.html"
+
+    # ---------- CONTEXT ----------
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
         try:
-            seo_data_from_db = Seo.objects.get(pagetype=5)
-
-            # Передаем данные из модели в контекст
-            context['seo_previev'] = seo_data_from_db.previev
-            context['seo_title'] = seo_data_from_db.title
-            context['seo_description'] = seo_data_from_db.metadescription
-            context['seo_propertytitle'] = seo_data_from_db.propertytitle
-            context['seo_propertydescription'] = seo_data_from_db.propertydescription
-            context['seo_head'] = seo_data_from_db.setting  # Если нужно добавлять дополнительные теги
+            seo = Seo.objects.get(pagetype=5)
+            context.update({
+                "seo_previev": seo.previev,
+                "seo_title": seo.title,
+                "seo_description": seo.metadescription,
+                "seo_propertytitle": seo.propertytitle,
+                "seo_propertydescription": seo.propertydescription,
+                "seo_head": seo.setting,
+            })
         except Seo.DoesNotExist:
-            # Если данных нет, используем значения по умолчанию
-            context['seo_previev'] = None
-            context['seo_title'] = 'Вход в систему - МойСайт'
-            context['seo_description'] = 'Войдите в свою учетную запись для доступа к персональным данным'
-            context['seo_propertytitle'] = 'og:title - Вход в систему'
-            context['seo_propertydescription'] = 'og:description - Страница входа в личный кабинет'
-            context['seo_head'] = '''
-                <link rel="stylesheet" href="/static/css/login.css">
-                <meta name="robots" content="noindex">
-            '''
+            context.update({
+                "seo_previev": None,
+                "seo_title": "Вход в систему",
+                "seo_description": "Авторизация пользователя",
+                "seo_propertytitle": "Вход",
+                "seo_propertydescription": "Авторизация",
+                "seo_head": '<meta name="robots" content="noindex">',
+            })
 
         return context
 
-    def get_seo_context(self):
-        """
-        Просто возвращаем SEO данные для блоков
-        """
-        try:
-            seo_data = Seo.objects.get(pagetype=5)
-            return {
-                'block_title': seo_data.title,
-                'block_description': seo_data.metadescription,
-                'block_propertytitle': seo_data.propertytitle,
-                'block_propertydescription': seo_data.propertydescription,
-                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
-                'block_head': seo_data.setting or ''
-            }
-        except Seo.DoesNotExist:
-            return {
-                'block_title': 'Вход в систему',
-                'block_description': 'Страница входа в аккаунт',
-                'block_propertytitle': 'Вход в систему',
-                'block_propertydescription': 'Страница входа',
-                'block_propertyimage': '',
-                'block_head': '<meta name="robots" content="noindex">'
-            }
+    # ---------- GET ----------
 
     def get(self, request, *args, **kwargs):
-        # Убедитесь, что вызываем родительский get, который использует миксин
         return super().get(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):  # Добавьте *args, **kwargs
+    # ---------- POST (LOGIN) ----------
+
+    def post(self, request, *args, **kwargs):
         identifier = request.POST.get("username")
         password = request.POST.get("password")
 
         user = None
 
-        # 1) Пробуем найти по username
+        # 1. username
         try:
             user_obj = User.objects.get(username=identifier)
-            user = authenticate(request, username=user_obj.username, password=password)
+            user = authenticate(
+                request,
+                username=user_obj.username,
+                password=password
+            )
         except User.DoesNotExist:
             pass
 
-        # 2) Пробуем найти по email
+        # 2. email
         if user is None:
             try:
                 user_obj = User.objects.get(email=identifier)
-                user = authenticate(request, username=user_obj.username, password=password)
+                user = authenticate(
+                    request,
+                    username=user_obj.username,
+                    password=password
+                )
             except User.DoesNotExist:
                 pass
 
-        # 3) Пробуем найти по телефону (если есть поле phone)
+        # 3. phone (если есть поле)
         if user is None:
             try:
                 user_obj = User.objects.get(phone=identifier)
-                user = authenticate(request, username=user_obj.username, password=password)
+                user = authenticate(
+                    request,
+                    username=user_obj.username,
+                    password=password
+                )
             except User.DoesNotExist:
                 pass
 
+        # ---------- SUCCESS ----------
         if user is not None:
             login(request, user)
-            if request.headers.get("Hx-Request") == "true":
-                return render(request, "moderation/useraccount/partials/login_success.html")
-            return redirect("home")
-        else:
-            # Для HTMX запросов возвращаем частичный шаблон
-            if request.headers.get("Hx-Request") == "true":
-                return render(request, "moderation/useraccount/partials/login_error.html", {
-                    "error": "Неверные данные для входа"
-                })
-            else:
-                # Для обычных запросов показываем форму с ошибкой
-                context = self.get_context_data()
-                context['error'] = "Неверные данные для входа"
-                return self.render_to_response(context)
 
+            # 🔥 ВАЖНО: редирект для HTMX
+            if request.headers.get("Hx-Request") == "true":
+                response = HttpResponse()
+                response["HX-Redirect"] = reverse("useraccount:edit_profile")
+                return response
+
+            return redirect("useraccount:edit_profile")
+
+        # ---------- ERROR ----------
+        if request.headers.get("Hx-Request") == "true":
+            return HttpResponse(
+                '<div class="error">Неверные данные для входа</div>',
+                status=400
+            )
+
+        context = self.get_context_data()
+        context["error"] = "Неверные данные для входа"
+        return self.render_to_response(context)
 
 
 class CheckUsernameView(View):
