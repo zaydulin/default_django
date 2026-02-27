@@ -135,24 +135,26 @@
         <li class="menu-header small">
           <span class="menu-header-text">ОБЩЕЕ</span>
         </li>
-        <li class="menu-item">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link menu-toggle">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_mails_list' or request.resolver_match.url_name == 'moderation_settings_list' %}active open{% endif %}">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-envelope"></i>
             <div>Почта</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_mails_list' %}active{% endif %}">
+              <a href="{% url 'mail:moderation_mails_list' %}" class="menu-link">
                 <div>Письма</div>
               </a>
             </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+              <a href="{% url 'mail:moderation_settings_list' %}" class="menu-link">
                 <div>Настройки</div>
               </a>
             </li>
           </ul>
         </li>
+
+
         <li class="menu-item">
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-chat"></i>
@@ -913,7 +915,7 @@
                 </li>
                 <li class="border-top">
                   <div class="d-grid p-4">
-                    <a class="btn btn-primary btn-sm d-flex" href="javascript:void(0);">
+                    <a class="btn btn-primary btn-sm d-flex" href="{% url 'notification:moderation_notification_list' %}">
                       <small class="align-middle">View all notifications</small>
                     </a>
                   </div>
