@@ -15,3 +15,14 @@ class DashboardModerationView(CustomHtmxMixin, View):
             # ваш контекст
         }
         return render(request, self.template_name, context)
+
+class GroupsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/groups.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
