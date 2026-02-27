@@ -1,5 +1,5 @@
 from django.urls import path
-app_name = 'prices'
+app_name = 'connects'
 from . import views
 
 urlpatterns = [

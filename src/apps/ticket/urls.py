@@ -1,5 +1,5 @@
 from django.urls import path
-app_name = ''
+app_name = 'ticket'
 from . import views
 
 urlpatterns = [

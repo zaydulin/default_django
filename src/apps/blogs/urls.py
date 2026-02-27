@@ -4,12 +4,10 @@ from . import views
 
 
 urlpatterns = [
+    # Сайт
     path("blogs/", views.BlogView.as_view(), name="list"),
     path('page/<int:page>/', views.BlogPaginationView.as_view(), name='pagination'),
-
-    path("<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
-    path('create/category/', views.CreateCategoryView.as_view(), name='create_category'),
-    path('blog/edit/<int:pk>/', views.BlogCreateUpdateView.as_view(), name='blog_edit'),
-    path('edit-category/<int:pk>/', views.EditCategoryView.as_view(), name='edit_category'),
-
+    path("blogs/<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
+    # Модерация
+    path("moderation/blogs/", views.BlogsModerationView.as_view(), name="moderation_blogs_list"),
 ]

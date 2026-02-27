@@ -13,38 +13,7 @@ from useraccount.models import Profile
 from webmain.models import Seo
 from django.template.loader import render_to_string
 
-
-class CustomHtmxMixin:
-    def get_template_names(self):
-        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
-        if is_htmx:
-            return [self.template_name]
-        else:
-            return ['include_block.html']
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['template_htmx'] = self.template_name
-
-        # Получаем SEO данные из View и передаем их для блоков
-        seo_context = self.get_seo_context()
-        context.update(seo_context)
-
-        return context
-
-    def get_seo_context(self):
-        """
-        Переопределите этот метод в дочерних классах
-        чтобы вернуть SEO данные для этой страницы
-        """
-        return {
-            'block_title': 'Заголовок по умолчанию',
-            'block_description': 'Описание по умолчанию',
-            'block_propertytitle': 'Property Title по умолчанию',
-            'block_propertydescription': 'Property Description по умолчанию',
-            'block_propertyimage': '',
-            'block_head': ''
-        }
+from apps.useraccount.views import CustomHtmxMixin
 
 """Новости"""
 
@@ -420,3 +389,17 @@ class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):
                     return JsonResponse({'success': False, 'error': str(e)})
 
                 return render(request, self.template_name, {'error': str(e)})
+
+"""Модерация"""
+
+
+class BlogsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/list.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)

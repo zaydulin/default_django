@@ -12,16 +12,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>base</title>
+  <title>base{% block title %}{% endblock title %}
+  </title>
   <!-- Canonical SEO -->
-  <meta name="description" content="Sneat is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
-  <meta name="keywords" content="Sneat bootstrap dashboard, sneat bootstrap 5 dashboard, themeselection, html dashboard, web dashboard, frontend dashboard, responsive bootstrap theme" />
-  <meta property="og:title" content="Sneat Bootstrap 5 Dashboard PRO by ThemeSelection" />
-  <meta property="og:type" content="product" />
-  <meta property="og:url" content="https://themeselection.com/item/sneat-dashboard-pro-bootstrap/" />
-  <meta property="og:image" content="https://themeselection.com/wp-content/uploads/edd/2024/08/sneat-dashboard-pro-bootstrap-smm-image.png" />
-  <meta property="og:description" content="Sneat is the best bootstrap 5 dashboard for responsive web apps. Streamline your app development process with ease." />
-  <meta property="og:site_name" content="ThemeSelection" />
+  <meta name="description" content="{% block description %}{% endblock description %}" />
+  <meta name="keywords" content="{% block keywords %}{% endblock keywords %}" />
+  <meta property="og:title" content="{% block propertytitle %}{% endblock propertytitle %}" />
+  <meta property="og:image" content="{% block propertyimage %}{% endblock propertyimage %}" />
+  <meta property="og:description" content="{% block propertydescription %}{% endblock propertydescription %}" />
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/assets/img/favicon/favicon.ico" />
 
@@ -109,7 +107,7 @@
             <div>Дашбоард</div>
           </a>
         </li>
-        <li class="menu-item active open">
+        <li class="menu-item ">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-group"></i>
             <div>Пользователи</div>
@@ -168,7 +166,7 @@
           </a>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item active open">
+        <li class="menu-item ">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-cart-alt"></i>
             <div>Магазин</div>
@@ -486,8 +484,8 @@
             </li>
           </ul>
         </li>
-        <li class="menu-item">
-          <a href="maps-leaflet.html" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_blogs_list' and request.resolver_match.namespace == 'blogs' %}active open{% endif %}">
+          <a href="{% url 'blogs:moderation_blogs_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-news"></i>
             <div>Блог</div>
           </a>
@@ -510,8 +508,8 @@
             <div>Проекты</div>
           </a>
         </li>
-        <li class="menu-item">
-          <a href="maps-leaflet.html" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_cases_list' and request.resolver_match.namespace == 'cases' %}active open{% endif %}">
+          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-trophy"></i>
             <div>Кейсы</div>
           </a>
@@ -1029,6 +1027,8 @@
   <div class="drag-target"></div>
 </div>
 <!-- / Layout wrapper -->
+{% block demo %}{% endblock demo %}
+
 {% block extra_js_top %}{% endblock extra_js_top %}
 <!-- Core JS -->
 <!-- build:js assets/vendor/js/theme.js  -->

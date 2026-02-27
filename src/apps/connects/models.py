@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 import json
+from django.conf import settings
+
 
 
 class Chats(models.Model):
     """Модель чатов"""
-    userabstract = models.ManyToManyField('Userabstracts', verbose_name="Участники чата")
+    userabstract = models.ManyToManyField('Userabstractes', verbose_name="Участники чата")
     create = models.DateTimeField("Дата создания", auto_now_add=True)
 
     class Meta:
@@ -17,9 +19,9 @@ class Chats(models.Model):
         return f"Чат #{self.id} от {self.create}"
 
 
-class Userabstracts(models.Model):
+class Userabstractes(models.Model):
     """Модель абстрактного пользователя"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь", null=True, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Пользователь", null=True, blank=True)
     phone = models.CharField("Телефон", max_length=20, blank=True)
     telegram = models.CharField("Telegram", max_length=100, blank=True)
     whatsapp = models.CharField("WhatsApp", max_length=100, blank=True)
@@ -29,7 +31,7 @@ class Userabstracts(models.Model):
     class Meta:
         verbose_name = "Абстрактный пользователь"
         verbose_name_plural = "Абстрактные пользователи"
-        db_table = 'userabstracts'
+        db_table = 'userabstractes'
 
     def __str__(self):
         contacts = []
