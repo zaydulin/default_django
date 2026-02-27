@@ -15,3 +15,14 @@ class ChatsModerationView(CustomHtmxMixin, View):
             # ваш контекст
         }
         return render(request, self.template_name, context)
+
+class CallsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/connects/calls.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)

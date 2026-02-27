@@ -162,6 +162,12 @@
           </a>
         </li>
         <li class="menu-item">
+          <a href="{% url 'connects:moderation_calls_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-chat"></i>
+            <div>Звонки</div>
+          </a>
+        </li>
+        <li class="menu-item">
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-grid"></i>
             <div data-i18n="Kanban">Kanban</div>
@@ -356,79 +362,37 @@
         </li>
         <!-- Cards -->
         <li class="menu-item">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="javascript:void(0);" class="menu-link ">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Соц-сети</div>
-            <div class="badge text-bg-primary rounded-pill ms-auto">6</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Telegram</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>WhatsApp</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Вконтакте</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Max</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Яндекс Дзен</div>
-              </a>
-            </li>
-          </ul>
+
         </li>
+
         <!-- User interface -->
         <li class="menu-item">
-          <a href="javascript:void(0)" class="menu-link menu-toggle">
+          <a href="javascript:void(0)" class="menu-link ">
             <i class="menu-icon icon-base bx bx-phone"></i>
             <div>Телефония</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div data-i18n="Typography">Typography</div>
-              </a>
-            </li>
-          </ul>
+
         </li>
 
         <!-- Extended components -->
         <li class="menu-item">
-          <a href="javascript:void(0)" class="menu-link menu-toggle">
+          <a href="javascript:void(0)" class="menu-link ">
             <i class="menu-icon icon-base bx bx-credit-card"></i>
             <div >Плат-системы</div>
           </a>
-          <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Точка-банк</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Сбер-банк</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Альфа-банк</div>
-              </a>
-            </li>
-          </ul>
-        </li>
 
+        </li>
+        <li class="menu-item">
+          <a href="javascript:void(0);" class="menu-link ">
+            <i class="menu-icon icon-base bx bx-like"></i>
+            <div>Доп. Сервисы</div>
+          </a>
+
+        </li>
         <!-- Forms & Tables -->
         <li class="menu-header small">
           <span class="menu-header-text">Бухгалтерия</span>
@@ -626,6 +590,12 @@
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-file"></i>
             <div>Страницы</div>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-file"></i>
+            <div>Вакансии</div>
           </a>
         </li>
         <li class="menu-item">
