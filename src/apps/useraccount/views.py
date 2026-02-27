@@ -339,3 +339,25 @@ class EditMyProfileView(TemplateView, LoginRequiredMixin):
             context['seo_propertytitle'] = None
             context['seo_propertydescription'] = None
         return context
+
+class UsersModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_list.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class ClientModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/clients_list.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)

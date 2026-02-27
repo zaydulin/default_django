@@ -17,5 +17,8 @@ urlpatterns = [
     path('reset/done/', views.CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('moderation/edit_profile/', views.EditMyProfileView.as_view(), name='edit_profile'),
+    # Модерация
+    path("moderation/users/", views.UsersModerationView.as_view(), name="moderation_users_list"),
+    path("moderation/clients/", views.ClientModerationView.as_view(), name="moderation_client_list"),
 
 ]

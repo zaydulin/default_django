@@ -107,24 +107,24 @@
             <div>Дашбоард</div>
           </a>
         </li>
-        <li class="menu-item ">
+       <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' or request.resolver_match.url_name == 'moderation_client_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
-            <i class="menu-icon icon-base bx bx-group"></i>
-            <div>Пользователи</div>
+              <i class="menu-icon icon-base bx bx-group"></i>
+              <div>Пользователи</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Клиенты</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div>Сотрудники</div>
-              </a>
-            </li>
+              <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' %}active{% endif %}">
+                  <a href="{% url 'useraccount:moderation_users_list' %}" class="menu-link">
+                      <div>Клиенты</div>
+                  </a>
+              </li>
+              <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+                  <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                      <div>Сотрудники</div>
+                  </a>
+              </li>
           </ul>
-        </li>
+      </li>
         <li class="menu-item">
           <a href="javascript:void(0);" class="menu-link">
             <i class="menu-icon icon-base bx bx-check-shield"></i>
