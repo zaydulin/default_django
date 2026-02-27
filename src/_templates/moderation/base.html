@@ -581,10 +581,42 @@
           </ul>
         </li>
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_blogs_list' and request.resolver_match.namespace == 'blogs' %}active open{% endif %}">
-          <a href="{% url 'blogs:moderation_blogs_list' %}" class="menu-link">
+          <a href="javascript:void(0)" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-news"></i>
             <div>Блог</div>
           </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link ">
+                <div >Статьи</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Категории</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Теги</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Лайки</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Комментарии</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Жалобы</div>
+              </a>
+            </li>
+          </ul>
         </li>
         <li class="menu-item">
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
@@ -593,10 +625,22 @@
           </a>
         </li>
         <li class="menu-item">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+          <a href="javascript:void(0)" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-file"></i>
             <div>Вакансии</div>
           </a>
+          <ul class="menu-sub">
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link ">
+                <div >Список</div>
+              </a>
+            </li>
+            <li class="menu-item">
+              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+                <div >Заявки</div>
+              </a>
+            </li>
+          </ul>
         </li>
         <li class="menu-item">
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
