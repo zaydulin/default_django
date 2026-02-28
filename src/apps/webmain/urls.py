@@ -5,6 +5,10 @@ from . import views
 
 urlpatterns = [
     path('subscribe/',  views.subscribe, name='subscribe'),
+    path('', views.HomePageView.as_view(), name='home'),
+    path('about/', views.AboutPageView.as_view(), name='about'),
+    path('contacts/', views.ContactsPageView.as_view(), name='contacts'),
+
     path("moderation/site/settings/", views.SettingsModerationView.as_view(), name="moderation_settings"),
     path("moderation/site/settings-templates/", views.SettingsTemplatesModerationView.as_view(), name="moderation_settings_templates"),
     path("moderation/site/settings-smtp/", views.SettingsSmtpModerationView.as_view(), name="moderation_settings_smtp"),

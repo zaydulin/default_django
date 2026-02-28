@@ -8,6 +8,8 @@ urlpatterns = [
     #path("__debug__/", include("debug_toolbar.urls")),
     path("_nested_admin/", include("nested_admin.urls")),
     path('developer_management/', admin.site.urls),
+    path('', include('webmain.urls', namespace='webmain')),
+
     path('', include('balance.urls', namespace='balance')),
     path('', include('blogs.urls', namespace='blogs')),
     path('', include('bookmark.urls', namespace='bookmark')),
@@ -35,7 +37,6 @@ urlpatterns = [
     path('', include('storage.urls', namespace='storage')),
     path('', include('ticket.urls', namespace='ticket')),
     path('', include('useraccount.urls', namespace='useraccount')),
-    path('', include('webmain.urls', namespace='webmain')),
 ]
 
 if settings.DEBUG:

@@ -62,7 +62,7 @@
                         <ul class="top-links-container">
                             <li class="top-links-item"><a href="{% url 'blogs:list' %}">Вакансии</a></li>
                             <li class="top-links-item"><a href="{% url 'blogs:list' %}">ЧаВо</a></li>
-                            <li class="top-links-item"><a href="{% url 'blogs:list' %}">Контакты</a></li>
+                            <li class="top-links-item"><a href="{% url 'webmain:contacts' %}">Контакты</a></li>
                         </ul>
                     </div><!-- .top-links end -->
 
@@ -141,8 +141,8 @@
                     ============================================= -->
                     <nav class="primary-menu with-arrows">
                         <ul class="menu-container">
-                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Главная</div></a></li>
-                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>О нас</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'webmain:home' %}"><div>Главная</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'webmain:about' %}"><div>О нас</div></a></li>
                             <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Блог</div></a></li>
                             <li class="menu-item"><a class="menu-link" href="{% url 'services:list' %}"><div>Услуги</div></a></li>
                             <li class="menu-item"><a class="menu-link" href="{% url 'projects:list' %}"><div>Проекты</div></a></li>

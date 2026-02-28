@@ -6,10 +6,11 @@ from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
 
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
-from webmain.models import SettingsGlobale, Seo
+from webmain.models import SettingsGlobale, Seo, Pages
 from django.http import Http404
 import logging
 from apps.useraccount.views import CustomHtmxMixin
@@ -48,6 +49,59 @@ class CustomHtmxSiteMixin:
         }
 
 logger = logging.getLogger(__name__)
+
+
+class HomePageView(DetailView):
+    """View для отображения главной страницы (pagetype=1)"""
+    model = Pages
+    template_name = 'active/home.html'
+    context_object_name = 'page'
+
+    def get_object(self, queryset=None):
+        """Получаем страницу с pagetype=1"""
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Фильтруем по pagetype=1 и публичным страницам
+        page = get_object_or_404(
+            queryset.filter(pagetype=1, publishet=True)
+        )
+        return page
+
+
+class AboutPageView(DetailView):
+    """View для отображения главной страницы (pagetype=1)"""
+    model = Pages
+    template_name = 'active/about.html'
+    context_object_name = 'page'
+
+    def get_object(self, queryset=None):
+        """Получаем страницу с pagetype=1"""
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Фильтруем по pagetype=1 и публичным страницам
+        page = get_object_or_404(
+            queryset.filter(pagetype=2, publishet=True)
+        )
+        return page
+
+class ContactsPageView(DetailView):
+    """View для отображения главной страницы (pagetype=1)"""
+    model = Pages
+    template_name = 'active/about.html'
+    context_object_name = 'page'
+
+    def get_object(self, queryset=None):
+        """Получаем страницу с pagetype=1"""
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        # Фильтруем по pagetype=1 и публичным страницам
+        page = get_object_or_404(
+            queryset.filter(pagetype=3, publishet=True)
+        )
+        return page
 
 
 """Подписка"""
