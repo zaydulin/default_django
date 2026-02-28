@@ -380,7 +380,6 @@
           </a>
 
         </li>
-
         <!-- User interface -->
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_telephony_list' %}" class="menu-link">
@@ -389,7 +388,6 @@
           </a>
 
         </li>
-
         <!-- Extended components -->
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_payments_list' %}" class="menu-link">
@@ -403,58 +401,60 @@
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Доп. Сервисы</div>
           </a>
-
         </li>
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_neiro_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Нейронки</div>
           </a>
-
         </li>
         <!-- Forms & Tables -->
         <li class="menu-header small">
           <span class="menu-header-text">Бухгалтерия</span>
         </li>
         <!-- Forms -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <li class="menu-header small">
+          <span class="menu-header-text">Бухгалтерия</span>
+        </li>
+        <!-- Forms -->
+        <li class="menu-item {% if request.resolver_match.url_name == 'settlements_list' or request.resolver_match.url_name == 'daily_calculation_list' or request.resolver_match.url_name == 'period_calculation_list' or request.resolver_match.url_name == 'calculation_rules_list' or request.resolver_match.url_name == 'calculation_criteria_list' or request.resolver_match.url_name == 'calculation_schemes_list' or request.resolver_match.url_name == 'bonuses_and_fines_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-stats"></i>
             <div>Расчет зарплат</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'settlements_list' %}active{% endif %}">
+              <a href="{% url 'accounting:settlements_list' %}" class="menu-link">
                 <div>Взаиморасчеты</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'daily_calculation_list' %}active{% endif %}">
+              <a href="{% url 'accounting:daily_calculation_list' %}" class="menu-link">
                 <div>Расчет за день</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'period_calculation_list' %}active{% endif %}">
+              <a href="{% url 'accounting:period_calculation_list' %}" class="menu-link">
                 <div>Расчет за период</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'calculation_rules_list' %}active{% endif %}">
+              <a href="{% url 'accounting:calculation_rules_list' %}" class="menu-link">
                 <div>Правила расчета</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'calculation_criteria_list' %}active{% endif %}">
+              <a href="{% url 'accounting:calculation_criteria_list' %}" class="menu-link">
                 <div>Критерии расчета</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'calculation_schemes_list' %}active{% endif %}">
+              <a href="{% url 'accounting:calculation_schemes_list' %}" class="menu-link">
                 <div>Схемы расчета</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'bonuses_and_fines_list' %}active{% endif %}">
+              <a href="{% url 'accounting:bonuses_and_fines_list' %}" class="menu-link">
                 <div>Премии и штрафы</div>
               </a>
             </li>
