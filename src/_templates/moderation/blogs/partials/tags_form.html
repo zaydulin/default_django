@@ -1,0 +1,163 @@
+{% load static %}
+<form id="blog-form"
+      hx-post="{% if tags %}{% url 'blogs:tags_form' tags.id %}{% else %}{% url 'blogs:tags_form' %}{% endif %}"
+      hx-target="#offcanvas-body-content"
+      hx-encoding="multipart/form-data"
+      hx-indicator="#form-loading"
+      enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <div id="form-loading" class="text-center my-3 htmx-indicator" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Сохранение...</span>
+        </div>
+    </div>
+
+    <!-- Основная информация -->
+    <div class="mb-3">
+        <label for="{{ form.name.id_for_label }}" class="form-label">Название *</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+            <div class="invalid-feedback d-block">{{ form.name.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.slug.id_for_label }}" class="form-label">Slug (URL)</label>
+        {{ form.slug }}
+        <small class="text-muted">Оставьте пустым для автоматической генерации</small>
+        {% if form.slug.errors %}
+            <div class="invalid-feedback d-block">{{ form.slug.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.description.id_for_label }}" class="form-label">Описание</label>
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div class="invalid-feedback d-block">{{ form.description.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Категории и теги -->
+    <div class="mb-3">
+        <label for="{{ form.category.id_for_label }}" class="form-label">Категории</label>
+        {{ form.category }}
+        {% if form.category.errors %}
+            <div class="invalid-feedback d-block">{{ form.category.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.tags.id_for_label }}" class="form-label">Теги</label>
+        {{ form.tags }}
+        {% if form.tags.errors %}
+            <div class="invalid-feedback d-block">{{ form.tags.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Файлы -->
+    <div class="mb-3">
+        <label for="{{ form.previev.id_for_label }}" class="form-label">Превью</label>
+        {% if tags and tags.previev %}
+            <div class="mb-2">
+                <img src="{{ tags.previev.url }}" alt="Текущее превью" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущее: {{ tags.previev.name }}</small>
+            </div>
+        {% endif %}
+        {{ form.previev }}
+        {% if form.previev.errors %}
+            <div class="invalid-feedback d-block">{{ form.previev.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.cover.id_for_label }}" class="form-label">Обложка</label>
+        {% if tags and tags.cover %}
+            <div class="mb-2">
+                <img src="{{ tags.cover.url }}" alt="Текущая обложка" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущая: {{ tags.cover.name }}</small>
+            </div>
+        {% endif %}
+        {{ form.cover }}
+        {% if form.cover.errors %}
+            <div class="invalid-feedback d-block">{{ form.cover.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
+        {% if tags and tags.image %}
+            <div class="mb-2">
+                <img src="{{ tags.image.url }}" alt="Текущее изображение" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущее: {{ tags.image.name }}</small>
+            </div>
+        {% endif %}
+        {{ form.image }}
+        {% if form.image.errors %}
+            <div class="invalid-feedback d-block">{{ form.image.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Мета-информация -->
+    <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Мета-заголовок</label>
+        {{ form.title }}
+        {% if form.title.errors %}
+            <div class="invalid-feedback d-block">{{ form.title.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.metadescription.id_for_label }}" class="form-label">Мета-описание</label>
+        {{ form.metadescription }}
+        {% if form.metadescription.errors %}
+            <div class="invalid-feedback d-block">{{ form.metadescription.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.propertytitle.id_for_label }}" class="form-label">Свойство title</label>
+        {{ form.propertytitle }}
+        {% if form.propertytitle.errors %}
+            <div class="invalid-feedback d-block">{{ form.propertytitle.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.propertydescription.id_for_label }}" class="form-label">Свойство description</label>
+        {{ form.propertydescription }}
+        {% if form.propertydescription.errors %}
+            <div class="invalid-feedback d-block">{{ form.propertydescription.errors }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="{{ form.resource.id_for_label }}" class="form-label">Источник</label>
+        {{ form.resource }}
+        {% if form.resource.errors %}
+            <div class="invalid-feedback d-block">{{ form.resource.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Публикация -->
+    <div class="mb-3 form-check">
+        {{ form.publishet }}
+        <label class="form-check-label" for="{{ form.publishet.id_for_label }}">
+            Опубликован
+        </label>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Отмена</button>
+        <button type="submit" class="btn btn-primary">
+            {% if tags %}Сохранить{% else %}Создать{% endif %}
+        </button>
+    </div>
+</form>
+
+<script>
+    // Обновляем заголовок offcanvas при загрузке формы
+    document.getElementById('offcanvasRightLabel').innerText = '{{ title }}';
+</script>
