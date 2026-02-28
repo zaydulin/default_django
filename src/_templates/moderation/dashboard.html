@@ -8,6 +8,970 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
+   <!-- Content wrapper -->
+      <div class="content-wrapper">
+        <!-- Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+  <div class="row">
+    <div class="col-xxl-8 mb-6 order-0">
+      <div class="card">
+        <div class="d-flex align-items-start row">
+          <div class="col-sm-7">
+            <div class="card-body">
+              <h5 class="card-title text-primary mb-3">Приветствуем Никита! 🎉</h5>
+              <p class="mb-6">Вперед к новым свершениям!<br />Новые лиды уже у вас в профиле!.</p>
+
+              <a href="javascript:;" class="btn btn-sm btn-label-primary">Перейти в записи</a>
+            </div>
+          </div>
+          <div class="col-sm-5 text-center text-sm-left">
+            <div class="card-body pb-0 px-0 px-md-6">
+              <img src="illustrations/man-with-laptop.png" height="175" class="scaleX-n1-rtl" alt="View Badge User" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-4 col-lg-12 col-md-4 order-1">
+      <div class="row">
+        <div class="col-lg-6 col-md-12 col-6 mb-6">
+          <div class="card h-100">
+            <div class="card-body pb-4">
+              <span class="d-block fw-medium mb-1">Записей на сегодня</span>
+              <h4 class="card-title mb-0">276</h4>
+            </div>
+            <div id="orderChart" class="pb-3 pe-1"></div>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-6 mb-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                <div class="avatar flex-shrink-0">
+                  <img src="icons/unicons/wallet-info.png" alt="wallet info" class="rounded" />
+                </div>
+                <div class="dropdown">
+                  <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                    <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                  </div>
+                </div>
+              </div>
+              <p class="mb-1">Выручка сегодня</p>
+              <h4 class="card-title mb-3">₽24,500</h4>
+              <small class="text-success fw-medium"><i class="icon-base bx bx-up-arrow-alt"></i> +28.42%</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Total Revenue -->
+    <div class="col-12 col-xxl-8 order-2 order-md-3 order-xxl-2 mb-6">
+      <div class="card h-100">
+        <div class="row row-bordered g-0 h-100">
+          <div class="col-md-6">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="card-title m-0 me-2">Топ услуг <span class="text-primary">по продажам</span></h5>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="topSales" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="icon-base bx bx-dots-vertical-rounded icon-lg text-body-secondary"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topSales">
+                  <a class="dropdown-item" href="javascript:void(0);">За неделю</a>
+                  <a class="dropdown-item" href="javascript:void(0);">За месяц</a>
+                  <a class="dropdown-item" href="javascript:void(0);">За год</a>
+                </div>
+              </div>
+            </div>
+          <div class="card-body pt-6">
+  <ul class="p-0 m-0">
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/oneplus.png" alt="чистка лица">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Чистка лица</h6>
+          <small class="d-block">Косметолог</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-1">
+          <span class="fw-medium">3 500 ₽</span>
+        </div>
+      </div>
+    </li>
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/watch-primary.png" alt="маникюр">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Маникюр + покрытие</h6>
+          <small class="d-block">Мастер ногтевого сервиса</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-1">
+          <span class="fw-medium">2 200 ₽</span>
+        </div>
+      </div>
+    </li>
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/surface.png" alt="стрижка">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Стрижка и укладка</h6>
+          <small class="d-block">Стилист</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-1">
+          <span class="fw-medium">2 800 ₽</span>
+        </div>
+      </div>
+    </li>
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/iphone.png" alt="окрашивание">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Окрашивание волос</h6>
+          <small class="d-block">Колорист</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-1">
+          <span class="fw-medium">5 500 ₽</span>
+        </div>
+      </div>
+    </li>
+    <li class="d-flex align-items-center">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/earphone.png" alt="массаж">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Массаж спины</h6>
+          <small class="d-block">Массажист</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-1">
+          <span class="fw-medium">2 000 ₽</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+          </div>
+          <div class="col-md-6">
+            <div class="card-header d-flex align-items-center justify-content-between">
+              <h5 class="card-title m-0 me-2">Топ  <span class="text-primary">мастеров</span></h5>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="topVolume" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="icon-base bx bx-dots-vertical-rounded icon-lg text-body-secondary"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topVolume">
+                  <a class="dropdown-item" href="javascript:void(0);">За неделю</a>
+                  <a class="dropdown-item" href="javascript:void(0);">За месяц/a>
+                  <a class="dropdown-item" href="javascript:void(0);">За год</a>
+                </div>
+              </div>
+            </div>
+            <div class="card-body pt-6">
+  <ul class="p-0 m-0">
+    <!-- Мастер 1 -->
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/laptop-secondary.png" alt="Анна" class="rounded">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Анна С.</h6>
+          <small class="d-block">Косметолог-эстетист</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-3">
+          <span class="fw-medium">124 800 ₽</span>
+          <span class="badge bg-label-success">42 записи</span>
+        </div>
+      </div>
+    </li>
+    <!-- Мастер 2 -->
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/computer.png" alt="Елена" class="rounded">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Елена В.</h6>
+          <small class="d-block">Мастер ногтевого сервиса</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-3">
+          <span class="fw-medium">89 200 ₽</span>
+          <span class="badge bg-label-success">31 запись</span>
+        </div>
+      </div>
+    </li>
+    <!-- Мастер 3 -->
+    <li class="d-flex align-items-center mb-7">
+      <div class="avatar flex-shrink-0 me-3">
+        <img src="icons/unicons/watch.png" alt="Дарья" class="rounded">
+      </div>
+      <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+        <div class="me-2">
+          <h6 class="mb-0">Дарья К.</h6>
+          <small class="d-block">Парикмахер-стилист</small>
+        </div>
+        <div class="user-progress d-flex align-items-center gap-3">
+          <span class="fw-medium">156 300 ₽</span>
+          <span class="badge bg-label-success">57 записей</span>
+        </div>
+      </div>
+    </li>
+
+
+  </ul>
+</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!--/ Total Revenue -->
+    <div class="col-12 col-md-8 col-lg-12 col-xxl-4 order-3 order-md-2">
+      <div class="row">
+        <div class="col-6 mb-6">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="card-title d-flex align-items-start justify-content-between mb-4">
+                <div class="avatar flex-shrink-0">
+                  <img src="icons/unicons/paypal.png" alt="paypal" class="rounded" />
+                </div>
+                <div class="dropdown">
+                  <button class="btn p-0" type="button" id="cardOpt4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="icon-base bx bx-dots-vertical-rounded text-body-secondary"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt4">
+                    <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                  </div>
+                </div>
+              </div>
+              <p class="mb-1">Средний чек</p>
+              <h4 class="card-title mb-3">2,456 ₽</h4>
+              <small class="text-danger fw-medium"><i class="icon-base bx bx-down-arrow-alt"></i> -14.82% по сравнению с прошлой неделей</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 mb-6">
+          <div class="card h-100">
+            <div class="card-body pb-0">
+              <span class="d-block fw-medium mb-1">Загрузка салона</span>
+              <h4 class="card-title mb-0 mb-lg-4">425</h4>
+              <div id="revenueChart"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mb-6">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center flex-sm-row flex-column gap-10 flex-wrap">
+                <div class="d-flex flex-sm-column flex-row align-items-start justify-content-between">
+                  <div class="card-title mb-6">
+                    <h5 class="text-nowrap mb-1">Доходы</h5>
+                    <span class="badge bg-label-warning">Февраль 2026</span>
+                  </div>
+                  <div class="mt-sm-auto">
+                    <span class="text-success text-nowrap fw-medium"><i class="icon-base bx bx-up-arrow-alt"></i> 68.2%</span>
+                    <h4 class="mb-0">84 686 ₽</h4>
+                  </div>
+                </div>
+                <div id="profileReportChart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <!-- Order Statistics -->
+    <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="mb-1 me-2">Статистика записей</h5>
+            <p class="card-subtitle">42 800 всего</p>
+          </div>
+          <div class="dropdown">
+            <button class="btn text-body-secondary p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+              <a class="dropdown-item" href="javascript:void(0);">За неделю</a>
+              <a class="dropdown-item" href="javascript:void(0);">За месяц</a>
+              <a class="dropdown-item" href="javascript:void(0);">За год</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-6">
+            <div class="d-flex flex-column align-items-center gap-1">
+              <h3 class="mb-1">42 записи </h3>
+              <small>за неделю</small>
+            </div>
+            <div id="orderStatisticsChart"></div>
+          </div>
+          <ul class="p-0 m-0">
+            <li class="d-flex align-items-center mb-5">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-primary"><i class="icon-base bx bx-mobile-alt"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Подтверждено</h6>
+                  <small>Записей</small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="mb-0">82 500</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex align-items-center mb-5">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-success"><i class="icon-base bx bx-closet"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Ожидает</h6>
+                  <small>Ответа</small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="mb-0">23 800</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex align-items-center mb-5">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-info"><i class="icon-base bx bx-home-alt"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Отменено</h6>
+                  <small>Заявок</small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="mb-0">8 490</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex align-items-center">
+              <div class="avatar flex-shrink-0 me-3">
+                <span class="avatar-initial rounded bg-label-secondary"><i class="icon-base bx bx-football"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-0">Неявки</h6>
+                  <small>Посетителей</small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="mb-0">99</h6>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!--/ Order Statistics -->
+
+    <!-- Expense Overview -->
+    <div class="col-md-6 col-lg-4 order-1 mb-6">
+      <div class="card h-100">
+        <div class="card-header nav-align-top">
+          <ul class="nav nav-pills flex-wrap row-gap-2" role="tablist">
+            <li class="nav-item">
+              <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-tabs-line-card-income" aria-controls="navs-tabs-line-card-income" aria-selected="true">Доходы</button>
+            </li>
+            <li class="nav-item">
+              <button type="button" class="nav-link" role="tab">Расходы</button>
+            </li>
+            <li class="nav-item">
+              <button type="button" class="nav-link" role="tab">Прибыль</button>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+          <div class="tab-content p-0">
+            <div class="tab-pane fade show active" id="navs-tabs-line-card-income" role="tabpanel">
+              <div class="d-flex mb-6">
+                <div class="avatar flex-shrink-0 me-3">
+                  <img src="icons/unicons/wallet-primary.png" alt="User" />
+                </div>
+                <div>
+                  <p class="mb-0">Баланс сейчас</p>
+                  <div class="d-flex align-items-center">
+                    <h6 class="mb-0 me-1">459.10 ₽</h6>
+                    <small class="text-success fw-medium">
+                      <i class="icon-base bx bx-chevron-up icon-lg"></i>
+                      42.9%
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div id="incomeChart"></div>
+              <div class="d-flex align-items-center justify-content-center mt-6 gap-3">
+                <div class="flex-shrink-0">
+                  <div id="expensesOfWeek"></div>
+                </div>
+                <div>
+                  <h6 class="mb-0">За эту неделю</h6>
+                  <small>39 тысяч рублей</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Expense Overview -->
+
+   <!-- Транзакции -->
+<div class="col-md-6 col-lg-4 order-2 mb-6">
+  <div class="card h-100">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h5 class="card-title m-0 me-2">Транзакции</h5>
+      <div class="dropdown">
+        <button class="btn text-body-secondary p-0" type="button" id="transactionID" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
+          <a class="dropdown-item" href="javascript:void(0);">За неделю</a>
+          <a class="dropdown-item" href="javascript:void(0);">За месяц</a>
+          <a class="dropdown-item" href="javascript:void(0);">За год</a>
+        </div>
+      </div>
+    </div>
+    <div class="card-body pt-4">
+      <ul class="p-0 m-0">
+
+        <li class="d-flex align-items-center mb-6">
+          <div class="avatar flex-shrink-0 me-3">
+            <img src="icons/unicons/wallet.png" alt="Наличные" class="rounded" />
+          </div>
+          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+            <div class="me-2">
+              <small class="d-block">Наличные</small>
+              <h6 class="fw-normal mb-0">Оплата стрижки</h6>
+            </div>
+            <div class="user-progress d-flex align-items-center gap-2">
+              <h6 class="fw-normal mb-0">+1 800</h6>
+              <span class="text-body-secondary">₽</span>
+            </div>
+          </div>
+        </li>
+
+
+
+        <li class="d-flex align-items-center">
+          <div class="avatar flex-shrink-0 me-3">
+            <img src="icons/unicons/cc-warning.png" alt="Кредитная карта" class="rounded" />
+          </div>
+          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+            <div class="me-2">
+              <small class="d-block">Кредитная карта</small>
+              <h6 class="fw-normal mb-0">Оплата косметики</h6>
+            </div>
+            <div class="user-progress d-flex align-items-center gap-2">
+              <h6 class="fw-normal mb-0">-3 200</h6>
+              <span class="text-body-secondary">₽</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- / Транзакции -->
+    <!-- Activity Timeline -->
+    <div class="col-md-12 col-lg-6 order-4 order-lg-3">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between">
+          <h5 class="card-title m-0 me-2">Последние действия</h5>
+          <div class="dropdown">
+            <button class="btn text-body-secondary p-0" type="button" id="timelineWapper" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base bx bx-dots-vertical-rounded icon-lg"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="timelineWapper">
+              <a class="dropdown-item" href="javascript:void(0);">Перезагрузить</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body pt-2">
+          <ul class="timeline mb-0">
+
+            <li class="timeline-item timeline-item-transparent">
+              <span class="timeline-point timeline-point-success"></span>
+              <div class="timeline-event">
+                <div class="timeline-header mb-3">
+                  <h6 class="mb-0">Запись прошла успешно</h6>
+                  <small class="text-body-secondary">45 минут назад</small>
+                </div>
+                <p class="mb-2">Оплата наличными, запись подтверждена</p>
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                  <div class="d-flex flex-wrap align-items-center">
+                    <div class="avatar avatar-sm me-2">
+                      <img src="avatars/1.png" alt="Avatar" class="rounded-circle" />
+                    </div>
+                    <div>
+                      <p class="mb-0 small fw-medium">Марина Алексеевна</p>
+                      <small>Управляющая</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!--/ Activity Timeline -->
+    <!-- pill table -->
+    <div class="col-md-6 order-3 order-lg-4 mb-6 mb-lg-0">
+      <div class="card text-center h-100">
+        <div class="card-header nav-align-top">
+          <ul class="nav nav-pills flex-wrap row-gap-2" role="tablist">
+            <li class="nav-item">
+              <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-browser" aria-controls="navs-pills-browser" aria-selected="true">Лиды</button>
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content pt-0 pb-4">
+          <div class="tab-pane fade show active" id="navs-pills-browser" role="tabpanel">
+            <div class="table-responsive text-start text-nowrap">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>№</th>
+                    <th>Направление</th>
+                    <th>Запросы</th>
+                    <th class="w-50">В процентах</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/vk.png" alt="Vk" height="24" class="me-3" />
+                        <span class="text-heading">Вконтакте</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">8 920</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-success" role="progressbar" style="width: 64.75%" aria-valuenow="64.75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">64.75%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/whatsapp.png" alt="WhatsApp" height="24" class="me-3" />
+                        <span class="text-heading">WhatsApp</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">1 290</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-primary" role="progressbar" style="width: 18.43%" aria-valuenow="18.43" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">18.43%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/max.png" alt="Max" height="24" class="me-3" />
+                        <span class="text-heading">Max</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">328</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-info" role="progressbar" style="width: 8.37%" aria-valuenow="8.37" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">8.37%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/telegram.png" alt="Edge" height="24" class="me-3" />
+                        <span class="text-heading">Telegram</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">142</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 6.12%" aria-valuenow="6.12" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">6.12%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/opera.png" alt="Opera" height="24" class="me-3" />
+                        <span class="text-heading">Сайт</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">82</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 2.12%" aria-valuenow="1.94" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">2.12%</small>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="navs-pills-os" role="tabpanel">
+            <div class="table-responsive text-start text-nowrap">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>System</th>
+                    <th>Visits</th>
+                    <th class="w-50">Data In Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="../_static/moderation/icons/brands/windows.png" alt="Windows" height="24" class="me-3" />
+                        <span class="text-heading">Windows</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">875.24k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-success" role="progressbar" style="width: 61.50%" aria-valuenow="61.50" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">61.50%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="../_static/moderation/icons/brands/mac.png" alt="Mac" height="24" class="me-3" />
+                        <span class="text-heading">Mac</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">89.68k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-primary" role="progressbar" style="width: 16.67%" aria-valuenow="16.67" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">16.67%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="../_static/moderation/icons/brands/ubuntu.png" alt="Ubuntu" height="24" class="me-3" />
+                        <span class="text-heading">Ubuntu</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">37.68k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-info" role="progressbar" style="width: 12.82%" aria-valuenow="12.82" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">12.82%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/chrome.png" alt="Chrome" height="24" class="me-3" />
+                        <span class="text-heading">Chrome</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">8.34k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 6.25%" aria-valuenow="6.25" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">6.25%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="icons/brands/cent.png" alt="Cent" height="24" class="me-3" />
+                        <span class="text-heading">Cent</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">2.25k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 2.76%" aria-valuenow="2.76" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">2.76%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img src="../_static/moderation/icons/brands/linux.png" alt="linux" height="24" class="me-3" />
+                        <span class="text-heading">Linux</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">328k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 20.14%" aria-valuenow="2.76" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">20.14%</small>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="navs-pills-country" role="tabpanel">
+            <div class="table-responsive text-start text-nowrap">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Country</th>
+                    <th>Visits</th>
+                    <th class="w-50">Data In Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-us rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">USA</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">87.24k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-success" role="progressbar" style="width: 38.12%" aria-valuenow="38.12" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">38.12%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-br rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">Brazil</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">42.68k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-primary" role="progressbar" style="width: 28.23%" aria-valuenow="28.23" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">28.23%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-in rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">India</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">12.58k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-info" role="progressbar" style="width: 14.82%" aria-valuenow="14.82" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">14.82%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-au rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">Australia</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">4.13k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 12.72%" aria-valuenow="12.72" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">12.72%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-fr rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">France</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">2.21k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 7.11%" aria-valuenow="7.11" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">7.11%</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>6</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <i class="fis fi fi-ca rounded-circle fs-4 me-3"></i>
+                        <span class="text-heading">Canada</span>
+                      </div>
+                    </td>
+                    <td class="text-heading">22.35k</td>
+                    <td>
+                      <div class="d-flex justify-content-between align-items-center gap-4">
+                        <div class="progress w-100" style="height:10px;">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 15.13%" aria-valuenow="7.11" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="fw-medium">15.13%</small>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ pill table -->
+  </div>
+
+        </div>
+        <!-- / Content -->
+
+
+
+
+<!-- Footer -->
+<footer class="content-footer footer bg-footer-theme">
+  <div class="container-xxl">
+    <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+      <div class="mb-2 mb-md-0">
+        ©
+        <script>
+          document.write(new Date().getFullYear());
+        </script>
+        , made with ❤️ by <a href="https://themeselection.com" target="_blank" class="footer-link">ThemeSelection</a>
+      </div>
+      <div class="d-none d-lg-inline-block">
+
+          <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
+          <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
+
+        <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-6">Documentation</a>
+
+
+          <a href="https://themeselection.com/support/" target="_blank" class="footer-link d-none d-sm-inline-block">Support</a>
+
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- / Footer -->
+
+
+        <div class="content-backdrop fade"></div>
+      </div>
+      <!-- Content wrapper -->
+    </div>
+    <!-- / Layout page -->
+  </div>
+
+
+
+  <!-- Overlay -->
+  <div class="layout-overlay layout-menu-toggle"></div>
+
+
+  <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+  <div class="drag-target"></div>
+
+</div>
+<!-- / Layout wrapper -->
+
+
+      <div class="buy-now">
+        <a href="https://themeselection.com/item/sneat-dashboard-pro-bootstrap/" target="_blank" class="btn btn-danger btn-buy-now">Buy Now</a>
+      </div>
+
+
+
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/theme.js  -->
+
+
+
 {% endblock content %}
 {% block demo %}
 <!-- Кнопка -->
@@ -29,4 +993,39 @@
         <button type="button" class="btn btn-primary">Сохранить</button>
     </div>
 </div>
+  <script src="../_static/moderation/libs/jquery/jquery.js"></script>
+
+    <script src="../_static/moderation/libs/popper/popper.js"></script>
+    <script src="../_static/moderation/js/bootstrap.js"></script>
+    <script src="../_static/moderation/libs/@algolia/autocomplete-js.js"></script>
+
+
+
+      <script src="../_static/moderation/libs/pickr/pickr.js"></script>
+
+
+
+      <script src="../_static/moderation/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+
+        <script src="../_static/moderation/libs/hammer/hammer.js"></script>
+
+          <script src="../_static/moderation/libs/i18n/i18n.js"></script>
+
+
+      <script src="../_static/moderation/js/menu.js"></script>
+
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="../_static/moderation/libs/apex-charts/apexcharts.js"></script>
+
+    <!-- Main JS -->
+
+      <script src="../_static/moderation/main.js"></script>
+
+
+    <!-- Page JS -->
+    <script src="../_static/moderation/dashboards-analytics.js"></script>
+
 {% endblock demo %}
