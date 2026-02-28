@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('moderation.urls', namespace='moderation')),
     path('', include('notification.urls', namespace='notification')),
     path('', include('buhgalteris.urls', namespace='buhgalteris')),
+    path('', include('payments.urls', namespace='payment')),
     path('', include('prices.urls', namespace='prices')),
     path('', include('projects.urls', namespace='projects')),
     path('', include('services.urls', namespace='services')),
