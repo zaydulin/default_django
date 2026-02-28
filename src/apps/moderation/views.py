@@ -26,3 +26,14 @@ class GroupsModerationView(CustomHtmxMixin, View):
             # ваш контекст
         }
         return render(request, self.template_name, context)
+
+class AppealsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/appeals.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)

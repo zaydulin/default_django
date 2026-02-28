@@ -2,10 +2,11 @@ from django.shortcuts import render
 from apps.useraccount.views import CustomHtmxMixin
 from django.views import View
 
+
 # Create your views here.
 
-class DashboardModerationView(CustomHtmxMixin, View):
-    template_name = 'moderation/courses/dashboard.html'
+class SocialModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/integrations/social.html'
 
     def get(self, request, *args, **kwargs):
         # Здесь ваша логика для GET-запроса
@@ -15,41 +16,45 @@ class DashboardModerationView(CustomHtmxMixin, View):
         }
         return render(request, self.template_name, context)
 
-
-class MyCoursesView(CustomHtmxMixin, View):
-    template_name = 'moderation/courses/my_courses.html'
+class TelephonyModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/integrations/telephony.html'
 
     def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
         context = {
             # ваш контекст
         }
         return render(request, self.template_name, context)
 
-
-class CompletedCoursesView(CustomHtmxMixin, View):
-    template_name = 'moderation/courses/completed_courses.html'
+class PaymentModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/integrations/payments.html'
 
     def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
         context = {
             # ваш контекст
         }
         return render(request, self.template_name, context)
 
-
-class CertificatesView(CustomHtmxMixin, View):
-    template_name = 'moderation/courses/certificates.html'
+class DopServiseModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/integrations/dopservice.html'
 
     def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
         context = {
             # ваш контекст
         }
         return render(request, self.template_name, context)
 
-
-class CreatedCoursesView(CustomHtmxMixin, View):
-    template_name = 'moderation/courses/created_courses.html'
+class NeiroModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/integrations/neiro.html'
 
     def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
         context = {
             # ваш контекст
         }
