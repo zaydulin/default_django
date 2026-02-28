@@ -19,7 +19,7 @@ from django.core.paginator import Paginator
 
 from apps.useraccount.views import CustomHtmxMixin
 
-from .forms import BlogForm, CategoriesForm
+from .forms import BlogForm, CategoriesForm, TagsForm
 
 """Новости"""
 
@@ -434,6 +434,7 @@ class CategoriesFormView(LoginRequiredMixin, View):
 
         if form.is_valid():
             categories = form.save(commit=False)
+            categories.save()
 
             # Для HTMX возвращаем обновленный элемент списка
             if request.headers.get('HX-Request'):
@@ -472,15 +473,177 @@ class CategoriesFormView(LoginRequiredMixin, View):
 
         return render(request, 'moderation/blogs/categories_form_full.html', {'form': form})
 
-
-class TagsView(CustomHtmxMixin, View):
+class TagsView(CustomHtmxMixin, ListView):
+    model = TagsBlogs
     template_name = 'moderation/blogs/tags.html'
+    context_object_name = "tags"
+    paginate_by = 6
 
-    def get(self, request, *args, **kwargs):
+    def get_template_names(self):
+        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
+
+        # Для пагинационных запросов возвращаем другой шаблон
+        if is_htmx and self.request.GET.get('page'):
+            return ["moderation/blogs/partials/tags_page_content.html"]
+
+        return super().get_template_names()
+
+    def render_to_response(self, context, **response_kwargs):
+        # Для HTMX пагинации возвращаем только контент
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            return render(self.request, "moderation/blogs/partials/tags_page_content.html", context)
+        return super().render_to_response(context, **response_kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Для пагинационных запросов добавляем флаг
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            context['is_pagination_request'] = True
+
+        # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
+        try:
+            seo_data_from_db = Seo.objects.get(pagetype=1)
+
+            # Передаем данные из модели в контекст
+            context['seo_previev'] = seo_data_from_db.previev
+            context['seo_title'] = seo_data_from_db.title
+            context['seo_description'] = seo_data_from_db.metadescription
+            context['seo_propertytitle'] = seo_data_from_db.propertytitle
+            context['seo_propertydescription'] = seo_data_from_db.propertydescription
+            context['seo_head'] = seo_data_from_db.setting  # Если нужно добавлять дополнительные теги
+        except Seo.DoesNotExist:
+            # Если данных нет, используем значения по умолчанию
+            context['seo_previev'] = None
+            context['seo_title'] = 'Вход в систему - МойСайт'
+            context['seo_description'] = 'Войдите в свою учетную запись для доступа к персональным данным'
+            context['seo_propertytitle'] = 'og:title - Вход в систему'
+            context['seo_propertydescription'] = 'og:description - Страница входа в личный кабинет'
+            context['seo_head'] = '''
+                        <link rel="stylesheet" href="/static/css/login.css">
+                        <meta name="robots" content="noindex">
+                    '''
+
+        return context
+
+    def get_seo_context(self):
+        """
+        Просто возвращаем SEO данные для блоков
+        """
+        try:
+            seo_data = Seo.objects.get(pagetype=5)
+            return {
+                'block_title': seo_data.title,
+                'block_description': seo_data.metadescription,
+                'block_propertytitle': seo_data.propertytitle,
+                'block_propertydescription': seo_data.propertydescription,
+                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
+                'block_head': seo_data.setting or ''
+            }
+        except Seo.DoesNotExist:
+            return {
+                'block_title': 'Вход в систему',
+                'block_description': 'Страница входа в аккаунт',
+                'block_propertytitle': 'Вход в систему',
+                'block_propertydescription': 'Страница входа',
+                'block_propertyimage': '',
+                'block_head': '<meta name="robots" content="noindex">'
+            }
+
+class TagsPaginationView(ListView):
+    model = TagsBlogs
+    template_name = "moderation/blogs/partials/tags_items.html"  # Только элементы
+    context_object_name = "tags"
+    paginate_by = 6
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_pagination_request'] = True
+        return context
+
+class TagsFormView(LoginRequiredMixin, View):
+    """Единый view для создания и редактирования блогов через попап"""
+
+    def get(self, request, pk=None):
+        """GET запрос - возвращает форму в offcanvas"""
+        if pk:
+            # Редактирование существующего блога
+            tags = get_object_or_404(TagsBlogs, pk=pk)
+            form = TagsForm(instance=tags)
+            title = f"Редактирование: {tags.name}"
+        else:
+            # Создание нового блога
+            form = TagsForm()
+            title = "Создание новой категории"
+            tags = None
+
         context = {
-            'title': 'Теги',
+            'form': form,
+            'title': title,
+            'tags': tags,
         }
-        return render(request, self.template_name, context)
+
+        # Для HTMX запросов возвращаем только форму
+        if request.headers.get('HX-Request'):
+            return render(request, 'moderation/blogs/partials/tags_form.html', context)
+
+        # Для обычных запросов (если нужно)
+        return render(request, 'moderation/blogs/tags_form_full.html', context)
+
+    def post(self, request, pk=None):
+        """POST запрос - сохраняет форму"""
+        if pk:
+            # Редактирование
+            tags = get_object_or_404(TagsBlogs, pk=pk)
+            form = TagsForm(request.POST, request.FILES, instance=tags)
+            action = 'updated'
+        else:
+            # Создание
+            form = TagsForm(request.POST, request.FILES)
+            action = 'created'
+
+        if form.is_valid():
+            tags = form.save(commit=False)
+            tags.save()
+
+            # Для HTMX возвращаем обновленный элемент списка
+            if request.headers.get('HX-Request'):
+                # Получаем обновленный список блогов для замены
+                tags = TagsBlogs.objects.all().order_by('-create')[:6]  # Последние 6
+
+                response_html = f'''
+                <div id="offcanvas-body-content" hx-swap-oob="true">
+                    <div class="alert alert-success">Тег успешно {action}</div>
+                </div>
+                <div id="blog-items" hx-swap-oob="innerHTML">
+                    {render_to_string('moderation/blogs/partials/tags_list.html', {'tags': tags, 'is_pagination_request': False}, request)}
+                </div>
+                <script>
+                    var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                    if (offcanvas) {{
+                        setTimeout(() => {{
+                            offcanvas.hide();
+                        }}, 1500);
+                    }}
+                </script>
+                '''
+
+                return HttpResponse(response_html)
+
+            return redirect('blogs:tags_list')
+
+        # Если форма не валидна
+        if request.headers.get('HX-Request'):
+            context = {
+                'form': form,
+                'title': f"{'Редактирование' if pk else 'Создание'} тега",
+                'tags': tags if pk else None,
+            }
+            return render(request, 'moderation/blogs/partials/tags_form.html', context)
+
+        return render(request, 'moderation/blogs/tags_form_full.html', {'form': form})
+
+
 
 
 class LikesView(CustomHtmxMixin, View):

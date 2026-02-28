@@ -1,0 +1,17 @@
+<!-- moderation/blogs/partials/blog_pagination.html -->
+{% if page_obj.has_next %}
+<div class="d-flex justify-content-center mt-4">
+    <button class="btn btn-outline-primary"
+            hx-get="{% url 'blogs:articles_pagination' page_obj.next_page_number %}"
+            hx-target="#blog-items"
+            hx-swap="beforeend"
+            hx-indicator="#loading-indicator"
+            hx-select=".col, #pagination-container">
+        Загрузить ещё
+    </button>
+</div>
+{% else %}
+<div class="d-flex justify-content-center mt-4">
+    <span class="text-muted">Все статьи загружены</span>
+</div>
+{% endif %}

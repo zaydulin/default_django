@@ -1,19 +1,19 @@
 <!-- moderation/blogs/partials/blog_list.html -->
 {% if is_pagination_request %}
 <!-- Только элементы блога для пагинации -->
-{% for categori in categories %}
-<div class="col" id="blog-{{ categori.id }}">
+{% for tag in tags %}
+<div class="col" id="tag-{{ tag.id }}">
     <div class="card h-100 shadow-sm">
-        {% if categori.image %}
-        <img src="{{ categori.image.url }}" class="card-img-top" alt="{{ categori.name }}">
+        {% if blog.image %}
+        <img src="{{ tag.image.url }}" class="card-img-top" alt="{{ tag.name }}">
         {% endif %}
         <div class="card-body">
-            <h5 class="card-title">{{ categori.name }}</h5>
-            <p class="card-text">{{ categori.description|striptags|truncatewords:20 }}</p>
+            <h5 class="card-title">{{ tag.name }}</h5>
+            <p class="card-text">{{ tag.description|striptags|truncatewords:20 }}</p>
             <button
-                data-identification="{{ categori.id }}"
+                data-identification="{{ tag.id }}"
                 class="btn btn-primary"
-                hx-get="{% url 'blogs:categories_form' categori.id %}"
+                hx-get="{% url 'blogs:tags_form' tag.id %}"
                 hx-target="#offcanvas-body-content"
                 hx-indicator="#offcanvas-loading"
                 data-bs-toggle="offcanvas"
@@ -28,24 +28,24 @@
 
 <!-- Индикатор для пагинации -->
 {% if blogs.has_next %}
-<div id="pagination-next" hx-get="?page={{ categories.next_page_number }}" hx-trigger="revealed" hx-target="#blog-items" hx-swap="beforeend" hx-indicator="#loading-indicator" hx-select=".col" hx-headers='{"X-Pagination-Request": "true"}'></div>
+<div id="pagination-next" hx-get="?page={{ tags.next_page_number }}" hx-trigger="revealed" hx-target="#blog-items" hx-swap="beforeend" hx-indicator="#loading-indicator" hx-select=".col" hx-headers='{"X-Pagination-Request": "true"}'></div>
 {% endif %}
 
 {% else %}
 <!-- Полный список для первоначальной загрузки -->
-{% for categori in categories %}
-<div class="col" id="blog-{{ categori.id }}">
+{% for tag in tags %}
+<div class="col" id="tag-{{ tag.id }}">
     <div class="card h-100 shadow-sm">
-        {% if categori.image %}
-        <img src="{{ categori.image.url }}" class="card-img-top" alt="{{ categori.name }}">
+        {% if tag.image %}
+        <img src="{{ tag.image.url }}" class="card-img-top" alt="{{ tag.name }}">
         {% endif %}
         <div class="card-body">
-            <h5 class="card-title">{{ categori.name }}</h5>
-            <p class="card-text">{{ categori.description|striptags|truncatewords:20 }}</p>
+            <h5 class="card-title">{{ tag.name }}</h5>
+            <p class="card-text">{{ tag.description|striptags|truncatewords:20 }}</p>
             <button
-                data-identification="{{ categori.id }}"
+                data-identification="{{ tag.id }}"
                 class="btn btn-primary"
-                hx-get="{% url 'blogs:categories_form' categori.id %}"
+                hx-get="{% url 'blogs:tags_form' tag.id %}"
                 hx-target="#offcanvas-body-content"
                 hx-indicator="#offcanvas-loading"
                 data-bs-toggle="offcanvas"

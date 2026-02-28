@@ -1,6 +1,6 @@
 {% load static %}
 <form id="blog-form"
-      hx-post="{% if categories %}{% url 'blogs:categories_form' categories.id %}{% else %}{% url 'blogs:categories_form' %}{% endif %}"
+      hx-post="{% if tags %}{% url 'blogs:tags_form' tags.id %}{% else %}{% url 'blogs:tags_form' %}{% endif %}"
       hx-target="#offcanvas-body-content"
       hx-encoding="multipart/form-data"
       hx-indicator="#form-loading"
@@ -60,10 +60,10 @@
     <!-- Файлы -->
     <div class="mb-3">
         <label for="{{ form.previev.id_for_label }}" class="form-label">Превью</label>
-        {% if categories and categories.previev %}
+        {% if tags and tags.previev %}
             <div class="mb-2">
-                <img src="{{ categories.previev.url }}" alt="Текущее превью" style="max-height: 50px;">
-                <small class="text-muted d-block">Текущее: {{ categories.previev.name }}</small>
+                <img src="{{ tags.previev.url }}" alt="Текущее превью" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущее: {{ tags.previev.name }}</small>
             </div>
         {% endif %}
         {{ form.previev }}
@@ -74,10 +74,10 @@
 
     <div class="mb-3">
         <label for="{{ form.cover.id_for_label }}" class="form-label">Обложка</label>
-        {% if categories and categories.cover %}
+        {% if tags and tags.cover %}
             <div class="mb-2">
-                <img src="{{ categories.cover.url }}" alt="Текущая обложка" style="max-height: 50px;">
-                <small class="text-muted d-block">Текущая: {{ categories.cover.name }}</small>
+                <img src="{{ tags.cover.url }}" alt="Текущая обложка" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущая: {{ tags.cover.name }}</small>
             </div>
         {% endif %}
         {{ form.cover }}
@@ -88,10 +88,10 @@
 
     <div class="mb-3">
         <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
-        {% if categories and categories.image %}
+        {% if tags and tags.image %}
             <div class="mb-2">
-                <img src="{{ categories.image.url }}" alt="Текущее изображение" style="max-height: 50px;">
-                <small class="text-muted d-block">Текущее: {{ categories.image.name }}</small>
+                <img src="{{ tags.image.url }}" alt="Текущее изображение" style="max-height: 50px;">
+                <small class="text-muted d-block">Текущее: {{ tags.image.name }}</small>
             </div>
         {% endif %}
         {{ form.image }}
@@ -152,7 +152,7 @@
     <div class="d-flex justify-content-end gap-2">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Отмена</button>
         <button type="submit" class="btn btn-primary">
-            {% if categories %}Сохранить{% else %}Создать{% endif %}
+            {% if tags %}Сохранить{% else %}Создать{% endif %}
         </button>
     </div>
 </form>
