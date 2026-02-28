@@ -393,13 +393,63 @@ class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):
 """Модерация"""
 
 
-class BlogsModerationView(CustomHtmxMixin, View):
-    template_name = 'moderation/blogs/list.html'
+
+class ArticlesView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/articles.html'
 
     def get(self, request, *args, **kwargs):
-        # Здесь ваша логика для GET-запроса
-        # Например, получение данных из базы
         context = {
-            # ваш контекст
+            'title': 'Статьи',
         }
         return render(request, self.template_name, context)
+
+
+class CategoriesView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/categories.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'title': 'Категории',
+        }
+        return render(request, self.template_name, context)
+
+
+class TagsView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/tags.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'title': 'Теги',
+        }
+        return render(request, self.template_name, context)
+
+
+class LikesView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/likes.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'title': 'Лайки',
+        }
+        return render(request, self.template_name, context)
+
+
+class CommentsView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/comments.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'title': 'Комментарии',
+        }
+        return render(request, self.template_name, context)
+
+
+class ComplaintsView(CustomHtmxMixin, View):
+    template_name = 'moderation/blogs/complaints.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'title': 'Жалобы',
+        }
+        return render(request, self.template_name, context)
+
