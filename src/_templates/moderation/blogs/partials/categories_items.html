@@ -1,0 +1,30 @@
+<!-- moderation/blogs/partials/blog_items.html -->
+{% for categori in categories %}
+<div class="col">
+    <div class="card h-100 shadow-sm">
+        {% if categori.image %}
+        <img src="{{ categori.image.url }}" class="card-img-top" alt="{{ categori.name }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ categori.name }}</h5>
+            <p class="card-text">{{ categori.description|truncatewords:20 }}</p>
+<button
+                data-identification="{{ categori.id }}"
+                class="btn btn-primary"
+                hx-get="{% url 'blogs:categories_form' categori.id %}"
+                hx-target="#offcanvas-body-content"
+                hx-indicator="#offcanvas-loading"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight">
+                Редактировать
+            </button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Обновляем пагинацию через hx-swap-oob -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% include "moderation/blogs/partials/categories_pagination.html" %}
+</div>

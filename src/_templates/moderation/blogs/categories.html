@@ -1,3 +1,4 @@
+<!-- moderation/blogs/categories.html -->
 {% extends 'moderation/base.html' %}
 {% load static %}
 {% block title %}{% endblock title %}
@@ -6,27 +7,71 @@
 {% block propertydescription %}{% endblock propertydescription %}
 {% block propertyimage %}{% endblock propertyimage %}
 {% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+{% block head %}
+<style>
+    .htmx-indicator {
+        display: none;
+    }
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
+    .htmx-request.htmx-indicator {
+        display: inline-block;
+    }
+</style>
+{% endblock head %}
+
 {% block content %}
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<div class="container my-5">
+    <!-- список -->
+    <div id="blog-list">
+        <div id="blog-items" class="row row-cols-1 row-cols-md-2 g-4">
+            {% include "moderation/blogs/partials/categories_list.html" %}
+        </div>
+        <div id="pagination-container">
+            {% include "moderation/blogs/partials/categories_pagination.html" %}
+        </div>
+    </div>
+
+    <!-- индикатор загрузки -->
+    <div id="loading-indicator" class="text-center my-3" style="display:none;">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
 </div>
+{% endblock %}
+
+{% block demo %}
+<!-- Кнопка создания -->
+<div class="buy-now">
+    <a href="#"
+       class="btn btn-danger btn-buy-now"
+       hx-get="{% url 'blogs:blog_form' %}"
+       hx-target="#offcanvas-body-content"
+       hx-trigger="click"
+       hx-indicator="#offcanvas-loading"
+       data-bs-toggle="offcanvas"
+       data-bs-target="#offcanvasRight"
+       aria-controls="offcanvasRight">
+        Создать
+    </a>
+</div>
+
 <!-- Offcanvas справа на всю ширину -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">
+            <span id="form-title">Создание статьи</span>
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
-    <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
-    </div>
-    <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+    <div class="offcanvas-body" id="offcanvas-body-content" hx-indicator="#offcanvas-loading">
+        <!-- Индикатор загрузки внутри offcanvas -->
+        <div id="offcanvas-loading" class="text-center my-5 htmx-indicator">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+        </div>
+        <!-- Форма будет загружаться сюда -->
     </div>
 </div>
 {% endblock demo %}

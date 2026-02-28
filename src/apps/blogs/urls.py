@@ -15,6 +15,9 @@ urlpatterns = [
     path('moderation/blog-form/<int:pk>/', views.BlogFormView.as_view(), name='blog_form'),
 
     path("moderation/categories/", views.CategoriesView.as_view(), name="categories_list"),
+    path('moderation/categories-page/<int:page>/', views.CategoriesPaginationView.as_view(), name='categories_pagination'),
+    path('moderation/categories-form/', views.CategoriesFormView.as_view(), name='categories_form'),
+    path('moderation/categories-form/<int:pk>/', views.CategoriesFormView.as_view(), name='categories_form'),
     path("moderation/tags/", views.TagsView.as_view(), name="tags_list"),
     path("moderation/likes/", views.LikesView.as_view(), name="likes_list"),
     path("moderation/comments/", views.CommentsView.as_view(), name="comments_list"),

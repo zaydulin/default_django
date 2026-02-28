@@ -21,6 +21,7 @@ class CategorysBlogs(models.Model):
     propertytitle = models.CharField(verbose_name="Мета-заголовок ссылки", max_length=150, blank=True, null=True,)
     propertydescription = models.CharField(verbose_name="Мета-описание ссылки", max_length=255, blank=True, null=True,)
     publishet = models.BooleanField("Опубликован", default=False)
+    create = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
