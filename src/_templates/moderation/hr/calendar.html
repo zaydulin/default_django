@@ -1,0 +1,430 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+{% block title %}{% endblock title %}
+{% block description %}{% endblock description %}
+{% block propertytitle %}{% endblock propertytitle %}
+{% block propertydescription %}{% endblock propertydescription %}
+{% block propertyimage %}{% endblock propertyimage %}
+{% block keywords %}{% endblock keywords %}
+{% block head %}
+<!-- Подключаем CSS через CDN для надежности -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+{% endblock head %}
+{% block content %}
+
+<div class="container-fluid p-4">
+    <div class="card app-calendar-wrapper">
+        <div class="row g-0">
+            <!-- Calendar Sidebar -->
+            <div class="col-auto app-calendar-sidebar border-end" id="app-calendar-sidebar">
+                <div class="border-bottom p-4">
+                    <button class="btn btn-primary w-100" data-bs-toggle="offcanvas" data-bs-target="#addEventSidebar" aria-controls="addEventSidebar">
+                        <i class="bx bx-plus me-2"></i>
+                        <span>Add Event</span>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <!-- inline calendar (flatpickr) -->
+                    <div class="inline-calendar mb-4"></div>
+
+                    <hr class="my-4" />
+
+                    <!-- Filter -->
+                    <div>
+                        <h5 class="mb-3">Event Filters</h5>
+
+                        <div class="form-check form-check-secondary mb-3">
+                            <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all" checked />
+                            <label class="form-check-label" for="selectAll">View All</label>
+                        </div>
+
+                        <div class="app-calendar-events-filter">
+                            <div class="form-check form-check-danger mb-3">
+                                <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal" checked />
+                                <label class="form-check-label" for="select-personal">Personal</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business" checked />
+                                <label class="form-check-label" for="select-business">Business</label>
+                            </div>
+                            <div class="form-check form-check-warning mb-3">
+                                <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked />
+                                <label class="form-check-label" for="select-family">Family</label>
+                            </div>
+                            <div class="form-check form-check-success mb-3">
+                                <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday" checked />
+                                <label class="form-check-label" for="select-holiday">Holiday</label>
+                            </div>
+                            <div class="form-check form-check-info">
+                                <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked />
+                                <label class="form-check-label" for="select-etc">ETC</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Calendar Sidebar -->
+
+            <!-- Calendar Content -->
+            <div class="col app-calendar-content">
+                <div class="card-body">
+                    <!-- FullCalendar -->
+                    <div id="calendar"></div>
+                </div>
+            </div>
+            <!-- /Calendar Content -->
+        </div>
+    </div>
+</div>
+
+<!-- Add Event Offcanvas -->
+<div class="offcanvas offcanvas-end event-sidebar" tabindex="-1" id="addEventSidebar" aria-labelledby="addEventSidebarLabel" style="width: 400px;">
+    <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="addEventSidebarLabel">Add Event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form class="event-form" id="eventForm" onsubmit="return false">
+            <div class="mb-3">
+                <label class="form-label" for="eventTitle">Title</label>
+                <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Event Title" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="eventLabel">Label</label>
+                <select class="form-select select-event-label" id="eventLabel" name="eventLabel">
+                    <option value="Business" selected>Business</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Family">Family</option>
+                    <option value="Holiday">Holiday</option>
+                    <option value="ETC">ETC</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="eventStartDate">Start Date</label>
+                <input type="text" class="form-control datepicker" id="eventStartDate" name="eventStartDate" placeholder="Select Start Date" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="eventEndDate">End Date</label>
+                <input type="text" class="form-control datepicker" id="eventEndDate" name="eventEndDate" placeholder="Select End Date" />
+            </div>
+            <div class="mb-3">
+                <div class="form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="allDaySwitch" />
+                    <label class="form-check-label" for="allDaySwitch">All Day</label>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="eventDescription">Description</label>
+                <textarea class="form-control" name="eventDescription" id="eventDescription" rows="3"></textarea>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <div>
+                    <button type="submit" class="btn btn-primary me-2">Add Event</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Подключаем скрипты через CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing calendar...');
+
+    // Инициализация основного календаря
+    var calendarEl = document.getElementById('calendar');
+
+    if (!calendarEl) {
+        console.error('Calendar element not found!');
+        return;
+    }
+
+    console.log('Calendar element found, creating calendar...');
+
+    // Пример событий для календаря
+    var events = [
+        {
+            id: '1',
+            title: 'Personal Event',
+            start: '2026-06-01',
+            end: '2026-06-02',
+            classNames: ['bg-danger'],
+            extendedProps: {
+                calendar: 'personal'
+            }
+        },
+        {
+            id: '2',
+            title: 'Business Meeting',
+            start: '2026-06-03T10:30:00',
+            end: '2026-06-03T12:30:00',
+            classNames: ['bg-primary'],
+            extendedProps: {
+                calendar: 'business'
+            }
+        },
+        {
+            id: '3',
+            title: 'Family Dinner',
+            start: '2026-06-15T18:00:00',
+            end: '2026-06-15T21:00:00',
+            classNames: ['bg-warning'],
+            extendedProps: {
+                calendar: 'family'
+            }
+        },
+        {
+            id: '4',
+            title: 'Holiday',
+            start: '2026-06-12',
+            end: '2026-06-13',
+            classNames: ['bg-success'],
+            extendedProps: {
+                calendar: 'holiday'
+            }
+        },
+        {
+            id: '5',
+            title: 'ETC Event',
+            start: '2026-06-20',
+            end: '2026-06-21',
+            classNames: ['bg-info'],
+            extendedProps: {
+                calendar: 'etc'
+            }
+        }
+    ];
+
+    try {
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            initialDate: '2026-06-01', // Устанавливаем июнь 2026
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+            },
+            events: events,
+            editable: true,
+            selectable: true,
+            selectMirror: true,
+            dayMaxEvents: true,
+            navLinks: true,
+            height: 'auto',
+            datesSet: function(info) {
+                console.log('Calendar view set to:', info.view.currentStart);
+            },
+            dateClick: function(info) {
+                console.log('Date clicked:', info.dateStr);
+                // Открываем форму добавления события
+                var addEventSidebar = new bootstrap.Offcanvas(document.getElementById('addEventSidebar'));
+                addEventSidebar.show();
+
+                // Заполняем дату в форме
+                var startDateInput = document.getElementById('eventStartDate');
+                var endDateInput = document.getElementById('eventEndDate');
+
+                if (startDateInput && startDateInput._flatpickr) {
+                    startDateInput._flatpickr.setDate(info.dateStr);
+                }
+                if (endDateInput && endDateInput._flatpickr) {
+                    endDateInput._flatpickr.setDate(info.dateStr);
+                }
+            },
+            eventClick: function(info) {
+                console.log('Event clicked:', info.event.title);
+                alert('Event: ' + info.event.title);
+            }
+        });
+
+        calendar.render();
+        console.log('Calendar rendered successfully');
+
+        // Сохраняем экземпляр календаря для использования в фильтрах
+        window.calendar = calendar;
+
+    } catch (error) {
+        console.error('Error creating calendar:', error);
+    }
+
+    // Инициализация inline календаря (flatpickr)
+    var inlineCalendarEl = document.querySelector('.inline-calendar');
+    if (inlineCalendarEl) {
+        try {
+            var inlineCalendar = flatpickr(inlineCalendarEl, {
+                inline: true,
+                defaultDate: '2026-06-01',
+                onChange: function(selectedDates, dateStr) {
+                    console.log('Inline date selected:', dateStr);
+                    if (window.calendar) {
+                        window.calendar.gotoDate(dateStr);
+                    }
+                }
+            });
+            console.log('Inline calendar initialized');
+        } catch (error) {
+            console.error('Error initializing inline calendar:', error);
+        }
+    }
+
+    // Инициализация datepicker для формы
+    document.querySelectorAll('.datepicker').forEach(function(el) {
+        try {
+            flatpickr(el, {
+                dateFormat: 'Y-m-d',
+                allowInput: true
+            });
+        } catch (error) {
+            console.error('Error initializing datepicker:', error);
+        }
+    });
+
+    // Фильтрация событий
+    var filterCheckboxes = document.querySelectorAll('.input-filter');
+    filterCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            if (!window.calendar) return;
+
+            var checkedValues = [];
+            document.querySelectorAll('.input-filter:checked').forEach(function(cb) {
+                checkedValues.push(cb.getAttribute('data-value'));
+            });
+
+            console.log('Filter changed:', checkedValues);
+
+            // Получаем все события
+            var allEvents = window.calendar.getEvents();
+
+            // Показываем/скрываем события
+            allEvents.forEach(function(event) {
+                var eventCalendar = event.extendedProps.calendar;
+                if (checkedValues.includes(eventCalendar)) {
+                    event.setProp('display', 'auto');
+                } else {
+                    event.setProp('display', 'none');
+                }
+            });
+        });
+    });
+
+    // Select All checkbox
+    var selectAllCheckbox = document.getElementById('selectAll');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function(e) {
+            var isChecked = e.target.checked;
+            document.querySelectorAll('.input-filter').forEach(function(checkbox) {
+                checkbox.checked = isChecked;
+            });
+
+            // Принудительно вызываем событие change
+            var changeEvent = new Event('change');
+            document.querySelectorAll('.input-filter').forEach(function(checkbox) {
+                checkbox.dispatchEvent(changeEvent);
+            });
+        });
+    }
+
+    // Обработка формы добавления события
+    var eventForm = document.getElementById('eventForm');
+    if (eventForm) {
+        eventForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!window.calendar) return;
+
+            // Получаем данные формы
+            var title = document.getElementById('eventTitle').value;
+            if (!title) {
+                alert('Please enter event title');
+                return;
+            }
+
+            var label = document.getElementById('eventLabel').value;
+            var startDate = document.getElementById('eventStartDate').value;
+            var endDate = document.getElementById('eventEndDate').value || startDate;
+            var allDay = document.getElementById('allDaySwitch').checked;
+            var description = document.getElementById('eventDescription').value;
+
+            // Определяем класс и тип события
+            var className = 'bg-primary';
+            var calendarType = 'business';
+
+            switch(label) {
+                case 'Personal':
+                    className = 'bg-danger';
+                    calendarType = 'personal';
+                    break;
+                case 'Business':
+                    className = 'bg-primary';
+                    calendarType = 'business';
+                    break;
+                case 'Family':
+                    className = 'bg-warning';
+                    calendarType = 'family';
+                    break;
+                case 'Holiday':
+                    className = 'bg-success';
+                    calendarType = 'holiday';
+                    break;
+                case 'ETC':
+                    className = 'bg-info';
+                    calendarType = 'etc';
+                    break;
+            }
+
+            // Добавляем событие
+            window.calendar.addEvent({
+                title: title,
+                start: startDate,
+                end: endDate,
+                allDay: allDay,
+                classNames: [className],
+                extendedProps: {
+                    calendar: calendarType,
+                    description: description
+                }
+            });
+
+            console.log('Event added:', title);
+
+            // Закрываем offcanvas и очищаем форму
+            var addEventSidebar = bootstrap.Offcanvas.getInstance(document.getElementById('addEventSidebar'));
+            if (addEventSidebar) {
+                addEventSidebar.hide();
+            }
+            this.reset();
+        });
+    }
+});
+</script>
+{% endblock content %}
+{% block demo %}
+<!-- Кнопка для дополнительного offcanvas -->
+<div class="buy-now">
+    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+</div>
+
+<!-- Дополнительный offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+    <div class="offcanvas-body">
+        <p>Контент попапа на всю ширину справа...</p>
+    </div>
+    <div class="offcanvas-footer p-3 border-top">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
+        <button type="button" class="btn btn-primary">Сохранить</button>
+    </div>
+</div>
+{% endblock demo %}
