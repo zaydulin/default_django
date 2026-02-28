@@ -18,15 +18,16 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 
 from apps.useraccount.views import CustomHtmxMixin
+from apps.webmain.views import CustomHtmxSiteMixin
 
 from .forms import BlogForm, CategoriesForm, TagsForm
 
 """Новости"""
 
 
-class BlogView(CustomHtmxMixin, ListView):
+class BlogView(CustomHtmxSiteMixin, ListView):
     model = Blogs
-    template_name = "blogs/blogs.html"
+    template_name = "active/blogs/blogs.html"
     context_object_name = "blogs"
     paginate_by = 6
 
@@ -35,14 +36,14 @@ class BlogView(CustomHtmxMixin, ListView):
 
         # Для пагинационных запросов возвращаем другой шаблон
         if is_htmx and self.request.GET.get('page'):
-            return ["blogs/partials/blog_page_content.html"]
+            return ["active/blogs/partials/blog_page_content.html"]
 
         return super().get_template_names()
 
     def render_to_response(self, context, **response_kwargs):
         # Для HTMX пагинации возвращаем только контент
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            return render(self.request, "blogs/partials/blog_page_content.html", context)
+            return render(self.request, "active/blogs/partials/blog_page_content.html", context)
         return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
@@ -103,7 +104,7 @@ class BlogView(CustomHtmxMixin, ListView):
 
 class BlogPaginationView(ListView):
     model = Blogs
-    template_name = "blogs/partials/blog_items.html"  # Только элементы
+    template_name = "active/blogs/partials/blog_items.html"  # Только элементы
     context_object_name = "blogs"
     paginate_by = 6
 
@@ -112,9 +113,9 @@ class BlogPaginationView(ListView):
         context['is_pagination_request'] = True
         return context
 
-class BlogDetailView(CustomHtmxMixin, DetailView):
+class BlogDetailView(CustomHtmxSiteMixin, DetailView):
     model = Blogs
-    template_name = "blogs/blog_detail.html"
+    template_name = "active/blogs/blog_detail.html"
     context_object_name = "blog"
 
 

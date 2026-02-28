@@ -147,33 +147,19 @@
                     <!-- Primary Navigation
                     ============================================= -->
                     <nav class="primary-menu with-arrows">
-
                         <ul class="menu-container">
-                            <li class="menu-item"><a class="menu-link" href="demo-construction.html"><div>Home</div></a></li>
-                            <li class="menu-item current"><a class="menu-link" href="demo-construction-services.html"><div>What we do</div></a>
-                                <ul class="sub-menu-container">
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-services.html#"><div>Housing Management</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-services.html#"><div>Construction Planning</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-services.html#"><div>Green Homes</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-services.html#"><div>Architecture Design</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-services.html#"><div>Interior Planning</div></a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-about-us.html"><div>About Us</div></a></li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-projects.html"><div>Projects</div></a>
-                                <ul class="sub-menu-container">
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-projects-2.html"><div>2 Columns</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-projects-3.html"><div>3 Columns</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-projects.html"><div>4 Columns</div></a></li>
-                                    <li class="menu-item"><a class="menu-link" href="demo-construction-projects-5.html"><div>5 Columns</div></a></li>
-                                </ul>
-                            </li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-investors.html"><div>Investors</div></a></li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-blog.html"><div>News</div></a></li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-careers.html"><div>Careers</div></a></li>
-                            <li class="menu-item"><a class="menu-link" href="demo-construction-contact.html"><div>Contact</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Главная</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>О нас</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Блог</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'services:list' %}"><div>Услуги</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'projects:list' %}"><div>Проекты</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Кейсы</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Галерея</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Вакансии</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Прайс</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>ЧаВо</div></a></li>
+                            <li class="menu-item"><a class="menu-link" href="{% url 'blogs:list' %}"><div>Контакты</div></a></li>
                         </ul>
-
                     </nav><!-- #primary-menu end -->
 
                     <form class="top-search-form" action="https://canvastemplate.com/search.html" method="get">
@@ -338,6 +324,7 @@
 <!-- jQuery -->
 <script src="{% static 'site/js/plugins.min.js' %}"></script>
 <script src="{% static 'site/js/functions.bundle.js' %}"></script>
+<script src="{% static 'site/htmx.min.js' %}"></script>
 
 </body>
 </html>
