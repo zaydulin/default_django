@@ -639,30 +639,29 @@
             <div>Страницы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_jobs_list' or request.resolver_match.url_name == 'moderation_jobs_aplication' %}active open{% endif %}">
           <a href="javascript:void(0)" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-file"></i>
             <div>Вакансии</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link ">
-                <div >Список</div>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_jobs_list' %}active{% endif %}">
+              <a href="{% url 'jobs:moderation_jobs_list' %}" class="menu-link">
+                <div>Список</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Заявки</div>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_jobs_aplication' %}active{% endif %}">
+              <a href="{% url 'jobs:moderation_jobs_aplication' %}" class="menu-link">
+                <div>Заявки</div>
               </a>
             </li>
           </ul>
-        </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-briefcase"></i>
-            <div>Услуги</div>
-          </a>
-        </li>
+        </li>        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+          <i class="menu-icon icon-base bx bx-briefcase"></i>
+          <div>Услуги</div>
+        </a>
+      </li>
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
           <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-task"></i>
