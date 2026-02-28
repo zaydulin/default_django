@@ -457,112 +457,112 @@
             </li>
           </ul>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' or request.resolver_match.url_name == 'online_cashdesks_list' or request.resolver_match.url_name == 'counterparties_list' or request.resolver_match.url_name == 'payment_articles_list' or request.resolver_match.url_name == 'financial_operations_list' or request.resolver_match.url_name == 'payment_documents_list' or request.resolver_match.url_name == 'ccm_operations_list' or request.resolver_match.url_name == 'payment_reception_list' or request.resolver_match.url_name == 'payment_reports_list' or request.resolver_match.url_name == 'payment_settings_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-wallet"></i>
             <div>Финансы</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' %}active{% endif %}">
+              <a href="{% url 'payment:accounts_and_cashdesks_list' %}" class="menu-link">
                 <div>Счета и кассы</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'online_cashdesks_list' %}active{% endif %}">
+              <a href="{% url 'payment:online_cashdesks_list' %}" class="menu-link">
                 <div>Онлайн-кассы</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'counterparties_list' %}active{% endif %}">
+              <a href="{% url 'payment:counterparties_list' %}" class="menu-link">
                 <div>Контрагенты</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_articles_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_articles_list' %}" class="menu-link">
                 <div>Статьи платежей</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'financial_operations_list' %}active{% endif %}">
+              <a href="{% url 'payment:financial_operations_list' %}" class="menu-link">
                 <div>Финансовые операции</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
                 <div>Документы</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'ccm_operations_list' %}active{% endif %}">
+              <a href="{% url 'payment:ccm_operations_list' %}" class="menu-link">
                 <div>Операции с ККМ</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_reception_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_reception_list' %}" class="menu-link">
                 <div>Прием платежей</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_reports_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_reports_list' %}" class="menu-link">
                 <div>Отчеты</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_settings_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_settings_list' %}" class="menu-link">
                 <div>Настройки</div>
               </a>
             </li>
           </ul>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' or request.resolver_match.url_name == 'products_list' or request.resolver_match.url_name == 'technological_maps_list' or request.resolver_match.url_name == 'warehouse_operations_list' or request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'price_tags_print_list' or request.resolver_match.url_name == 'storage_reports_list' or request.resolver_match.url_name == 'storage_settings_list' or request.resolver_match.url_name == 'product_labeling_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-package"></i>
             <div>Склад</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' %}active{% endif %}">
+              <a href="{% url 'storage:warehouses_list' %}" class="menu-link">
                 <div>Склады</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'products_list' %}active{% endif %}">
+              <a href="{% url 'storage:products_list' %}" class="menu-link">
                 <div>Товары</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'technological_maps_list' %}active{% endif %}">
+              <a href="{% url 'storage:technological_maps_list' %}" class="menu-link">
                 <div>Технологические карты</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'warehouse_operations_list' %}active{% endif %}">
+              <a href="{% url 'storage:warehouse_operations_list' %}" class="menu-link">
                 <div>Складские операции</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
+              <a href="{% url 'storage:inventory_list' %}" class="menu-link">
                 <div>Инвентаризация</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'price_tags_print_list' %}active{% endif %}">
+              <a href="{% url 'storage:price_tags_print_list' %}" class="menu-link">
                 <div>Печать товарных ценников</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'storage_reports_list' %}active{% endif %}">
+              <a href="{% url 'storage:storage_reports_list' %}" class="menu-link">
                 <div>Отчеты</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'storage_settings_list' %}active{% endif %}">
+              <a href="{% url 'storage:storage_settings_list' %}" class="menu-link">
                 <div>Настройки</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'product_labeling_list' %}active{% endif %}">
+              <a href="{% url 'storage:product_labeling_list' %}" class="menu-link">
                 <div>Маркировка товаров</div>
               </a>
             </li>
@@ -573,99 +573,80 @@
         <li class="menu-header small">
           <span class="menu-header-text">Сайты</span>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings' or request.resolver_match.url_name == 'moderation_settings_smtp' or request.resolver_match.url_name == 'moderation_settings_templates' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-task"></i>
             <div>Настройки</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings' %}active{% endif %}">
+              <a href="{% url 'webmain:moderation_settings' %}" class="menu-link">
                 <div>Настройки</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_smtp' %}active{% endif %}">
+              <a href="{% url 'webmain:moderation_settings_smtp' %}" class="menu-link">
                 <div>SMTP</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_templates' %}active{% endif %}">
+              <a href="{% url 'webmain:moderation_settings_templates' %}" class="menu-link">
                 <div>Шаблон</div>
               </a>
             </li>
           </ul>
-        </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_blogs_list' and request.resolver_match.namespace == 'blogs' %}active open{% endif %}">
-          <a href="javascript:void(0)" class="menu-link menu-toggle">
-            <i class="menu-icon icon-base bx bx-news"></i>
-            <div>Блог</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link ">
-                <div >Статьи</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Категории</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Теги</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Лайки</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Комментарии</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Жалобы</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        </li>        <li class="menu-item {% if request.resolver_match.namespace == 'blogs' and request.resolver_match.url_name in 'articles_list,categories_list,tags_list,likes_list,comments_list,complaints_list' %}active open{% endif %}">
+        <a href="javascript:void(0)" class="menu-link menu-toggle">
+          <i class="menu-icon icon-base bx bx-news"></i>
+          <div>Блог</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {% if request.resolver_match.url_name == 'articles_list' %}active{% endif %}">
+            <a href="{% url 'blogs:articles_list' %}" class="menu-link">
+              <div>Статьи</div>
+            </a>
+          </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'categories_list' %}active{% endif %}">
+            <a href="{% url 'blogs:categories_list' %}" class="menu-link">
+              <div>Категории</div>
+            </a>
+          </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'tags_list' %}active{% endif %}">
+            <a href="{% url 'blogs:tags_list' %}" class="menu-link">
+              <div>Теги</div>
+            </a>
+          </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'likes_list' %}active{% endif %}">
+            <a href="{% url 'blogs:likes_list' %}" class="menu-link">
+              <div>Лайки</div>
+            </a>
+          </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'comments_list' %}active{% endif %}">
+            <a href="{% url 'blogs:comments_list' %}" class="menu-link">
+              <div>Комментарии</div>
+            </a>
+          </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'complaints_list' %}active{% endif %}">
+            <a href="{% url 'blogs:complaints_list' %}" class="menu-link">
+              <div>Жалобы</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_pages_list' %}active{% endif %}">
+          <a href="{% url 'webmain:moderation_pages_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-file"></i>
             <div>Страницы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0)" class="menu-link menu-toggle">
-            <i class="menu-icon icon-base bx bx-file"></i>
-            <div>Вакансии</div>
-          </a>
-          <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link ">
-                <div >Список</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-              <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-                <div >Заявки</div>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-briefcase"></i>
             <div>Услуги</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_projects_list' %}active{% endif %}">
+          <a href="{% url 'projects:moderation_projects_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-task"></i>
             <div>Проекты</div>
           </a>
@@ -676,29 +657,20 @@
             <div>Кейсы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_gallerys_list' %}active{% endif %}">
+          <a href="{% url 'gallerys:moderation_gallerys_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-images"></i>
             <div>Галереи</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_prices_list' %}active{% endif %}">
+          <a href="{% url 'prices:moderation_prices_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-money"></i>
             <div>Прайсы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-layout"></i>
-            <div>Шаблон</div>
-          </a>
-        </li>
       </ul>
-
-
     </aside>
-
     <div class="menu-mobile-toggler d-xl-none rounded-1">
       <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large text-bg-secondary p-2 rounded-1">
         <i class="bx bx-menu icon-base"></i>
@@ -706,33 +678,16 @@
       </a>
     </div>
     <!-- / Menu -->
-
-
-
     <!-- Layout container -->
     <div class="layout-page">
-
-
-
-
-
       <!-- Navbar -->
-
-      <nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
-
-
-
-
-
+      <nav class="layout-navbar content navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme " id="layout-navbar" style="margin-left: 34px;">
         <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0   d-xl-none ">
           <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
             <i class="icon-base bx bx-menu icon-md"></i>
           </a>
         </div>
-
-
         <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
-
           <!-- Search -->
           <div class="navbar-nav align-items-center">
             <div class="nav-item navbar-search-wrapper mb-0">
@@ -741,48 +696,24 @@
               </a>
             </div>
           </div>
-
           <!-- /Search -->
-
-
-
-
-
           <ul class="navbar-nav flex-row align-items-center ms-md-auto">
-
-
-
             <!-- Language -->
             <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
               <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                 <i class="icon-base bx bx-globe icon-md"></i>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
+                <!---Языки--->
                 <li>
                   <a class="dropdown-item" href="javascript:void(0);" data-language="en" data-text-direction="ltr">
                     <span>English</span>
                   </a>
                 </li>
-                <li>
-                  <a class="dropdown-item" href="javascript:void(0);" data-language="fr" data-text-direction="ltr">
-                    <span>French</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="javascript:void(0);" data-language="ar" data-text-direction="rtl">
-                    <span>Arabic</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="javascript:void(0);" data-language="de" data-text-direction="ltr">
-                    <span>German</span>
-                  </a>
-                </li>
+
               </ul>
             </li>
             <!--/ Language -->
-
-
             <!-- Style Switcher -->
             <li class="nav-item dropdown me-2 me-xl-0">
               <a class="nav-link dropdown-toggle hide-arrow" id="nav-theme" href="javascript:void(0);" data-bs-toggle="dropdown">
@@ -816,74 +747,51 @@
               <div class="dropdown-menu dropdown-menu-end p-0">
                 <div class="dropdown-menu-header border-bottom">
                   <div class="dropdown-header d-flex align-items-center py-3">
-                    <h6 class="mb-0 me-auto">Shortcuts</h6>
-                    <a href="javascript:void(0)" class="dropdown-shortcuts-add py-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Add shortcuts"><i class="icon-base bx bx-plus-circle text-heading"></i></a>
+                    <h6 class="mb-0 me-auto">Быстрый доступ</h6>
                   </div>
                 </div>
                 <div class="dropdown-shortcuts-list scrollable-container">
                   <div class="row row-bordered overflow-visible g-0">
                     <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-calendar icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Calendar</a>
-                      <small>Appointments</small>
+                      <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                        <i class="icon-base bx bx-calendar icon-26px text-heading"></i>
+                      </span>
+                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Календарь</a>
+                      <small>Записи и задачи</small>
                     </div>
                     <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-food-menu icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Invoice App</a>
-                      <small>Manage Accounts</small>
+                      <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                        <i class="icon-base bx bx-food-menu icon-26px text-heading"></i>
+                      </span>
+                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">База знания</a>
+                      <small>Инструкция</small>
                     </div>
                   </div>
                   <div class="row row-bordered overflow-visible g-0">
                     <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-user icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">User App</a>
-                      <small>Manage Users</small>
+                      <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                        <i class="icon-base bx bx-user icon-26px text-heading"></i>
+                      </span>
+                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Пользователь</a>
+                      <small>Личная инфмация</small>
                     </div>
                     <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-check-shield icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Role Management</a>
-                      <small>Permission</small>
+                      <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                        <i class="icon-base bx bx-check-shield icon-26px text-heading"></i>
+                      </span>
+                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Доступы</a>
+                      <small>Личные доступы</small>
                     </div>
                   </div>
                   <div class="row row-bordered overflow-visible g-0">
                     <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-pie-chart-alt-2 icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Dashboard</a>
-                      <small>User Dashboard</small>
+                      <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                        <i class="icon-base bx bx-pie-chart-alt-2 icon-26px text-heading"></i>
+                      </span>
+                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Статисктиа</a>
+                      <small>Личная статистика</small>
                     </div>
-                    <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-cog icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Setting</a>
-                      <small>Account Settings</small>
-                    </div>
-                  </div>
-                  <div class="row row-bordered overflow-visible g-0">
-                    <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-help-circle icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">FAQs</a>
-                      <small>FAQs & Articles</small>
-                    </div>
-                    <div class="dropdown-shortcuts-item col">
-                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
-                  <i class="icon-base bx bx-window-open icon-26px text-heading"></i>
-                </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Modals</a>
-                      <small>Useful Popups</small>
-                    </div>
+
                   </div>
                 </div>
               </div>
@@ -892,19 +800,15 @@
             <!-- Notification -->
             <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2">
               <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-          <span class="position-relative">
-            <i class="icon-base bx bx-bell icon-md"></i>
-            <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
-          </span>
+                <span class="position-relative">
+                  <i class="icon-base bx bx-bell icon-md"></i>
+                  <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
+                </span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end p-0">
                 <li class="dropdown-menu-header border-bottom">
                   <div class="dropdown-header d-flex align-items-center py-3">
-                    <h6 class="mb-0 me-auto">Notification</h6>
-                    <div class="d-flex align-items-center h6 mb-0">
-                      <span class="badge bg-label-primary me-2">8 New</span>
-                      <a href="javascript:void(0)" class="dropdown-notifications-all p-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Mark all as read"><i class="icon-base bx bx-envelope-open text-heading"></i></a>
-                    </div>
+                    <h6 class="mb-0 me-auto">Уведомления</h6>
                   </div>
                 </li>
                 <li class="dropdown-notifications-list scrollable-container">
@@ -927,156 +831,13 @@
                         </div>
                       </div>
                     </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <span class="avatar-initial rounded-circle bg-label-danger">CF</span>
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">Charles Franklin</h6>
-                          <small class="mb-1 d-block text-body">Accepted your connection</small>
-                          <small class="text-body-secondary">12hr ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <img src="avatars/2.png" alt class="rounded-circle" />
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">New Message ✉️</h6>
-                          <small class="mb-1 d-block text-body">You have new message from Natalie</small>
-                          <small class="text-body-secondary">1h ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <span class="avatar-initial rounded-circle bg-label-success"><i class="icon-base bx bx-cart"></i></span>
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">Whoo! You have new order 🛒</h6>
-                          <small class="mb-1 d-block text-body">ACME Inc. made new order $1,154</small>
-                          <small class="text-body-secondary">1 day ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <img src="avatars/9.png" alt class="rounded-circle" />
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">Application has been approved 🚀</h6>
-                          <small class="mb-1 d-block text-body">Your ABC project application has been approved.</small>
-                          <small class="text-body-secondary">2 days ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <span class="avatar-initial rounded-circle bg-label-success"><i class="icon-base bx bx-pie-chart-alt"></i></span>
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">Monthly report is generated</h6>
-                          <small class="mb-1 d-block text-body">July monthly financial report is generated </small>
-                          <small class="text-body-secondary">3 days ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <img src="avatars/5.png" alt class="rounded-circle" />
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">Send connection request</h6>
-                          <small class="mb-1 d-block text-body">Peter sent you connection request</small>
-                          <small class="text-body-secondary">4 days ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <img src="avatars/6.png" alt class="rounded-circle" />
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">New message from Jane</h6>
-                          <small class="mb-1 d-block text-body">Your have new message from Jane</small>
-                          <small class="text-body-secondary">5 days ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
-                      <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                          <div class="avatar">
-                            <span class="avatar-initial rounded-circle bg-label-warning"><i class="icon-base bx bx-error"></i></span>
-                          </div>
-                        </div>
-                        <div class="flex-grow-1">
-                          <h6 class="small mb-0">CPU is running high</h6>
-                          <small class="mb-1 d-block text-body">CPU Utilization Percent is currently at 88.63%,</small>
-                          <small class="text-body-secondary">5 days ago</small>
-                        </div>
-                        <div class="flex-shrink-0 dropdown-notifications-actions">
-                          <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
-                          <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
-                        </div>
-                      </div>
-                    </li>
+
                   </ul>
                 </li>
                 <li class="border-top">
                   <div class="d-grid p-4">
                     <a class="btn btn-primary btn-sm d-flex" href="{% url 'notification:moderation_notification_list' %}">
-                      <small class="align-middle">View all notifications</small>
+                      <small class="align-middle">Просмотреть все уведомления</small>
                     </a>
                   </div>
                 </li>
@@ -1087,7 +848,7 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
               <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
                 <div class="avatar avatar-online">
-                  <img src="{% if user.avatar %}{{user.avatar.url}}{% endif %}"" alt class="rounded-circle" />
+                  <img src="{% if user.avatar %}{{user.avatar.url}}{% endif %}" alt class="rounded-circle" />
                 </div>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
@@ -1110,31 +871,15 @@
                   <div class="dropdown-divider my-1"></div>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-user icon-md me-3"></i><span>My Profile</span> </a>
+                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-user icon-md me-3"></i><span>Мой пройиль</span> </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Settings</span> </a>
+                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Настройки</span> </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}">
-              <span class="d-flex align-items-center align-middle">
-                <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i><span class="flex-grow-1 align-middle">Billing Plan</span>
-                <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
-              </span>
-                  </a>
+                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Безопастность</span> </a>
                 </li>
-                <li>
-                  <div class="dropdown-divider my-1"></div>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-dollar icon-md me-3"></i><span>Pricing</span> </a>
-                </li>
-                <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-help-circle icon-md me-3"></i><span>FAQ</span> </a>
-                </li>
-                <li>
-                  <div class="dropdown-divider my-1"></div>
-                </li>
+
                 <li>
                   <a class="dropdown-item" href="{% url 'useraccount:logout' %}" target="_blank"> <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Выйти</span> </a>
                 </li>
@@ -1148,7 +893,7 @@
       <!-- Content wrapper -->
       <div class="content-wrapper">
         <!-- Content -->
-        <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="content flex-grow-1 container-p-y">
           <div class="row g-6">
             {% block content %}
             {% endblock content %}
@@ -1156,27 +901,6 @@
           </div>
         </div>
         <!-- / Content -->
-        <!-- Footer -->
-        <footer class="content-footer footer bg-footer-theme">
-          <div class="container-xxl">
-            <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
-              <div class="mb-2 mb-md-0">
-                ©
-                <script>
-                  document.write(new Date().getFullYear());
-                </script>
-
-              </div>
-              <div class="d-none d-lg-inline-block">
-                <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-                <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-6">Documentation</a>
-                <a href="https://themeselection.com/support/" target="_blank" class="footer-link d-none d-sm-inline-block">Support</a>
-              </div>
-            </div>
-          </div>
-        </footer>
-        <!-- / Footer -->
         <div class="content-backdrop fade"></div>
       </div>
       <!-- Content wrapper -->
@@ -1188,7 +912,6 @@
   <!-- Drag Target Area To SlideIn Menu On Small Screens -->
   <div class="drag-target"></div>
 </div>
-
 <!-- / Layout wrapper -->
 {% block demo %}{% endblock demo %}
 

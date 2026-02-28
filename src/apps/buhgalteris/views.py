@@ -4,7 +4,7 @@ from django.views import View
 
 
 class SettlementsView(CustomHtmxMixin, View):
-    template_name = 'accounting/settlements.html'
+    template_name = 'moderation/buhgalteris/settlements.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -12,7 +12,7 @@ class SettlementsView(CustomHtmxMixin, View):
 
 
 class DailyCalculationView(CustomHtmxMixin, View):
-    template_name = 'accounting/daily_calculation.html'
+    template_name = 'moderation/buhgalteris/daily_calculation.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -20,7 +20,7 @@ class DailyCalculationView(CustomHtmxMixin, View):
 
 
 class PeriodCalculationView(CustomHtmxMixin, View):
-    template_name = 'accounting/period_calculation.html'
+    template_name = 'moderation/buhgalteris/period_calculation.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -28,7 +28,7 @@ class PeriodCalculationView(CustomHtmxMixin, View):
 
 
 class CalculationRulesView(CustomHtmxMixin, View):
-    template_name = 'accounting/calculation_rules.html'
+    template_name = 'moderation/buhgalteris/calculation_rules.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -36,7 +36,7 @@ class CalculationRulesView(CustomHtmxMixin, View):
 
 
 class CalculationCriteriaView(CustomHtmxMixin, View):
-    template_name = 'accounting/calculation_criteria.html'
+    template_name = 'moderation/buhgalteris/calculation_criteria.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -44,7 +44,7 @@ class CalculationCriteriaView(CustomHtmxMixin, View):
 
 
 class CalculationSchemesView(CustomHtmxMixin, View):
-    template_name = 'accounting/calculation_schemes.html'
+    template_name = 'moderation/buhgalteris/calculation_schemes.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
@@ -52,7 +52,7 @@ class CalculationSchemesView(CustomHtmxMixin, View):
 
 
 class BonusesAndFinesView(CustomHtmxMixin, View):
-    template_name = 'accounting/bonuses_and_fines.html'
+    template_name = 'moderation/buhgalteris/bonuses_and_fines.html'
 
     def get(self, request, *args, **kwargs):
         context = {}

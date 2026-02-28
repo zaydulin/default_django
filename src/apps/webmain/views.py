@@ -12,6 +12,8 @@ from webmain.forms import SubscriptionForm
 from webmain.models import SettingsGlobale, Seo
 from django.http import Http404
 import logging
+from apps.useraccount.views import CustomHtmxMixin
+from django.views import View
 
 
 logger = logging.getLogger(__name__)
@@ -32,4 +34,46 @@ def subscribe(request):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-"""Поиск"""
+class SettingsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/site/settings.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class SettingsTemplatesModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/site/settings_templates.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class SettingsSmtpModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/site/settings_smtp.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class PagesModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/site/pages.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
