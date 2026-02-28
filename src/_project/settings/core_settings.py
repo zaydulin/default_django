@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # app (Приложения)
     'apps.balance.apps.BalanceConfig',
     'apps.blogs.apps.BlogsConfig',
+    'apps.bookings.apps.BookingsConfig',
     'apps.bookmark.apps.BookmarkConfig',
     'apps.cases.apps.CasesConfig',
     'apps.company.apps.CompanyConfig',
