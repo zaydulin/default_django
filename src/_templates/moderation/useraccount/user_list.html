@@ -8,25 +8,704 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
+  <!-- Navbar -->
+
+<nav class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
+
+
+
+
+
+  <div class="layout-menu-toggle navbar-nav align-items-xl-center me-4 me-xl-0   d-xl-none ">
+    <a class="nav-item nav-link px-0 me-xl-6" href="javascript:void(0)">
+      <i class="icon-base bx bx-menu icon-md"></i>
+    </a>
+  </div>
+
+
+<div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
+
+    <!-- Search / Поиск -->
+    <div class="navbar-nav align-items-center">
+      <div class="nav-item navbar-search-wrapper mb-0">
+        <a class="nav-item nav-link search-toggler px-0" href="javascript:void(0);">
+          <span class="d-inline-block text-body-secondary fw-normal" id="autocomplete"></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- /Search -->
+
+
+
+
+
+  <ul class="navbar-nav flex-row align-items-center ms-md-auto">
+
+
+
+      <!-- Language / Язык -->
+      <li class="nav-item dropdown-language dropdown me-2 me-xl-0">
+        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+          <i class="icon-base bx bx-globe icon-md"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-language="en" data-text-direction="ltr">
+              <span>Английский</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-language="fr" data-text-direction="ltr">
+              <span>Французский</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-language="ar" data-text-direction="rtl">
+              <span>Арабский</span>
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="javascript:void(0);" data-language="de" data-text-direction="ltr">
+              <span>Немецкий</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <!--/ Language -->
+
+
+        <!-- Style Switcher / Переключатель темы -->
+        <li class="nav-item dropdown me-2 me-xl-0">
+          <a class="nav-link dropdown-toggle hide-arrow" id="nav-theme" href="javascript:void(0);" data-bs-toggle="dropdown">
+            <i class="icon-base bx bx-sun icon-md theme-icon-active"></i>
+            <span class="d-none ms-2" id="nav-theme-text">Сменить тему</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-theme-text">
+            <li>
+              <button type="button" class="dropdown-item align-items-center active" data-bs-theme-value="light" aria-pressed="false">
+                <span><i class="icon-base bx bx-sun icon-md me-3" data-icon="sun"></i>Светлая</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="dark" aria-pressed="true">
+                <span><i class="icon-base bx bx-moon icon-md me-3" data-icon="moon"></i>Тёмная</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="dropdown-item align-items-center" data-bs-theme-value="system" aria-pressed="false">
+                <span><i class="icon-base bx bx-desktop icon-md me-3" data-icon="desktop"></i>Системная</span>
+              </button>
+            </li>
+          </ul>
+        </li>
+        <!-- / Style Switcher-->
+
+
+      <!-- Quick links / Быстрые ссылки  -->
+      <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+          <i class="icon-base bx bx-grid-alt icon-md"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end p-0">
+          <div class="dropdown-menu-header border-bottom">
+            <div class="dropdown-header d-flex align-items-center py-3">
+              <h6 class="mb-0 me-auto">Быстрые ссылки</h6>
+              <a href="javascript:void(0)" class="dropdown-shortcuts-add py-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Добавить ярлык"><i class="icon-base bx bx-plus-circle text-heading"></i></a>
+            </div>
+          </div>
+          <div class="dropdown-shortcuts-list scrollable-container">
+            <div class="row row-bordered overflow-visible g-0">
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-calendar icon-26px text-heading"></i>
+                </span>
+                <a href="app-calendar.html" class="stretched-link">Календарь</a>
+                <small>События</small>
+              </div>
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-food-menu icon-26px text-heading"></i>
+                </span>
+                <a href="app-invoice-list.html" class="stretched-link">Счета</a>
+                <small>Управление счетами</small>
+              </div>
+            </div>
+            <div class="row row-bordered overflow-visible g-0">
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-user icon-26px text-heading"></i>
+                </span>
+                <a href="app-user-list.html" class="stretched-link">Пользователи</a>
+                <small>Управление пользователями</small>
+              </div>
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-check-shield icon-26px text-heading"></i>
+                </span>
+                <a href="app-access-roles.html" class="stretched-link">Роли</a>
+                <small>Права доступа</small>
+              </div>
+            </div>
+            <div class="row row-bordered overflow-visible g-0">
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-pie-chart-alt-2 icon-26px text-heading"></i>
+                </span>
+                <a href="index.html" class="stretched-link">Дашборд</a>
+                <small>Панель пользователя</small>
+              </div>
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-cog icon-26px text-heading"></i>
+                </span>
+                <a href="pages-account-settings-account.html" class="stretched-link">Настройки</a>
+                <small>Настройки аккаунта</small>
+              </div>
+            </div>
+            <div class="row row-bordered overflow-visible g-0">
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-help-circle icon-26px text-heading"></i>
+                </span>
+                <a href="pages-faq.html" class="stretched-link">ЧаВо</a>
+                <small>Вопросы и ответы</small>
+              </div>
+              <div class="dropdown-shortcuts-item col">
+                <span class="dropdown-shortcuts-icon rounded-circle mb-3">
+                  <i class="icon-base bx bx-window-open icon-26px text-heading"></i>
+                </span>
+                <a href="modal-examples.html" class="stretched-link">Модалки</a>
+                <small>Полезные окна</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <!-- Quick links -->
+
+      <!-- Notification / Уведомления -->
+      <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-2">
+        <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+          <span class="position-relative">
+            <i class="icon-base bx bx-bell icon-md"></i>
+            <span class="badge rounded-pill bg-danger badge-dot badge-notifications border"></span>
+          </span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end p-0">
+          <li class="dropdown-menu-header border-bottom">
+            <div class="dropdown-header d-flex align-items-center py-3">
+              <h6 class="mb-0 me-auto">Уведомления</h6>
+              <div class="d-flex align-items-center h6 mb-0">
+                <span class="badge bg-label-primary me-2">8 новых</span>
+                <a href="javascript:void(0)" class="dropdown-notifications-all p-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Отметить все как прочитанные"><i class="icon-base bx bx-envelope-open text-heading"></i></a>
+              </div>
+            </div>
+          </li>
+          <li class="dropdown-notifications-list scrollable-container">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="avatars/1.png" alt class="rounded-circle" />
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Поздравляем, Летти! 🎉</h6>
+                    <small class="mb-1 d-block text-body">Вы получили золотой значок лучшего продавца месяца</small>
+                    <small class="text-body-secondary">1ч назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <span class="avatar-initial rounded-circle bg-label-danger">КФ</span>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Чарльз Франклин</h6>
+                    <small class="mb-1 d-block text-body">Принял ваше приглашение</small>
+                    <small class="text-body-secondary">12ч назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="avatars/2.png" alt class="rounded-circle" />
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Новое сообщение ✉️</h6>
+                    <small class="mb-1 d-block text-body">У вас новое сообщение от Натали</small>
+                    <small class="text-body-secondary">1ч назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <span class="avatar-initial rounded-circle bg-label-success"><i class="icon-base bx bx-cart"></i></span>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Ура! У вас новый заказ 🛒</h6>
+                    <small class="mb-1 d-block text-body">ACME Inc. сделала новый заказ на $1,154</small>
+                    <small class="text-body-secondary">1 день назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="avatars/9.png" alt class="rounded-circle" />
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Заявка одобрена 🚀</h6>
+                    <small class="mb-1 d-block text-body">Ваша заявка на проект ABC одобрена.</small>
+                    <small class="text-body-secondary">2 дня назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <span class="avatar-initial rounded-circle bg-label-success"><i class="icon-base bx bx-pie-chart-alt"></i></span>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Сформирован месячный отчёт</h6>
+                    <small class="mb-1 d-block text-body">Финансовый отчёт за июль готов</small>
+                    <small class="text-body-secondary">3 дня назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="avatars/5.png" alt class="rounded-circle" />
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Запрос на добавление в контакты</h6>
+                    <small class="mb-1 d-block text-body">Питер хочет добавить вас в контакты</small>
+                    <small class="text-body-secondary">4 дня назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <img src="avatars/6.png" alt class="rounded-circle" />
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Новое сообщение от Джейн</h6>
+                    <small class="mb-1 d-block text-body">У вас новое сообщение от Джейн</small>
+                    <small class="text-body-secondary">5 дней назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+              <li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read">
+                <div class="d-flex">
+                  <div class="flex-shrink-0 me-3">
+                    <div class="avatar">
+                      <span class="avatar-initial rounded-circle bg-label-warning"><i class="icon-base bx bx-error"></i></span>
+                    </div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="small mb-0">Высокая нагрузка CPU</h6>
+                    <small class="mb-1 d-block text-body">Загрузка процессора достигла 88.63%</small>
+                    <small class="text-body-secondary">5 дней назад</small>
+                  </div>
+                  <div class="flex-shrink-0 dropdown-notifications-actions">
+                    <a href="javascript:void(0)" class="dropdown-notifications-read"><span class="badge badge-dot"></span></a>
+                    <a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="icon-base bx bx-x"></span></a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <li class="border-top">
+            <div class="d-grid p-4">
+              <a class="btn btn-primary btn-sm d-flex" href="javascript:void(0);">
+                <small class="align-middle">Посмотреть все уведомления</small>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <!--/ Notification -->
+      <!-- User / Пользователь -->
+      <li class="nav-item navbar-dropdown dropdown-user dropdown">
+        <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+          <div class="avatar avatar-online">
+            <img src="avatars/1.png" alt class="rounded-circle" />
+          </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <a class="dropdown-item" href="pages-account-settings-account.html">
+              <div class="d-flex">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar avatar-online">
+                    <img src="avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0">Иван Петров</h6>
+                  <small class="text-body-secondary">Администратор</small>
+                </div>
+              </div>
+            </a>
+          </li>
+          <li>
+            <div class="dropdown-divider my-1"></div>
+          </li>
+          <li>
+            <a class="dropdown-item" href="pages-profile-user.html"> <i class="icon-base bx bx-user icon-md me-3"></i><span>Мой профиль</span> </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="pages-account-settings-account.html"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Настройки</span> </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="pages-account-settings-billing.html">
+              <span class="d-flex align-items-center align-middle">
+                <i class="flex-shrink-0 icon-base bx bx-credit-card icon-md me-3"></i><span class="flex-grow-1 align-middle">Тарифный план</span>
+                <span class="flex-shrink-0 badge rounded-pill bg-danger">4</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <div class="dropdown-divider my-1"></div>
+          </li>
+          <li>
+            <a class="dropdown-item" href="pages-pricing.html"> <i class="icon-base bx bx-dollar icon-md me-3"></i><span>Цены</span> </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="pages-faq.html"> <i class="icon-base bx bx-help-circle icon-md me-3"></i><span>ЧаВо</span> </a>
+          </li>
+          <li>
+            <div class="dropdown-divider my-1"></div>
+          </li>
+          <li>
+            <a class="dropdown-item" href="auth-login-cover.html" target="_blank"> <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Выйти</span> </a>
+          </li>
+        </ul>
+      </li>
+      <!--/ User -->
+
+  </ul>
+</div>
+
+</nav>
+
+<!-- / Navbar -->
+
+
+      <!-- Content wrapper -->
+      <div class="content-wrapper">
+        <!-- Content -->
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+  <div class="row g-6 mb-6">
+    <div class="col-sm-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Клиенты</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">21,459</h4>
+                <p class="text-success mb-0"></p>
+              </div>
+              <small class="mb-0">Всего клиентов</small>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-primary">
+                <i class="icon-base bx bx-group icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Неактивные</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">4,567</h4>
+                <p class="text-success mb-0">(+40%)</p>
+              </div>
+              <small class="mb-0">Аналитика за неделю</small>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-danger">
+                <i class="icon-base bx bx-user-plus icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Активные</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">19,860</h4>
+                <p class="text-danger mb-0">(-14%)</p>
+              </div>
+              <small class="mb-0">Аналитика за неделю</small>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-success">
+                <i class="icon-base bx bx-user-check icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">В ожидании</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">237</h4>
+                <p class="text-success mb-0">(+42%)</p>
+              </div>
+              <small class="mb-0">Аналитика за неделю</small>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-warning">
+                <i class="icon-base bx bx-user-voice icon-lg"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Users List Table / Таблица списка пользователей -->
+           <!-- Вкладки пользователя -->
+                                <div class="nav-align-top">
+                                    <ul class="nav nav-pills flex-column flex-md-row mb-6 flex-wrap row-gap-2">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="javascript:void(0);"><i class="icon-base bx bx-user icon-sm me-1_5"></i>Рассылка</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="app-user-view-security.html"><i class="icon-base bx bx-lock-alt icon-sm me-1_5"></i>Импорт из Excel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!--/ Вкладки пользователя -->
+
+  <div class="card">
+    <div class="card-header border-bottom">
+      <h5 class="card-title mb-0">Фильтры поиска</h5>
+      <div class="d-flex justify-content-between align-items-center row pt-4 gap-md-0 g-6">
+        <div class="col-md-4 user_role"></div>
+        <div class="col-md-4 user_plan"></div>
+        <div class="col-md-4 user_status"></div>
+      </div>
+    </div>
+   <div class="d-flex flex-wrap gap-2 ms-8 mt-2 mb-2">
+  <!-- Dropdown По визитам -->
+  <div class="dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      По визитам
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">Наличие записей</a></li>
+      <li><a class="dropdown-item" href="#">Статус записей</a></li>
+      <li><a class="dropdown-item" href="#">Количество записей</a></li>
+      <li><a class="dropdown-item" href="#">Период</a></li>
+      <li><a class="dropdown-item" href="#">Сотрудник</a></li>
+      <li><a class="dropdown-item" href="#">Услуги</a></li>
+      <li><a class="dropdown-item" href="#">Сумма оказанных услуг</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">Очистить</a></li>
+    </ul>
+  </div>
+
+  <!-- Dropdown По клиентам -->
+  <div class="dropdown">
+    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      По клиентам
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" href="#">Пол</a></li>
+      <li><a class="dropdown-item" href="#">Категории клиента</a></li>
+      <li><a class="dropdown-item" href="#">Продано</a></li>
+      <li><a class="dropdown-item" href="#">Важность клиента</a></li>
+      <li><a class="dropdown-item" href="#">День рождения</a></li>
+      <li><a class="dropdown-item" href="#">Возраст</a></li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item" href="#">Очистить</a></li>
+    </ul>
+  </div>
+     <button class="btn btn-primary btn-section-block">Применить</button>
+</div>
+    <div class="card-datatable">
+      <table class="datatables-users table border-top">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Имя</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Продано</th>
+            <th>Визиты</th>
+            <th>Скидка</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <!-- Offcanvas to add new user / Выдвижная панель для добавления пользователя -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" aria-labelledby="offcanvasAddUserLabel">
+      <div class="offcanvas-header border-bottom">
+        <h5 id="offcanvasAddUserLabel" class="offcanvas-title">Добавить пользователя</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+      </div>
+
+      <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100">
+        <form class="add-new-user pt-0" id="addNewUserForm" onsubmit="return false">
+          <div class="mb-6 form-control-validation">
+            <label class="form-label" for="add-user-fullname">Имя</label>
+            <input type="text" class="form-control" id="add-user-fullname" placeholder="Иван Петров" name="userFullname" aria-label="Иван Петров" />
+          </div>
+           <div class="mb-6">
+            <label class="form-label" for="add-user-contact">Телефон</label>
+            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+7 (999) 123-45-67" aria-label="ivan.petrov@example.com" name="userContact" />
+          </div>
+           <div class="mb-6">
+            <label class="form-label" for="add-user-contact">Дополнительный телефон</label>
+            <input type="text" id="add-user-contact" class="form-control phone-mask" placeholder="+7 (999) 123-45-67" aria-label="ivan.petrov@example.com" name="userContact" />
+          </div>
+          <div class="mb-6 form-control-validation">
+            <label class="form-label" for="add-user-email">E-mail</label>
+            <input type="text" id="add-user-email" class="form-control" placeholder="ivan.petrov@example.com" aria-label="ivan.petrov@example.com" name="userEmail" />
+          </div>
+          <div class="mb-6">
+            <label class="form-label" for="country">Категория</label>
+            <select id="country" class="select2 form-select">
+              <option value="">Выберите категорию</option>
+              <option value="United Arab Emirates">VIP</option>
+              <option value="United Kingdom">Лояльный</option>
+              <option value="United States">Постоянный</option>
+            </select>
+          </div>
+           <div class="mb-6">
+            <label class="form-label" for="user-role">Пол</label>
+            <select id="user-role" class="form-select">
+              <option value="subscriber">Мужской</option>
+              <option value="editor">Женский</option>
+            </select>
+          </div>
+           <div class="mb-6">
+            <label class="form-label" for="user-role">Важность</label>
+            <select id="user-role" class="form-select">
+              <option value="subscriber">без класса важности</option>
+              <option value="editor">Бронза</option>
+              <option value="editor">Серебро</option>
+              <option value="editor">Золото</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="form-label" for="add-user-company">Скидка (%)</label>
+            <input type="text" id="add-user-company" class="form-control" aria-label="jdoe1" name="companyName" />
+          </div>
+ <div class="mb-6">
+            <label class="form-label" for="add-user-company">Комментарий</label>
+            <input type="text" id="add-user-company" class="form-control" aria-label="jdoe1" name="companyName" />
+          </div>
+<div class="mb-6">
+            <label class="form-label" for="add-user-company">Продано (₽)</label>
+            <input type="text" id="add-user-company" class="form-control" aria-label="jdoe1" name="companyName" />
+          </div>
+          <div class="mb-6">
+            <label class="form-label" for="add-user-company">Оплачено (₽)</label>
+            <input type="text" id="add-user-company" class="form-control" aria-label="jdoe1" name="companyName" />
+          </div>
+          <div class="mb-6">
+            <label for="html5-datetime-local-input" class="col-md-2 col-form-label">Дата рождения</label>
+            <div class="col-md-12">
+              <input class="form-control" type="datetime-local" value="2021-06-18T12" id="html5-datetime-local-input">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary me-3 data-submit">Отправить</button>
+          <button type="reset" class="btn btn-label-danger" data-bs-dismiss="offcanvas">Отмена</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+        </div>
+        <!-- / Content -->
+      </div>
 {% endblock content %}
+
+{% block extra_js_bottom %}
+<script src="{% static 'moderation/libs/datatables-bs5/datatables-bootstrap5.js' %}"></script>
+<script src="{% static 'moderation/libs/cleave-zen/cleave-zen.js' %}"></script>
+<script src="{% static 'moderation/libs/@form-validation/bootstrap5.js' %}"></script>
+<script src="{% static 'moderation/libs/@form-validation/auto-focus.js' %}"></script>
+<script src="{% static 'moderation/libs/@form-validation/popular.js' %}"></script>
+<script src="{% static 'moderation/libs/moment/moment.js' %}"></script>
+<script src="{% static 'moderation/libs/select2/select2.js' %}"></script>
+<script src="{% static 'moderation/app-user-list.js' %}"></script>
+<script src="{% static 'moderation/libs/apex-charts/apexcharts.js' %}"></script>
+{% endblock extra_js_bottom %}
 {% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
-</div>
-<!-- Offcanvas справа на всю ширину -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-    </div>
-    <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
-    </div>
-    <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
-    </div>
-</div>
 {% endblock demo %}
