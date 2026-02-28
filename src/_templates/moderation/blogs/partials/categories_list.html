@@ -1,10 +1,10 @@
-<!-- moderation/categoriess/partials/categories_list.html -->
+<!-- moderation/blogs/partials/blog_list.html -->
 {% if is_pagination_request %}
 <!-- Только элементы блога для пагинации -->
 {% for categori in categories %}
-<div class="col" id="categories-{{ categories.id }}">
+<div class="col" id="blog-{{ categori.id }}">
     <div class="card h-100 shadow-sm">
-        {% if categories.image %}
+        {% if categori.image %}
         <img src="{{ categori.image.url }}" class="card-img-top" alt="{{ categori.name }}">
         {% endif %}
         <div class="card-body">
@@ -27,16 +27,16 @@
 {% endfor %}
 
 <!-- Индикатор для пагинации -->
-{% if categoriess.has_next %}
-<div id="pagination-next" hx-get="?page={{ categories.next_page_number }}" hx-trigger="revealed" hx-target="#categories-items" hx-swap="beforeend" hx-indicator="#loading-indicator" hx-select=".col" hx-headers='{"X-Pagination-Request": "true"}'></div>
+{% if blogs.has_next %}
+<div id="pagination-next" hx-get="?page={{ categories.next_page_number }}" hx-trigger="revealed" hx-target="#blog-items" hx-swap="beforeend" hx-indicator="#loading-indicator" hx-select=".col" hx-headers='{"X-Pagination-Request": "true"}'></div>
 {% endif %}
 
 {% else %}
 <!-- Полный список для первоначальной загрузки -->
 {% for categori in categories %}
-<div class="col" id="categories-{{ categori.id }}">
+<div class="col" id="blog-{{ categori.id }}">
     <div class="card h-100 shadow-sm">
-        {% if categories.image %}
+        {% if categori.image %}
         <img src="{{ categori.image.url }}" class="card-img-top" alt="{{ categori.name }}">
         {% endif %}
         <div class="card-body">
