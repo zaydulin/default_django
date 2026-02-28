@@ -153,8 +153,6 @@
             </li>
           </ul>
         </li>
-
-
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_chats_list' %}active{% endif %}">
           <a href="{% url 'connects:moderation_chats_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-chat"></i>
@@ -358,15 +356,14 @@
           </ul>
         </li>
         <!-- Academy menu end -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_appeals_list' %}active{% endif %}">
+          <a href="{% url 'moderation:moderation_appeals_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-support"></i>
             <div>Обращение</div>
           </a>
         </li>
-
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="{% url 'cases:moderation_cases_list' %}" class="menu-link">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_tickets_list' %}active{% endif %}">
+          <a href="{% url 'ticket:moderation_tickets_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-task"></i>
             <div>Тикеты</div>
           </a>
@@ -376,8 +373,8 @@
           <span class="menu-header-text">Интеграции</span>
         </li>
         <!-- Cards -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0);" class="menu-link ">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_social_list' %}active{% endif %}">
+          <a href="{% url 'integrations:moderation_social_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Соц-сети</div>
           </a>
@@ -385,8 +382,8 @@
         </li>
 
         <!-- User interface -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0)" class="menu-link ">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %}">
+          <a href="{% url 'integrations:moderation_telephony_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-phone"></i>
             <div>Телефония</div>
           </a>
@@ -394,22 +391,22 @@
         </li>
 
         <!-- Extended components -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0)" class="menu-link ">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %}">
+          <a href="{% url 'integrations:moderation_payments_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-credit-card"></i>
             <div >Плат-системы</div>
           </a>
 
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0);" class="menu-link ">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_dopservice_list' %}active{% endif %}">
+          <a href="{% url 'integrations:moderation_dopservice_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Доп. Сервисы</div>
           </a>
 
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_settings_list' %}active{% endif %}">
-          <a href="javascript:void(0);" class="menu-link ">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %}">
+          <a href="{% url 'integrations:moderation_neiro_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Нейронки</div>
           </a>

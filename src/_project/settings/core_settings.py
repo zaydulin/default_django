@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'apps.crm.apps.CrmConfig',
     'apps.gallerys.apps.GallerysConfig',
     'apps.hr.apps.HrConfig',
+    'apps.integrations.apps.IntegrationsConfig',
     'apps.jobs.apps.JobsConfig',
     'apps.mail.apps.MailConfig',
     'apps.moderation.apps.ModerationConfig',
