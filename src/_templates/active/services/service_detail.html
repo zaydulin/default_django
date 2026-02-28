@@ -1,0 +1,161 @@
+{% extends 'active/base.html' %}
+{% load static generals_tag pages_tag %}
+{% get_contacts_first as contacts %}
+
+{% block title %}{{ seo_title }}{% endblock title %}
+{% block description %}{{ seo_description }}{% endblock description %}
+{% block propertytitle %}{% if seo_previev %}{{ seo_previev.url }} {% endif %} {% endblock propertytitle %}
+{% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
+{% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
+{% block head %}{% endblock head %}
+{% block content %}
+
+<!--Page Header Start-->
+<section class="page-header">
+  <div class="page-header__bg" style="background-image: url(assets/images/backgrounds/page-header-bg.jpg);">
+  </div>
+  <div class="container">
+    <div class="page-header__inner">
+      <h3>{{ service.name }}</h3>
+      <div class="thm-breadcrumb__inner">
+        <ul class="thm-breadcrumb list-unstyled">
+          <li><a href="{% url 'webmain:home' %}">Главная</a></li>
+          <li><span class="icon-arrow-angle-pointing-to-right"></span></li>
+          <li><a href="{% url 'service:list' %}">Услуги</a></li>
+          <li><span class="icon-arrow-angle-pointing-to-right"></span></li>
+          <li>{{ service.name }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Page Header End-->
+
+<!--Service Details Start-->
+<section class="service-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-4 col-lg-5">
+        <div class="service-details__sidebar">
+          <div class="service-details__services-box">
+            <h3 class="service-details__services-title">Наши услуги</h3>
+            <ul class="service-details__services-list list-unstyled">
+               {% for category in service.category.all %}
+                 <li>
+                   <a href="web-development.html">
+                      {{category.name}}
+                     <span class="icon-arrow-right"></span></a>
+
+                   </li>
+                  {% endfor %}
+
+            </ul>
+          </div>
+          <div class="service-details__get-started">
+            <h3 class="service-details__get-started-title">Начните проект</h3>
+            <p class="service-details__get-started-text">
+              Оставьте заявку — мы проконсультируем бесплатно и подготовим расчёт.
+            </p>
+            <ul class="service-details__get-started-points list-unstyled">
+              <li>
+                <div class="icon">
+                  <span class="icon-call"></span>
+                </div>
+                <p>
+                  <a href="tel:
+                            {% for contact in contacts %}
+                            {% if contact.page_type == 'phone_default' %}
+                          {{ contact.information_contact }}
+                            {% endif %}
+                            {% endfor %}
+                          ">
+
+
+                                                {% for contact in contacts %}
+                                                {% if contact.page_type == 'phone_default' %}
+                                                {{ contact.information_contact }}
+                                                {% endif %}
+                                                {% endfor %}
+
+                                            </a>
+                </p>
+              </li>
+              <li>
+                <div class="icon">
+                  <span class="icon-email"></span>
+                </div>
+                <p>
+                 {% for contact in contacts %}
+                                            {% if contact.page_type == 'email_default' %}
+                                            <a href="{{ contact.information_contact }}">{{ contact.information_contact }}</a>
+                                            {% endif %}
+                                            {% endfor %}
+                </p>
+              </li>
+              <li>
+                <div class="icon">
+                  <span class="icon-pin"></span>
+                </div>
+                <p>
+                  {% for contact in contacts %}
+    {% if contact.page_type == 'address_default' %}
+        {{ contact.information_contact }}
+    {% endif %}
+{% endfor %}
+
+                </p>
+              </li>
+            </ul>
+            <div class="service-details__get-started-btn-box">
+              <a href="{% url 'webmain:contacts' %}" class="thm-btn">
+                Связаться
+                <span class="fas fa-arrow-right"></span></a>
+            </div>
+          </div>
+          <div class="service-details__sidebar-download-box">
+            <h3 class="service-details__services-title">Скачать</h3>
+            <div class="service-details__sidebar-single-download">
+
+              <ul class="clearfix list-unstyled">
+                {% for file in service.files.all %}
+
+
+                <li>
+                  <div class="content-box">
+                    <div class="icon">
+                      <span class="far fa-file-pdf"></span>
+                    </div>
+                    <div class="text-box">
+                      <h5><a href="{{file.file.url}}">{{file.name}}</a></h5>
+                      <p><a href="{{file.file.url}}">Скачать</a></p>
+                    </div>
+                  </div>
+
+                  <div class="btn-box">
+                    <a href="ui-ux-design.html#"><span class="far fa-cloud-download"></span></a>
+                  </div>
+                </li>
+                {% endfor %}
+
+                <div class="btn-box">
+                  <a href="ui-ux-design.html#"><span class="far fa-cloud-download"></span></a>
+                </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-8 col-lg-7">
+        <div class="service-details__left">
+          <div class="service-details__img">
+            <img src="{{ service.cover.url }}" alt="Веб-дизайн и UI/UX">
+          </div>
+          {{ service.description|safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Service Details End-->
+{% endblock content %}

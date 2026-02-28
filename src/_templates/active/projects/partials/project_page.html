@@ -1,0 +1,22 @@
+<!-- projects/partials/project_page.html -->
+{% if request.headers.hx_request %}
+    <!-- Полная страница для HTMX запросов -->
+    <div id="project-list">
+        <div id="project-items" class="row row-cols-1 row-cols-md-2 g-4">
+            {% include "active/projects/partials/project_list.html" %}
+        </div>
+
+        <div id="pagination-container">
+            {% include "active/projects/partials/project_pagination.html" %}
+        </div>
+    </div>
+{% else %}
+    <!-- Только новые элементы для подгрузки -->
+    <div id="project-items" hx-swap-oob="beforeend">
+        {% include "active/projects/partials/project_list.html" %}
+    </div>
+
+    <div id="pagination-container" hx-swap-oob="true">
+        {% include "active/projects/partials/project_pagination.html" %}
+    </div>
+{% endif %}

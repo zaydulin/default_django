@@ -1,0 +1,134 @@
+{% extends 'active/base.html' %}
+{% load static generals_tag pages_tag %}
+{% get_contacts_first as contacts %}
+{% block title %}{{ seo_title }}{% endblock title %}
+{% block description %}{{ seo_description }}{% endblock description %}
+{% block propertytitle %}{% if seo_previev %}{{ seo_previev.url }} {% endif %} {% endblock propertytitle %}
+{% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
+{% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
+{% block head %}{% endblock head %}
+{% block content %}
+
+<!--Page Header Start-->
+<section class="page-header">
+  <div class="page-header__bg" style="background-image: url({% static 'site/assets/images/backgrounds/page-header-bg.jpg' %});">
+  </div>
+  <div class="container">
+    <div class="page-header__inner">
+      <h3>{{ project.name }}</h3>
+      <div class="thm-breadcrumb__inner">
+        <ul class="thm-breadcrumb list-unstyled">
+          <li><a href="{% url 'webmain:home' %}">Главная</a></li>
+          <li><span class="icon-arrow-angle-pointing-to-right"></span></li>
+          <li>{{ project.name }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Page Header End-->
+<!--Project Details Start-->
+<section class="project-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-8 col-lg-7">
+        <div class="project-details__left">
+          <div class="project-details__img">
+            <img src="{{ project.cover.url }}" alt="">
+          </div>
+          {{ project.description|safe }}
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-5">
+        <div class="project-details__sidebar">
+          <div class="project-details__information">
+            <h3 class="project-details__information-title">Project Information</h3>
+            <ul class="project-details__information-list list-unstyled">
+              <li>
+                <h4>Category :</h4>
+                <p>
+                  {% for category in project.category.all %}
+                  {{category.name}}<br>
+                  {% endfor %}
+                </p>
+              </li>
+              <li>
+                <h4>Дата создания :</h4>
+                <p> {{ project.data }}</p>
+              </li>
+              <li>
+                <h4>Страна :</h4>
+                <p>{{ project.country }}</p>
+              </li>
+            </ul>
+          </div>
+          <div class="service-details__get-started">
+            <h3 class="service-details__get-started-title">Начните проект</h3>
+            <p class="service-details__get-started-text">
+              Оставьте заявку — мы проконсультируем бесплатно и подготовим расчёт.
+            </p>
+            <ul class="service-details__get-started-points list-unstyled">
+               <li>
+                <div class="icon">
+                  <span class="icon-call"></span>
+                </div>
+                <p>
+                  <a href="tel:
+                            {% for contact in contacts %}
+                            {% if contact.page_type == 'phone_default' %}
+                          {{ contact.information_contact }}
+                            {% endif %}
+                            {% endfor %}
+                          ">
+
+
+                                                {% for contact in contacts %}
+                                                {% if contact.page_type == 'phone_default' %}
+                                                {{ contact.information_contact }}
+                                                {% endif %}
+                                                {% endfor %}
+
+                                            </a>
+                </p>
+              </li>
+              <li>
+                <div class="icon">
+                  <span class="icon-email"></span>
+                </div>
+                <p>
+                 {% for contact in contacts %}
+                                            {% if contact.page_type == 'email_default' %}
+                                            <a href="{{ contact.information_contact }}">{{ contact.information_contact }}</a>
+                                            {% endif %}
+                                            {% endfor %}
+                </p>
+              </li>
+              <li>
+                <div class="icon">
+                  <span class="icon-pin"></span>
+                </div>
+                <p>
+                  {% for contact in contacts %}
+    {% if contact.page_type == 'address_default' %}
+        {{ contact.information_contact }}
+    {% endif %}
+{% endfor %}
+
+                </p>
+              </li>
+            </ul>
+            <div class="service-details__get-started-btn-box">
+              <a href="{% url 'webmain:contacts' %}" class="thm-btn">
+                Связаться
+                <span class="fas fa-arrow-right"></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+{% endblock content %}

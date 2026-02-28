@@ -1,0 +1,56 @@
+{% extends 'active/base.html' %}
+{% load static %}
+
+{% block title %}{{ seo_title }}{% endblock title %}
+{% block description %}{{ seo_description }}{% endblock description %}
+{% block propertytitle %}{% if seo_previev %}{{ seo_previev.url }} {% endif %} {% endblock propertytitle %}
+{% block propertydescription %}{{ seo_propertytitle }}{% endblock propertydescription %}
+{% block propertyimage %}{{ seo_propertydescription }}{% endblock propertyimage %}
+{% block head %}
+<style>
+  .services-two__icon {
+    bottom: 26px!important;
+  }
+</style>
+{% endblock head %}
+
+{% block content %}
+
+<!--Page Header Start-->
+<section class="page-header">
+  <div class="page-header__bg" style="background-image: url({% static 'site/assets/images/backgrounds/page-header-bg.jpg' %});">
+  </div>
+  <div class="container">
+    <div class="page-header__inner">
+      <h3>Услуги</h3>
+      <div class="thm-breadcrumb__inner">
+        <ul class="thm-breadcrumb list-unstyled">
+          <li><a href="{#% url 'webmain:home' %#}">Главная</a></li>
+          <li><span class="icon-arrow-angle-pointing-to-right"></span></li>
+          <li>Услуги</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Page Header End-->
+
+<!--Services Page Start -->
+<section class="services-page">
+  <div class="container" id="service-list">
+    <div class="row" id="service-items">
+      {% include "active/services/partials/service_list.html" %}
+    </div>
+
+    <div id="pagination-container">
+      {% include "active/services/partials/service_pagination.html" %}
+    </div>
+    <!-- индикатор -->
+    <div id="loading-indicator" class="text-center " style=display:none;">
+      <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+  </div>
+</section>
+<!--Services Page End -->
+{% endblock %}

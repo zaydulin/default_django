@@ -1,0 +1,23 @@
+{% for project in projects %}
+<div class="col-xl-3 col-lg-6 col-md-6 wow fadeInLeft" data-wow-delay="100ms">
+    <div class="project-two__single">
+        <div class="project-two__img-box">
+            <div class="project-two__img">
+                <img src="{% if project.image %}{{ project.image.url }}{% endif %}" alt="Корпоративный сайт для СтройИнвест">
+                <div class="project-two__arrow">
+                    <a href="{% url 'projects:project_detail' project.slug %}" class="img-popup"><span
+                            class="fas fa-arrow-right"></span></a>
+                </div>
+            </div>
+            <div class="project-two__content">
+                <h3 class="project-two__title"><a href="{% url 'projects:project_detail' project.slug %}">{{ project.name }}</a>
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<!-- Обновляем пагинацию через hx-swap-oob -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% include "active/projects/partials/project_pagination.html" %}
+</div>

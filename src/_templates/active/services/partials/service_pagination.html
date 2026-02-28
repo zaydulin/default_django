@@ -1,0 +1,21 @@
+{% if page_obj.has_next %}
+<div class="d-flex justify-content-center mt-4">
+
+    <div class="btn-wrap wow fadeInUp" >
+        <a class="tj-primary-btn"
+   hx-get="{% url 'services:service_pagination' page_obj.next_page_number %}"
+   hx-target="#service-items"
+   hx-swap="beforeend"
+   hx-indicator="#loading-indicator">
+
+            <span class="btn-text"><span>Загрузить ещё</span></span>
+            <span class="btn-icon"><i class="tji-arrow-right-long"></i></span>
+        </a>
+    </div>
+</div>
+
+{% else %}
+<div class="d-flex justify-content-center mt-4">
+    <span class="text-muted">Все услуги загружены</span>
+</div>
+{% endif %}

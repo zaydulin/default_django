@@ -1,0 +1,32 @@
+{% for service in services %}
+<!--Services Two Single Start-->
+<div class="col-xl-4 col-lg-6 col-md-6 wow fadeInLeft" data-wow-delay="100ms">
+    <div class="services-two__single">
+        <div class="services-two__img-box">
+            <div class="services-two__img">
+                <img src="{% if service.image %}{{ service.image.url }}{% endif %}" alt="Разработка сайтов">
+            </div>
+            <div class="services-two__icon">
+                <span class="{{ service.icon}}"></span>
+            </div>
+        </div>
+        <div class="services-two__content">
+            <h3 class="services-two__title"><a href="{% url 'services:service_detail' service.slug %}">{{ service.name }}</a>
+            </h3>
+            <p class="services-two__text">
+                {{ service.anonce}}
+            </p>
+            <div class="services-two__plus">
+                <a href="{% url 'services:service_detail' service.slug %}"><span class="fas fa-plus"></span></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Services Two Single End-->
+{% endfor %}
+
+
+<!-- Обновляем пагинацию через hx-swap-oob -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% include "active/services/partials/service_pagination.html" %}
+</div>
