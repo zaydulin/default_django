@@ -20,5 +20,10 @@ urlpatterns = [
     # Модерация
     path("moderation/users/", views.UsersModerationView.as_view(), name="moderation_users_list"),
     path("moderation/clients/", views.ClientModerationView.as_view(), name="moderation_client_list"),
+    path("moderation/user-information/", views.UserInformationModerationView.as_view(), name="moderation_user_information_list"),
+    path("moderation/user-assets/", views.UserAssetsModerationView.as_view(), name="moderation_user_assets_list"),
+    path("moderation/user-statistic/", views.UserStatisticModerationView.as_view(), name="moderation_user_statistic_list"),
+    path("moderation/user-settings/", views.UserSettingsModerationView.as_view(), name="moderation_user_settings_list"),
+    path("moderation/user-security/", views.UserSecurityModerationView.as_view(), name="moderation_user_security_list"),
 
 ]

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.connects.apps.ConnectsConfig',
     'apps.course.apps.CourseConfig',
     'apps.crm.apps.CrmConfig',
+    'apps.documentations.apps.DocumentationsConfig',
     'apps.gallerys.apps.GallerysConfig',
     'apps.hr.apps.HrConfig',
     'apps.integrations.apps.IntegrationsConfig',

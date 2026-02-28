@@ -763,7 +763,7 @@
                       <span class="dropdown-shortcuts-icon rounded-circle mb-3">
                         <i class="icon-base bx bx-food-menu icon-26px text-heading"></i>
                       </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">База знания</a>
+                      <a href="{% url 'documentations:moderation_documentations_list' %}" class="stretched-link">База знания</a>
                       <small>Инструкция</small>
                     </div>
                   </div>
@@ -772,14 +772,14 @@
                       <span class="dropdown-shortcuts-icon rounded-circle mb-3">
                         <i class="icon-base bx bx-user icon-26px text-heading"></i>
                       </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Пользователь</a>
+                      <a href="{% url 'useraccount:moderation_user_information_list' %}" class="stretched-link">Пользователь</a>
                       <small>Личная инфмация</small>
                     </div>
                     <div class="dropdown-shortcuts-item col">
                       <span class="dropdown-shortcuts-icon rounded-circle mb-3">
                         <i class="icon-base bx bx-check-shield icon-26px text-heading"></i>
                       </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Доступы</a>
+                      <a href="{% url 'useraccount:moderation_user_assets_list' %}" class="stretched-link">Доступы</a>
                       <small>Личные доступы</small>
                     </div>
                   </div>
@@ -788,7 +788,7 @@
                       <span class="dropdown-shortcuts-icon rounded-circle mb-3">
                         <i class="icon-base bx bx-pie-chart-alt-2 icon-26px text-heading"></i>
                       </span>
-                      <a href="{% url 'cases:moderation_cases_list' %}" class="stretched-link">Статисктиа</a>
+                      <a href="{% url 'useraccount:moderation_user_statistic_list' %}" class="stretched-link">Статистика</a>
                       <small>Личная статистика</small>
                     </div>
 
@@ -874,10 +874,10 @@
                   <a class="dropdown-item" href="{% url 'useraccount:edit_profile' %}"> <i class="icon-base bx bx-user icon-md me-3"></i><span>Мой профиль</span> </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Настройки</span> </a>
+                  <a class="dropdown-item" href="{% url 'useraccount:moderation_user_settings_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Настройки</span> </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="{% url 'cases:moderation_cases_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Безопастность</span> </a>
+                  <a class="dropdown-item" href="{% url 'useraccount:moderation_user_security_list' %}"> <i class="icon-base bx bx-cog icon-md me-3"></i><span>Безопастность</span> </a>
                 </li>
                 <li>
                   <a class="dropdown-item" href="{% url 'useraccount:logout' %}" target="_blank"> <i class="icon-base bx bx-power-off icon-md me-3"></i><span>Выйти</span> </a>

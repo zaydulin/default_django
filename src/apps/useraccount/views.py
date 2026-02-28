@@ -361,3 +361,58 @@ class ClientModerationView(CustomHtmxMixin, View):
             # ваш контекст
         }
         return render(request, self.template_name, context)
+
+class UserInformationModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_information.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class UserAssetsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_assets.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class UserStatisticModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_statistic.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class UserSettingsModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_settings.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
+
+class UserSecurityModerationView(CustomHtmxMixin, View):
+    template_name = 'moderation/useraccount/user_security.html'
+
+    def get(self, request, *args, **kwargs):
+        # Здесь ваша логика для GET-запроса
+        # Например, получение данных из базы
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)
