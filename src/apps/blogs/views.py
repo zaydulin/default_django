@@ -1,8 +1,11 @@
 import json
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.http import require_http_methods
 
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
 from blogs.models import TagsBlogs,  CategorysBlogs, Blogs
@@ -12,8 +15,11 @@ from django.core.exceptions import ValidationError
 from useraccount.models import Profile
 from webmain.models import Seo
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 
 from apps.useraccount.views import CustomHtmxMixin
+
+from .forms import BlogForm
 
 """Новости"""
 
@@ -111,297 +117,190 @@ class BlogDetailView(CustomHtmxMixin, DetailView):
     template_name = "blogs/blog_detail.html"
     context_object_name = "blog"
 
-class CreateCategoryView(View):
-    def post(self, request):
-        """Создание категории"""
-        current_selected_ids = request.POST.getlist('category', [])
-        # Используем new_category_name вместо category_name
-        category_name = request.POST.get('new_category_name', '').strip()
-
-        if not category_name:
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories,
-                'error': 'Название категории не может быть пустым.'
-            })
-            return HttpResponse(html, status=400)
-
-        try:
-            category = CategorysBlogs.objects.create(
-                name=category_name,
-                # Используем new_ префикс для всех полей
-                description=request.POST.get('new_category_description', ''),
-                parent_id=request.POST.get('new_category_parent') or None,
-                title=request.POST.get('new_category_title', ''),
-                metadescription=request.POST.get('new_category_metadescription', ''),
-                propertytitle=request.POST.get('new_category_propertytitle', ''),
-                propertydescription=request.POST.get('new_category_propertydescription', ''),
-                publishet=request.POST.get('new_category_publishet') == 'on'
-            )
-
-            # Обработка файлов с new_ префиксом
-            if 'new_category_cover' in request.FILES:
-                category.cover = request.FILES['new_category_cover']
-            if 'new_category_icon' in request.FILES:
-                category.icon = request.FILES['new_category_icon']
-            if 'new_category_previev' in request.FILES:
-                category.previev = request.FILES['new_category_previev']
-
-            category.save()
-
-            # Добавляем новую категорию к выбранным
-            current_selected_ids.append(str(category.id))
-
-            # Возвращаем обновленный список
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories
-            })
-
-            response = HttpResponse(html)
-            response['HX-Trigger'] = json.dumps({
-                'closeModal': True,
-                'clearForm': True,
-                'showMessage': 'Категория успешно создана'
-            })
-            return response
-
-        except Exception as e:
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories,
-                'error': str(e)
-            })
-            return HttpResponse(html, status=400)
-
-
-class EditCategoryView(View):
-    def post(self, request, pk):
-        """Обновление категории"""
-        current_selected_ids = request.POST.getlist('category', [])
-        category = get_object_or_404(CategorysBlogs, pk=pk)
-        # Используем new_category_name вместо category_name
-        category_name = request.POST.get('new_category_name', '').strip()
-
-        if not category_name:
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories,
-                'error': 'Название категории не может быть пустым.'
-            })
-            return HttpResponse(html, status=400)
-
-        try:
-            category.name = category_name
-            category.description = request.POST.get('new_category_description', '')
-            category.parent_id = request.POST.get('new_category_parent') or None
-            category.title = request.POST.get('new_category_title', '')
-            category.metadescription = request.POST.get('new_category_metadescription', '')
-            category.propertytitle = request.POST.get('new_category_propertytitle', '')
-            category.propertydescription = request.POST.get('new_category_propertydescription', '')
-            category.publishet = request.POST.get('new_category_publishet') == 'on'
-
-            # Обработка файлов с new_ префиксом
-            if 'new_category_cover' in request.FILES:
-                category.cover = request.FILES['new_category_cover']
-            if 'new_category_icon' in request.FILES:
-                category.icon = request.FILES['new_category_icon']
-            if 'new_category_previev' in request.FILES:
-                category.previev = request.FILES['new_category_previev']
-
-            category.save()
-
-            # Возвращаем обновленный список
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories
-            })
-
-            response = HttpResponse(html)
-            response['HX-Trigger'] = json.dumps({
-                'closeModal': True,
-                'clearForm': True,
-                'showMessage': f'Категория "{category.name}" успешно обновлена'
-            })
-            return response
-
-        except Exception as e:
-            categories = CategorysBlogs.objects.all()
-            selected_categories = CategorysBlogs.objects.filter(id__in=current_selected_ids)
-
-            html = render_to_string('blogs/partials/category_select.html', {
-                'categories': categories,
-                'selected_categories': selected_categories,
-                'error': str(e)
-            })
-            return HttpResponse(html, status=400)
-class BlogCreateUpdateView(CustomHtmxMixin, TemplateView):
-    template_name = 'blogs/blog_form.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get('pk')
-        users = Profile.objects.all()
-
-        if pk:
-            blog = get_object_or_404(Blogs, pk=pk)
-            context.update({
-                'blog': blog,
-                'categories': CategorysBlogs.objects.all(),
-                'tags': TagsBlogs.objects.all(),
-                'users': users
-            })
-        else:
-            context.update({
-                'categories': CategorysBlogs.objects.all(),
-                'tags': TagsBlogs.objects.all(),
-                'users': users
-            })
-
-        return context
-
-    def get(self, request, *args, **kwargs):
-        # TemplateView автоматически использует get_template_names() из миксина
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, pk=None):
-        # Получаем данные из формы
-        name = request.POST.get('name')
-        resource = request.POST.get('resource', '')
-        category_ids = request.POST.getlist('category')
-        tag_ids = request.POST.getlist('tags')
-        description = request.POST.get('description', '')
-        title = request.POST.get('title', '')
-        metadescription = request.POST.get('metadescription', '')
-        propertytitle = request.POST.get('propertytitle', '')
-        propertydescription = request.POST.get('propertydescription', '')
-        publishet = request.POST.get('publishet', 'off') == 'on'
-
-        previev = request.FILES.get('previev', None)
-        cover = request.FILES.get('cover', None)
-        image = request.FILES.get('image', None)
-
-        # Получаем выбранного автора
-        author_id = request.POST.get('author')
-        author = get_object_or_404(Profile, pk=author_id)
-
-        # Генерация slug
-        slug = slugify(name)  # Применяем slugify для преобразования в sluggable строку
-
-        # Если редактируем блог, то slug не меняем
-        if pk:
-            blog = get_object_or_404(Blogs, pk=pk)
-            # Если slug не изменяется, оставляем старый
-            slug = blog.slug
-        else:
-            # Генерация уникального slug для нового блога
-            count = 1
-            original_slug = slug
-            while Blogs.objects.filter(slug=slug).exists():
-                slug = f"{original_slug}-{count}"
-                count += 1
-
-        # Если редактируем существующий блог
-        if pk:
-            blog = get_object_or_404(Blogs, pk=pk)
-            blog.name = name
-            blog.resource = resource
-            blog.description = description
-            blog.title = title
-            blog.metadescription = metadescription
-            blog.propertytitle = propertytitle
-            blog.propertydescription = propertydescription
-            blog.slug = slug  # Оставляем существующий slug при редактировании
-            blog.publishet = publishet
-            blog.author = author
-
-            # Обработка файлов
-            if previev:
-                blog.previev = previev
-            if cover:
-                blog.cover = cover
-            if image:
-                blog.image = image
-
-            # Обновляем категории и теги
-            blog.category.set(CategorysBlogs.objects.filter(id__in=category_ids))
-            blog.tags.set(TagsBlogs.objects.filter(id__in=tag_ids))
-
-            blog.save()
-
-            if 'HX-Request' in request.META:
-                return JsonResponse({'success': True, 'message': 'Blog updated successfully!'})
-            else:
-                return render(request, self.template_name, {'blog': blog, 'categories': CategorysBlogs.objects.all(), 'tags': TagsBlogs.objects.all(), 'users': Profile.objects.all()})
-
-        # Если создаем новый блог (pk не передан)
-        else:
-            try:
-                blog = Blogs.objects.create(
-                    author=author,
-                    name=name,
-                    resource=resource,
-                    description=description,
-                    title=title,
-                    metadescription=metadescription,
-                    propertytitle=propertytitle,
-                    propertydescription=propertydescription,
-                    slug=slug,  # Используем уникальный slug
-                    publishet=publishet,
-                )
-
-                # Обработка файлов
-                if previev:
-                    blog.previev = previev
-                if cover:
-                    blog.cover = cover
-                if image:
-                    blog.image = image
-
-                # Сохранение категорий и тегов
-                blog.category.set(CategorysBlogs.objects.filter(id__in=category_ids))
-                blog.tags.set(TagsBlogs.objects.filter(id__in=tag_ids))
-
-                blog.save()
-
-                if 'HX-Request' in request.META:
-                    return JsonResponse({'success': True, 'message': 'Blog created successfully!'})
-
-                return render(request, self.template_name, {'blog': blog, 'categories': CategorysBlogs.objects.all(), 'tags': TagsBlogs.objects.all(), 'users': Profile.objects.all()})
-
-            except ValidationError as e:
-                if 'HX-Request' in request.META:
-                    return JsonResponse({'success': False, 'error': str(e)})
-
-                return render(request, self.template_name, {'error': str(e)})
 
 """Модерация"""
 
 
 
-class ArticlesView(CustomHtmxMixin, View):
+class ArticlesView(CustomHtmxMixin, ListView):
+    model = Blogs
     template_name = 'moderation/blogs/articles.html'
+    context_object_name = "blogs"
+    paginate_by = 6
 
-    def get(self, request, *args, **kwargs):
+    def get_template_names(self):
+        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
+
+        # Для пагинационных запросов возвращаем другой шаблон
+        if is_htmx and self.request.GET.get('page'):
+            return ["moderation/blogs/partials/blog_page_content.html"]
+
+        return super().get_template_names()
+
+    def render_to_response(self, context, **response_kwargs):
+        # Для HTMX пагинации возвращаем только контент
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            return render(self.request, "moderation/blogs/partials/blog_page_content.html", context)
+        return super().render_to_response(context, **response_kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Для пагинационных запросов добавляем флаг
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            context['is_pagination_request'] = True
+
+        # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
+        try:
+            seo_data_from_db = Seo.objects.get(pagetype=1)
+
+            # Передаем данные из модели в контекст
+            context['seo_previev'] = seo_data_from_db.previev
+            context['seo_title'] = seo_data_from_db.title
+            context['seo_description'] = seo_data_from_db.metadescription
+            context['seo_propertytitle'] = seo_data_from_db.propertytitle
+            context['seo_propertydescription'] = seo_data_from_db.propertydescription
+            context['seo_head'] = seo_data_from_db.setting  # Если нужно добавлять дополнительные теги
+        except Seo.DoesNotExist:
+            # Если данных нет, используем значения по умолчанию
+            context['seo_previev'] = None
+            context['seo_title'] = 'Вход в систему - МойСайт'
+            context['seo_description'] = 'Войдите в свою учетную запись для доступа к персональным данным'
+            context['seo_propertytitle'] = 'og:title - Вход в систему'
+            context['seo_propertydescription'] = 'og:description - Страница входа в личный кабинет'
+            context['seo_head'] = '''
+                    <link rel="stylesheet" href="/static/css/login.css">
+                    <meta name="robots" content="noindex">
+                '''
+
+        return context
+
+    def get_seo_context(self):
+        """
+        Просто возвращаем SEO данные для блоков
+        """
+        try:
+            seo_data = Seo.objects.get(pagetype=5)
+            return {
+                'block_title': seo_data.title,
+                'block_description': seo_data.metadescription,
+                'block_propertytitle': seo_data.propertytitle,
+                'block_propertydescription': seo_data.propertydescription,
+                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
+                'block_head': seo_data.setting or ''
+            }
+        except Seo.DoesNotExist:
+            return {
+                'block_title': 'Вход в систему',
+                'block_description': 'Страница входа в аккаунт',
+                'block_propertytitle': 'Вход в систему',
+                'block_propertydescription': 'Страница входа',
+                'block_propertyimage': '',
+                'block_head': '<meta name="robots" content="noindex">'
+            }
+
+
+class ArticlesPaginationView(ListView):
+    model = Blogs
+    template_name = "moderation/blogs/partials/blog_items.html"  # Только элементы
+    context_object_name = "blogs"
+    paginate_by = 6
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_pagination_request'] = True
+        return context
+
+
+class BlogFormView(LoginRequiredMixin, View):
+    """Единый view для создания и редактирования блогов через попап"""
+
+    def get(self, request, pk=None):
+        """GET запрос - возвращает форму в offcanvas"""
+        if pk:
+            # Редактирование существующего блога
+            blog = get_object_or_404(Blogs, pk=pk)
+            form = BlogForm(instance=blog)
+            title = f"Редактирование: {blog.name}"
+        else:
+            # Создание нового блога
+            form = BlogForm()
+            title = "Создание новой статьи"
+            blog = None
+
         context = {
-            'title': 'Статьи',
+            'form': form,
+            'title': title,
+            'blog': blog,
         }
-        return render(request, self.template_name, context)
+
+        # Для HTMX запросов возвращаем только форму
+        if request.headers.get('HX-Request'):
+            return render(request, 'moderation/blogs/partials/blog_form.html', context)
+
+        # Для обычных запросов (если нужно)
+        return render(request, 'moderation/blogs/blog_form_full.html', context)
+
+    def post(self, request, pk=None):
+        """POST запрос - сохраняет форму"""
+        if pk:
+            # Редактирование
+            blog = get_object_or_404(Blogs, pk=pk)
+            form = BlogForm(request.POST, request.FILES, instance=blog)
+            action = 'updated'
+        else:
+            # Создание
+            form = BlogForm(request.POST, request.FILES)
+            action = 'created'
+
+        if form.is_valid():
+            blog = form.save(commit=False)
+
+            # Если создаем новый блог, добавляем автора
+            if not pk:
+                blog.author = request.user
+
+            blog.save()
+
+            # Сохраняем ManyToMany поля
+            form.save_m2m()
+
+            # Для HTMX возвращаем обновленный элемент списка
+            if request.headers.get('HX-Request'):
+                # Получаем обновленный список блогов для замены
+                blogs = Blogs.objects.all().order_by('-create')[:6]  # Последние 6
+
+                response_html = f'''
+                <div id="offcanvas-body-content" hx-swap-oob="true">
+                    <div class="alert alert-success">Блог успешно {action}</div>
+                </div>
+                <div id="blog-items" hx-swap-oob="innerHTML">
+                    {render_to_string('moderation/blogs/partials/blog_list.html', {'blogs': blogs, 'is_pagination_request': False}, request)}
+                </div>
+                <script>
+                    var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                    if (offcanvas) {{
+                        setTimeout(() => {{
+                            offcanvas.hide();
+                        }}, 1500);
+                    }}
+                </script>
+                '''
+
+                return HttpResponse(response_html)
+
+            return redirect('blogs:articles_list')
+
+        # Если форма не валидна
+        if request.headers.get('HX-Request'):
+            context = {
+                'form': form,
+                'title': f"{'Редактирование' if pk else 'Создание'} статьи",
+                'blog': blog if pk else None,
+            }
+            return render(request, 'moderation/blogs/partials/blog_form.html', context)
+
+        return render(request, 'moderation/blogs/blog_form_full.html', {'form': form})
 
 
 class CategoriesView(CustomHtmxMixin, View):

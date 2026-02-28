@@ -1,0 +1,30 @@
+<!-- moderation/blogs/partials/blog_items.html -->
+{% for blog in blogs %}
+<div class="col">
+    <div class="card h-100 shadow-sm">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.name }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ blog.name }}</h5>
+            <p class="card-text">{{ blog.description|truncatewords:20 }}</p>
+<button
+                data-identification="{{ blog.id }}"
+                class="btn btn-primary"
+                hx-get="{% url 'blogs:blog_form' blog.id %}"
+                hx-target="#offcanvas-body-content"
+                hx-indicator="#offcanvas-loading"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight">
+                Редактировать
+            </button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Обновляем пагинацию через hx-swap-oob -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% include "moderation/blogs/partials/blog_pagination.html" %}
+</div>

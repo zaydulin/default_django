@@ -9,11 +9,15 @@ urlpatterns = [
     path('page/<int:page>/', views.BlogPaginationView.as_view(), name='pagination'),
     path("blogs/<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
     # Модерация
-    path("articles/", views.ArticlesView.as_view(), name="articles_list"),
-    path("categories/", views.CategoriesView.as_view(), name="categories_list"),
-    path("tags/", views.TagsView.as_view(), name="tags_list"),
-    path("likes/", views.LikesView.as_view(), name="likes_list"),
-    path("comments/", views.CommentsView.as_view(), name="comments_list"),
-    path("complaints/", views.ComplaintsView.as_view(), name="complaints_list"),
+    path("moderation/articles/", views.ArticlesView.as_view(), name="articles_list"),
+    path('moderation/articles-page/<int:page>/', views.ArticlesPaginationView.as_view(), name='articles_pagination'),
+    path('moderation/blog-form/', views.BlogFormView.as_view(), name='blog_form'),
+    path('moderation/blog-form/<int:pk>/', views.BlogFormView.as_view(), name='blog_form'),
+
+    path("moderation/categories/", views.CategoriesView.as_view(), name="categories_list"),
+    path("moderation/tags/", views.TagsView.as_view(), name="tags_list"),
+    path("moderation/likes/", views.LikesView.as_view(), name="likes_list"),
+    path("moderation/comments/", views.CommentsView.as_view(), name="comments_list"),
+    path("moderation/complaints/", views.ComplaintsView.as_view(), name="complaints_list"),
 
 ]

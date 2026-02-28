@@ -1,0 +1,64 @@
+<!-- moderation/blogs/partials/blog_list.html -->
+{% if is_pagination_request %}
+<!-- Только элементы блога для пагинации -->
+{% for blog in blogs %}
+<div class="col" id="blog-{{ blog.id }}">
+    <div class="card h-100 shadow-sm">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.name }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ blog.name }}</h5>
+            <p class="card-text">{{ blog.description|striptags|truncatewords:20 }}</p>
+            <button
+                data-identification="{{ blog.id }}"
+                class="btn btn-primary"
+                hx-get="{% url 'blogs:blog_form' blog.id %}"
+                hx-target="#offcanvas-body-content"
+                hx-indicator="#offcanvas-loading"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight">
+                Редактировать
+            </button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Индикатор для пагинации -->
+{% if blogs.has_next %}
+<div id="pagination-next" hx-get="?page={{ blogs.next_page_number }}" hx-trigger="revealed" hx-target="#blog-items" hx-swap="beforeend" hx-indicator="#loading-indicator" hx-select=".col" hx-headers='{"X-Pagination-Request": "true"}'></div>
+{% endif %}
+
+{% else %}
+<!-- Полный список для первоначальной загрузки -->
+{% for blog in blogs %}
+<div class="col" id="blog-{{ blog.id }}">
+    <div class="card h-100 shadow-sm">
+        {% if blog.image %}
+        <img src="{{ blog.image.url }}" class="card-img-top" alt="{{ blog.name }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ blog.name }}</h5>
+            <p class="card-text">{{ blog.description|striptags|truncatewords:20 }}</p>
+            <button
+                data-identification="{{ blog.id }}"
+                class="btn btn-primary"
+                hx-get="{% url 'blogs:blog_form' blog.id %}"
+                hx-target="#offcanvas-body-content"
+                hx-indicator="#offcanvas-loading"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight">
+                Редактировать
+            </button>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="col-12">
+    <p class="text-muted">Нет статей</p>
+</div>
+{% endfor %}
+{% endif %}
