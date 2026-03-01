@@ -164,6 +164,16 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">
                 <i class="bi bi-x-circle"></i> Отмена
             </button>
+            {% if form.instance.pk %}
+        <button type="button"
+          class="btn btn-danger"
+          hx-post="{% url 'blogs:articles_delete' form.instance.pk %}"
+          hx-confirm="Удалить безвозвратно?"
+          hx-target="#offcanvas-body-content"
+          hx-swap="innerHTML">
+            Удалить
+          </button>
+        {% endif %}
         </div>
     </form>
 </div>

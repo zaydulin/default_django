@@ -106,6 +106,16 @@
         <button type="submit" class="btn btn-primary">
             {% if categories %}Сохранить{% else %}Создать{% endif %}
         </button>
+        {% if form.instance.pk %}
+        <button type="button"
+          class="btn btn-danger"
+          hx-post="{% url 'blogs:categories_delete' form.instance.pk %}"
+          hx-confirm="Удалить безвозвратно?"
+          hx-target="#offcanvas-body-content"
+          hx-swap="innerHTML">
+            Удалить
+          </button>
+        {% endif %}
     </div>
 </form>
 

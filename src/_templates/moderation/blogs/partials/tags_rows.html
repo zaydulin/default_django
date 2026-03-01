@@ -23,8 +23,8 @@
         </button>
     </td>
 </tr>
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">Нет тегов</td>
+</tr>
 {% endfor %}
-
-<div id="pagination-container" hx-swap-oob="true">
-    {% include "moderation/blogs/partials/tags_pagination.html" %}
-</div>

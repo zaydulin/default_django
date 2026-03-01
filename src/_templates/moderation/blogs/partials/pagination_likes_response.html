@@ -1,0 +1,27 @@
+{% for like in likes %}
+<tr id="like-{{ like.id }}">
+    <th scope="row">{{ like.id }}</th>
+    <td>{{ like.author.username|default:"-" }}</td>
+    <td>{{ like.blog.name|default:"-" }}</td>
+    <td>{{ like.blog.slug|default:"-" }}</td>
+    <td>{{ like.create|date:"d.m.Y H:i" }}</td>
+</tr>
+{% endfor %}
+
+<div id="pagination-container" hx-swap-oob="true">
+    {% if page_obj.has_next %}
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-outline-primary"
+                hx-get="{% url 'blogs:likes_pagination' page_obj.next_page_number %}"
+                hx-target="#likes-items"
+                hx-swap="beforeend"
+                hx-indicator="#loading-indicator">
+            Загрузить ещё
+        </button>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-center mt-4">
+        <span class="text-muted">Все лайки загружены</span>
+    </div>
+    {% endif %}
+</div>

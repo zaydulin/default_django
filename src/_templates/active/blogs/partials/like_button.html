@@ -1,0 +1,19 @@
+<div id="like-container-{{ blog.id }}" class="d-inline-block">
+    {% if request.user.is_authenticated %}
+    <form
+        hx-post="{% url 'blogs:blog_like_toggle' blog.id %}"
+        hx-target="#like-container-{{ blog.id }}"
+        hx-swap="outerHTML"
+        class="d-inline"
+    >
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm {% if is_liked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+            <i class="fa-solid fa-heart me-1"></i>{{ blog.likes_count|default:0 }}
+        </button>
+    </form>
+    {% else %}
+    <a href="{% url 'useraccount:login' %}" class="btn btn-sm btn-outline-secondary">
+        Войти, чтобы лайкнуть
+    </a>
+    {% endif %}
+</div>

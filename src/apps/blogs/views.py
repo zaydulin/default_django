@@ -5,7 +5,7 @@ from django.views.decorators.http import require_http_methods
 from django.db.models import Count
 
 from django.views import View
-from django.views.generic import ListView, DetailView, TemplateView
+from django.views.generic import ListView, DetailView, TemplateView, DeleteView
 from django.shortcuts import render, get_object_or_404, redirect
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
@@ -356,6 +356,70 @@ class BlogFormView(LoginRequiredMixin, View):
 
         return render(request, 'moderation/blogs/partials/articles_form.html', {'form': form})
 
+class BlogDeleteView(LoginRequiredMixin, View):
+    model = Blogs
+
+    def post(self, request, pk=None):
+        blog = get_object_or_404(Blogs, pk=pk)
+        blog_name = blog.name
+        blog.delete()
+
+        if request.headers.get('HX-Request'):
+            blogs = Blogs.objects.all().order_by('-create')
+            paginator = Paginator(blogs, 6)
+            page_obj = paginator.get_page(1)
+
+            rows_html = render_to_string(
+                'moderation/blogs/partials/articles_rows.html',
+                {'blogs': page_obj},
+                request
+            )
+
+            # Рендерим пагинацию
+            pagination_html = render_to_string(
+                'moderation/blogs/partials/blog_pagination.html',
+                {'page_obj': page_obj},
+                request
+            )
+
+            # Формируем ответ
+            response = HttpResponse()
+
+            # Обновляем tbody
+            response.write(f'''
+                            <tbody id="blogs-items" hx-swap-oob="outerHTML">
+                                {rows_html}
+                            </tbody>
+                            ''')
+
+            # Обновляем пагинацию
+            response.write(f'''
+                            <div id="pagination-container" hx-swap-oob="outerHTML">
+                                {pagination_html}
+                            </div>
+                            ''')
+
+            # Сообщение об успехе
+            response.write(f'''
+                            <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
+                                <div class="alert alert-success">
+                                    Блог "{blog_name}" успешно удален
+                                </div>
+                                <script>
+                                    setTimeout(function() {{
+                                        var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                                        if (offcanvas) {{
+                                            offcanvas.hide();
+                                        }}
+                                    }}, 1500);
+                                </script>
+                            </div>
+                            ''')
+
+            return response
+
+        return redirect('blogs:articles_list')
+
 class CategoriesView(CustomHtmxMixin, ListView):
     model = CategorysBlogs
     template_name = 'moderation/blogs/categories.html'
@@ -540,6 +604,71 @@ class CategoriesFormView(LoginRequiredMixin, View):
 
         return render(request, 'moderation/blogs/partials/categories_form.html', {'form': form})
 
+class CategoriesDeleteView(LoginRequiredMixin, View):
+    model = CategorysBlogs
+
+    def post(self, request, pk=None):
+        category = get_object_or_404(CategorysBlogs, pk=pk)
+        category_name = category.name
+        category.delete()
+
+        if request.headers.get('HX-Request'):
+            categories = CategorysBlogs.objects.all().order_by('-create')
+            paginator = Paginator(categories, 6)
+            page_obj = paginator.get_page(1)
+
+            rows_html = render_to_string(
+                'moderation/blogs/partials/categories_rows.html',
+                {'categories': page_obj},
+                request
+            )
+
+            # Рендерим пагинацию
+            pagination_html = render_to_string(
+                'moderation/blogs/partials/categories_pagination.html',
+                {'page_obj': page_obj},
+                request
+            )
+
+            # Формируем ответ
+            response = HttpResponse()
+
+            # Обновляем tbody
+            response.write(f'''
+                            <tbody id="categories-items" hx-swap-oob="outerHTML">
+                                {rows_html}
+                            </tbody>
+                            ''')
+
+            # Обновляем пагинацию
+            response.write(f'''
+                            <div id="pagination-container" hx-swap-oob="outerHTML">
+                                {pagination_html}
+                            </div>
+                            ''')
+
+            # Сообщение об успехе
+            response.write(f'''
+                            <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
+                                <div class="alert alert-success">
+                                    Категория "{category_name}" успешно удалена
+                                </div>
+                                <script>
+                                    setTimeout(function() {{
+                                        var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                                        if (offcanvas) {{
+                                            offcanvas.hide();
+                                        }}
+                                    }}, 1500);
+                                </script>
+                            </div>
+                            ''')
+
+            return response
+
+        return redirect('blogs:categories_list')
+
+
 class TagsView(CustomHtmxMixin, ListView):
     model = TagsBlogs
     template_name = 'moderation/blogs/tags.html'
@@ -551,14 +680,14 @@ class TagsView(CustomHtmxMixin, ListView):
 
         # Для пагинационных запросов возвращаем другой шаблон
         if is_htmx and self.request.GET.get('page'):
-            return ["moderation/blogs/partials/tags_page_content.html"]
+            return ["moderation/blogs/partials/tags_rows.html"]
 
         return super().get_template_names()
 
     def render_to_response(self, context, **response_kwargs):
         # Для HTMX пагинации возвращаем только контент
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            return render(self.request, "moderation/blogs/partials/tags_page_content.html", context)
+            return render(self.request, "moderation/blogs/partials/tags_rows.html", context)
         return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
@@ -619,7 +748,7 @@ class TagsView(CustomHtmxMixin, ListView):
 
 class TagsPaginationView(ListView):
     model = TagsBlogs
-    template_name = "moderation/blogs/partials/tags_items.html"  # Только элементы
+    template_name = "moderation/blogs/partials/tags_items.html"
     context_object_name = "tags"
     paginate_by = 6
 
@@ -673,29 +802,48 @@ class TagsFormView(LoginRequiredMixin, View):
             tags = form.save(commit=False)
             tags.save()
 
-            # Для HTMX возвращаем обновленный элемент списка
+            # Для HTMX возвращаем обновленную таблицу и пагинацию
             if request.headers.get('HX-Request'):
-                # Получаем обновленный список блогов для замены
-                tags = TagsBlogs.objects.all().order_by('-create')[:6]  # Последние 6
+                tags_qs = TagsBlogs.objects.all().order_by('-create')
+                paginator = Paginator(tags_qs, 6)
+                page_obj = paginator.get_page(1)
 
-                response_html = f'''
-                <div id="offcanvas-body-content" hx-swap-oob="true">
+                rows_html = render_to_string(
+                    'moderation/blogs/partials/tags_rows.html',
+                    {'tags': page_obj},
+                    request
+                )
+                pagination_html = render_to_string(
+                    'moderation/blogs/partials/tags_pagination.html',
+                    {'page_obj': page_obj},
+                    request
+                )
+
+                response = HttpResponse()
+                response.write(f'''
+                <tbody id="tags-items" hx-swap-oob="outerHTML">
+                    {rows_html}
+                </tbody>
+                ''')
+                response.write(f'''
+                <div id="pagination-container" hx-swap-oob="outerHTML">
+                    {pagination_html}
+                </div>
+                ''')
+                response.write(f'''
+                <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
                     <div class="alert alert-success">Тег успешно {action}</div>
+                    <script>
+                        var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                        if (offcanvas) {{
+                            setTimeout(() => {{
+                                offcanvas.hide();
+                            }}, 1500);
+                        }}
+                    </script>
                 </div>
-                <div id="blog-items" hx-swap-oob="innerHTML">
-                    {render_to_string('moderation/blogs/partials/tags_list.html', {'tags': tags, 'is_pagination_request': False}, request)}
-                </div>
-                <script>
-                    var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
-                    if (offcanvas) {{
-                        setTimeout(() => {{
-                            offcanvas.hide();
-                        }}, 1500);
-                    }}
-                </script>
-                '''
-
-                return HttpResponse(response_html)
+                ''')
+                return response
 
             return redirect('blogs:tags_list')
 
@@ -710,7 +858,69 @@ class TagsFormView(LoginRequiredMixin, View):
 
         return render(request, 'moderation/blogs/tags_form_full.html', {'form': form})
 
+class TagsDeleteView(LoginRequiredMixin, View):
+    model = TagsBlogs
 
+    def post(self, request, pk=None):
+        tag = get_object_or_404(TagsBlogs, pk=pk)
+        tag_name = tag.name
+        tag.delete()
+
+        if request.headers.get('HX-Request'):
+            tags = TagsBlogs.objects.all().order_by('-create')
+            paginator = Paginator(tags, 6)
+            page_obj = paginator.get_page(1)
+
+            rows_html = render_to_string(
+                'moderation/blogs/partials/tags_rows.html',
+                {'tags': page_obj},
+                request
+            )
+
+            # Рендерим пагинацию
+            pagination_html = render_to_string(
+                'moderation/blogs/partials/tags_pagination.html',
+                {'page_obj': page_obj},
+                request
+            )
+
+            # Формируем ответ
+            response = HttpResponse()
+
+            # Обновляем tbody
+            response.write(f'''
+                            <tbody id="tags-items" hx-swap-oob="outerHTML">
+                                {rows_html}
+                            </tbody>
+                            ''')
+
+            # Обновляем пагинацию
+            response.write(f'''
+                            <div id="pagination-container" hx-swap-oob="outerHTML">
+                                {pagination_html}
+                            </div>
+                            ''')
+
+            # Сообщение об успехе
+            response.write(f'''
+                            <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
+                                <div class="alert alert-success">
+                                    Блог "{tag_name}" успешно удален
+                                </div>
+                                <script>
+                                    setTimeout(function() {{
+                                        var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                                        if (offcanvas) {{
+                                            offcanvas.hide();
+                                        }}
+                                    }}, 1500);
+                                </script>
+                            </div>
+                            ''')
+
+            return response
+
+        return redirect('blogs:tags_list')
 
 
 class LikesView(CustomHtmxMixin, ListView):
