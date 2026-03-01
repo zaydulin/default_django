@@ -1,3 +1,4 @@
+<!-- moderation/blogs/articles.html -->
 {% extends 'moderation/base.html' %}
 {% load static %}
 
@@ -11,12 +12,15 @@
                 <th scope="col">ID</th>
                 <th scope="col">Изображение</th>
                 <th scope="col">Название</th>
-                <th scope="col">Описание</th>
+                <th scope="col">Содержание</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Автор</th>
+                <th scope="col">Дата</th>
                 <th scope="col">Действия</th>
             </tr>
             </thead>
             <tbody id="articles-items">
-            {% include "moderation/blogs/partials/articles_rows.html" %}
+                {% include "moderation/blogs/partials/articles_rows.html" %}
             </tbody>
         </table>
     </div>
@@ -38,12 +42,12 @@
 <div class="buy-now">
     <a href="#"
        class="btn btn-danger btn-buy-now"
-       hx-get="{% url 'blogs:blog_form' %}"
+       hx-get="{% url 'blogs:articles_form' %}"
        hx-target="#offcanvas-body-content"
        hx-trigger="click"
        data-bs-toggle="offcanvas"
        data-bs-target="#offcanvasRight">
-        Создать статью
+        Создать
     </a>
 </div>
 

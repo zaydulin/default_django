@@ -1,17 +1,18 @@
-<!-- moderation/blogs/partials/categories_pagination.html -->
-{% if page_obj.has_next %}
-<div class="d-flex justify-content-center mt-4">
-    <button class="btn btn-outline-primary"
-            hx-get="{% url 'blogs:articles_pagination' page_obj.next_page_number %}"
-            hx-target="#articles-items"
-            hx-swap="beforeend"
-            hx-indicator="#loading-indicator"
-            hx-select="tr, #pagination-container">
-        Загрузить ещё
-    </button>
+<!-- moderation/blogs/partials/articles_pagination.html -->
+<div id="pagination-container">
+    {% if page_obj.has_next %}
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-outline-primary"
+                hx-get="{% url 'blogs:articles_pagination' page_obj.next_page_number %}"
+                hx-target="#articles-items"
+                hx-swap="beforeend"
+                hx-indicator="#loading-indicator">
+            Загрузить ещё
+        </button>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-center mt-4">
+        <span class="text-muted">Все статьи загружены</span>
+    </div>
+    {% endif %}
 </div>
-{% else %}
-<div class="d-flex justify-content-center mt-4">
-    <span class="text-muted">Все статьи загружены</span>
-</div>
-{% endif %}

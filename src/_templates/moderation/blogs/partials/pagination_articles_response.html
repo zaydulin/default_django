@@ -1,4 +1,4 @@
-<!-- moderation/blogs/partials/articles_rows.html -->
+<!-- moderation/blogs/partials/pagination_articles_response.html -->
 {% for blog in blogs %}
 <tr id="blog-{{ blog.id }}">
     <th scope="row">{{ blog.id }}</th>
@@ -30,10 +30,23 @@
         </button>
     </td>
 </tr>
-{% empty %}
-<tr>
-    <td colspan="8" class="text-center text-muted">
-        Нет статей
-    </td>
-</tr>
 {% endfor %}
+
+<!-- Обновленная кнопка пагинации -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% if page_obj.has_next %}
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-outline-primary"
+                hx-get="{% url 'blogs:articles_pagination' page_obj.next_page_number %}"
+                hx-target="#articles-items"
+                hx-swap="beforeend"
+                hx-indicator="#loading-indicator">
+            Загрузить ещё
+        </button>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-center mt-4">
+        <span class="text-muted">Все статьи загружены</span>
+    </div>
+    {% endif %}
+</div>

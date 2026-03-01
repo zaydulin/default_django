@@ -131,76 +131,44 @@ class ArticlesView(CustomHtmxMixin, ListView):
 
     def get_template_names(self):
         if self.request.headers.get('HX-Request'):
-            if self.request.GET.get('page'):
-                return ["moderation/blogs/partials/articles_rows.html"]
             return ["moderation/blogs/partials/articles_rows.html"]
-        return super().get_template_names()
+        return ["moderation/blogs/articles.html"]
 
     def render_to_response(self, context, **response_kwargs):
         # Для HTMX пагинации возвращаем только контент
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            return render(self.request, "moderation/blogs/partials/blog_page_content.html", context)
+            return render(self.request, "moderation/blogs/partials/articles_rows.html", context)
         return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Для пагинационных запросов добавляем флаг
         context['is_pagination_request'] = bool(self.request.headers.get('HX-Request') and self.request.GET.get('page'))
 
-        # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
+        # SEO данные
         try:
             seo_data_from_db = Seo.objects.get(pagetype=1)
-
-            # Передаем данные из модели в контекст
             context['seo_previev'] = seo_data_from_db.previev
             context['seo_title'] = seo_data_from_db.title
             context['seo_description'] = seo_data_from_db.metadescription
             context['seo_propertytitle'] = seo_data_from_db.propertytitle
             context['seo_propertydescription'] = seo_data_from_db.propertydescription
-            context['seo_head'] = seo_data_from_db.setting  # Если нужно добавлять дополнительные теги
+            context['seo_head'] = seo_data_from_db.setting
         except Seo.DoesNotExist:
-            # Если данных нет, используем значения по умолчанию
             context['seo_previev'] = None
             context['seo_title'] = 'Вход в систему - МойСайт'
             context['seo_description'] = 'Войдите в свою учетную запись для доступа к персональным данным'
             context['seo_propertytitle'] = 'og:title - Вход в систему'
             context['seo_propertydescription'] = 'og:description - Страница входа в личный кабинет'
             context['seo_head'] = '''
-                    <link rel="stylesheet" href="/static/css/login.css">
-                    <meta name="robots" content="noindex">
-                '''
+                <link rel="stylesheet" href="/static/css/login.css">
+                <meta name="robots" content="noindex">
+            '''
 
         return context
 
-    def get_seo_context(self):
-        """
-        Просто возвращаем SEO данные для блоков
-        """
-        try:
-            seo_data = Seo.objects.get(pagetype=5)
-            return {
-                'block_title': seo_data.title,
-                'block_description': seo_data.metadescription,
-                'block_propertytitle': seo_data.propertytitle,
-                'block_propertydescription': seo_data.propertydescription,
-                'block_propertyimage': seo_data.previev.url if seo_data.previev else '',
-                'block_head': seo_data.setting or ''
-            }
-        except Seo.DoesNotExist:
-            return {
-                'block_title': 'Вход в систему',
-                'block_description': 'Страница входа в аккаунт',
-                'block_propertytitle': 'Вход в систему',
-                'block_propertydescription': 'Страница входа',
-                'block_propertyimage': '',
-                'block_head': '<meta name="robots" content="noindex">'
-            }
-
-
 class ArticlesPaginationView(ListView):
     model = Blogs
-    template_name = "moderation/blogs/partials/articles_rows.html"  # Используем тот же шаблон
+    template_name = "moderation/blogs/partials/pagination_articles_response.html"
     context_object_name = "blogs"
     paginate_by = 6
 
@@ -219,6 +187,8 @@ class BlogFormView(LoginRequiredMixin, View):
             blog = get_object_or_404(Blogs, pk=pk)
             form = BlogForm(instance=blog)
             title = f"Редактирование: {blog.name}"
+            print(f"Editing blog: {blog.id}, slug: {blog.slug}")
+            print(f"Blog data: name={blog.name}, description={blog.description[:50]}...")
         else:
             form = BlogForm()
             title = "Создание новой статьи"
@@ -228,24 +198,33 @@ class BlogFormView(LoginRequiredMixin, View):
             'title': title,
         }
 
-        return render(request, 'moderation/blogs/partials/blog_form.html', context)
+        return render(request, 'moderation/blogs/partials/articles_form.html', context)
 
     def post(self, request, pk=None):
         """POST запрос - сохраняет форму"""
+        print(f"POST request data: {request.POST}")
+        print(f"FILES: {request.FILES}")
+
         if pk:
             blog = get_object_or_404(Blogs, pk=pk)
             form = BlogForm(request.POST, request.FILES, instance=blog)
+            print(f"Editing blog ID: {pk}, current data: {blog.name}")
         else:
             form = BlogForm(request.POST, request.FILES)
+            print("Creating new blog")
 
         if form.is_valid():
+            print("Form is valid, saving...")
             blog = form.save(commit=False)
 
             if not pk:
                 blog.author = request.user
+                print(f"Setting author: {request.user}")
 
             blog.save()
-            form.save_m2m()
+            form.save_m2m()  # Сохраняем ManyToMany поля (category, tags)
+
+            print(f"Blog saved successfully! ID: {blog.id}, Name: {blog.name}")
 
             if request.headers.get('HX-Request'):
                 # Получаем обновленный список (первая страница)
@@ -262,7 +241,7 @@ class BlogFormView(LoginRequiredMixin, View):
 
                 # Рендерим пагинацию
                 pagination_html = render_to_string(
-                    'moderation/blogs/partials/articles_pagination.html',  # Создайте этот шаблон
+                    'moderation/blogs/partials/articles_pagination.html',
                     {'page_obj': page_obj},
                     request
                 )
@@ -287,16 +266,22 @@ class BlogFormView(LoginRequiredMixin, View):
                 # Сообщение об успехе
                 response.write(f'''
                 <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
-                    <div class="alert alert-success">
-                        Статья "{blog.name}" успешно сохранена
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Успешно!</strong> Статья "{blog.name}" успешно сохранена
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     <script>
-                        setTimeout(function() {{
-                            var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
-                            if (offcanvas) {{
-                                offcanvas.hide();
-                            }}
-                        }}, 1500);
+                        (function() {{
+                            setTimeout(function() {{
+                                var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                                if (offcanvas) {{
+                                    offcanvas.hide();
+                                }}
+                                setTimeout(function() {{
+                                    document.getElementById('offcanvas-body-content').innerHTML = '';
+                                }}, 300);
+                            }}, 1500);
+                        }})();
                     </script>
                 </div>
                 ''')
@@ -305,16 +290,20 @@ class BlogFormView(LoginRequiredMixin, View):
 
             return redirect('blogs:articles_list')
 
+        else:
+            print(f"Form is invalid. Errors: {form.errors}")
+            print(f"Form data: {form.data}")
+
         # Если форма не валидна
         if request.headers.get('HX-Request'):
             context = {
                 'form': form,
                 'title': f"{'Редактирование' if pk else 'Создание'} статьи",
+                'errors': form.errors,
             }
-            return render(request, 'moderation/blogs/partials/blog_form.html', context)
+            return render(request, 'moderation/blogs/partials/articles_form.html', context)
 
-        return render(request, 'moderation/blogs/partials/blog_form.html', {'form': form})
-
+        return render(request, 'moderation/blogs/partials/articles_form.html', {'form': form})
 
 class CategoriesView(CustomHtmxMixin, ListView):
     model = CategorysBlogs
