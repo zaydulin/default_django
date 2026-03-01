@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block content %}
-<div id="tags-list">
+<!-- Таблица тегов -->
+<div id="blog-list">
     <div class="table-responsive">
         <table class="table table-hover table-striped align-middle">
             <thead class="table-dark">
@@ -25,39 +26,34 @@
     </div>
 </div>
 
+<!-- индикатор загрузки -->
 <div id="loading-indicator" class="text-center my-3" style="display:none;">
     <div class="spinner-border text-primary" role="status"></div>
 </div>
 {% endblock %}
 
 {% block demo %}
+<!-- Кнопка создания -->
 <div class="buy-now">
     <a href="#"
        class="btn btn-danger btn-buy-now"
        hx-get="{% url 'blogs:tags_form' %}"
        hx-target="#offcanvas-body-content"
        hx-trigger="click"
-       hx-indicator="#offcanvas-loading"
        data-bs-toggle="offcanvas"
-       data-bs-target="#offcanvasRight"
-       aria-controls="offcanvasRight">
+       data-bs-target="#offcanvasRight">
         Создать
     </a>
 </div>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
+<!-- Offcanvas справа -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">
-            <span id="form-title">Создание тега</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+        <h5 class="offcanvas-title">Тег</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body" id="offcanvas-body-content" hx-indicator="#offcanvas-loading">
-        <div id="offcanvas-loading" class="text-center my-5 htmx-indicator">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Загрузка...</span>
-            </div>
-        </div>
+    <div class="offcanvas-body" id="offcanvas-body-content">
+        <!-- Сюда загружается форма -->
     </div>
 </div>
 {% endblock demo %}

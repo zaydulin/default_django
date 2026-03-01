@@ -9,14 +9,13 @@
         {% endif %}
     </td>
     <td>
-        <strong>{{ tag.name }}</strong>
+        <strong class="text-break">{{ tag.name }}</strong>
     </td>
-    <td>{{ tag.description|striptags|truncatewords:20 }}</td>
+    <td class="text-break" style="max-width: 420px;">{{ tag.description|striptags|truncatewords:20 }}</td>
     <td>
         <button class="btn btn-sm btn-primary"
                 hx-get="{% url 'blogs:tags_form' tag.id %}"
                 hx-target="#offcanvas-body-content"
-                hx-indicator="#offcanvas-loading"
                 data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasRight">
             <i class="bi bi-pencil"></i>
