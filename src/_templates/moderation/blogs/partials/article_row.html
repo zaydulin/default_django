@@ -1,0 +1,23 @@
+<tr id="article-{{ blog.id }}">
+    <th scope="row">{{ blog.id }}</th>
+    <td style="width: 100px;">
+        {% if blog.image %}
+            <img src="{{ blog.image.url }}" class="img-thumbnail" alt="{{ blog.name }}" style="max-width: 80px; max-height: 60px;">
+        {% else %}
+            <span class="text-muted">Нет фото</span>
+        {% endif %}
+    </td>
+    <td>
+        <strong>{{ blog.name }}</strong>
+    </td>
+    <td>{{ blog.description|truncatewords:20 }}</td>
+    <td>
+        <button class="btn btn-sm btn-primary"
+                hx-get="{% url 'blogs:blog_form' blog.id %}"
+                hx-target="#offcanvas-body-content"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight">
+            <i class="bi bi-pencil"></i> Ред.
+        </button>
+    </td>
+</tr>

@@ -1,3 +1,4 @@
+<!-- moderation/blogs/categories.html -->
 {% extends 'moderation/base.html' %}
 {% load static %}
 
@@ -16,7 +17,7 @@
             </tr>
             </thead>
             <tbody id="categories-items">
-            {% include "moderation/blogs/partials/categories_rows.html" %}
+                {% include "moderation/blogs/partials/categories_rows.html" %}
             </tbody>
         </table>
     </div>
@@ -31,6 +32,26 @@
 <div id="loading-indicator" class="text-center my-3" style="display:none;">
     <div class="spinner-border text-primary" role="status"></div>
 </div>
+
+<!-- Скрытый элемент для обновления пагинации -->
+<script>
+    document.body.addEventListener('updatePagination', function() {
+        // Получаем текущий номер страницы из URL или атрибута кнопки
+        const nextButton = document.querySelector('#pagination-container button');
+        if (nextButton) {
+            const currentUrl = nextButton.getAttribute('hx-get');
+            if (currentUrl) {
+                // Извлекаем номер страницы из URL
+                const matches = currentUrl.match(/\/page\/(\d+)\//);
+                if (matches && matches[1]) {
+                    const nextPage = parseInt(matches[1]) + 1;
+                    // Обновляем URL кнопки
+                    nextButton.setAttribute('hx-get', currentUrl.replace(/\/page\/\d+\//, `/page/${nextPage}/`));
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
 
 {% block demo %}

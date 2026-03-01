@@ -1,42 +1,35 @@
-<!-- moderation/blogs/articles.html -->
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
-{% block head %}
-<style>
-    .htmx-indicator {
-        display: none;
-    }
-    .htmx-request .htmx-indicator {
-        display: inline-block;
-    }
-    .htmx-request.htmx-indicator {
-        display: inline-block;
-    }
-</style>
-{% endblock head %}
 
 {% block content %}
-<div class="container my-5">
-    <!-- список -->
-    <div id="blog-list">
-        <div id="blog-items" class="row row-cols-1 row-cols-md-2 g-4">
-            {% include "moderation/blogs/partials/blog_list.html" %}
-        </div>
-        <div id="pagination-container">
-            {% include "moderation/blogs/partials/blog_pagination.html" %}
-        </div>
+<!-- Таблица статей -->
+<div id="blog-list">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Изображение</th>
+                <th scope="col">Название</th>
+                <th scope="col">Описание</th>
+                <th scope="col">Действия</th>
+            </tr>
+            </thead>
+            <tbody id="articles-items">
+            {% include "moderation/blogs/partials/articles_rows.html" %}
+            </tbody>
+        </table>
     </div>
 
-    <!-- индикатор загрузки -->
-    <div id="loading-indicator" class="text-center my-3" style="display:none;">
-        <div class="spinner-border text-primary" role="status"></div>
+    <!-- Пагинация -->
+    <div id="pagination-container">
+        {% include "moderation/blogs/partials/articles_pagination.html" %}
     </div>
+</div>
+
+<!-- индикатор загрузки -->
+<div id="loading-indicator" class="text-center my-3" style="display:none;">
+    <div class="spinner-border text-primary" role="status"></div>
 </div>
 {% endblock %}
 
@@ -48,30 +41,20 @@
        hx-get="{% url 'blogs:blog_form' %}"
        hx-target="#offcanvas-body-content"
        hx-trigger="click"
-       hx-indicator="#offcanvas-loading"
        data-bs-toggle="offcanvas"
-       data-bs-target="#offcanvasRight"
-       aria-controls="offcanvasRight">
-        Создать
+       data-bs-target="#offcanvasRight">
+        Создать статью
     </a>
 </div>
 
-<!-- Offcanvas справа на всю ширину -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
+<!-- Offcanvas справа -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">
-            <span id="form-title">Создание статьи</span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+        <h5 class="offcanvas-title">Статья</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body" id="offcanvas-body-content" hx-indicator="#offcanvas-loading">
-        <!-- Индикатор загрузки внутри offcanvas -->
-        <div id="offcanvas-loading" class="text-center my-5 htmx-indicator">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Загрузка...</span>
-            </div>
-        </div>
-        <!-- Форма будет загружаться сюда -->
+    <div class="offcanvas-body" id="offcanvas-body-content">
+        <!-- Сюда загружается форма -->
     </div>
 </div>
 {% endblock demo %}

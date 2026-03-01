@@ -1,4 +1,4 @@
-<!-- moderation/blogs/partials/categories_rows.html -->
+<!-- Строки таблицы (вставляются в #categories-items) -->
 {% for category in categories %}
 <tr id="category-{{ category.id }}">
     <th scope="row">{{ category.id }}</th>
@@ -23,10 +23,23 @@
         </button>
     </td>
 </tr>
-{% empty %}
-<tr>
-    <td colspan="5" class="text-center text-muted">
-        Нет категорий
-    </td>
-</tr>
 {% endfor %}
+
+<!-- Обновленная кнопка пагинации (заменяет старую) -->
+<div id="pagination-container" hx-swap-oob="true">
+    {% if page_obj.has_next %}
+    <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-outline-primary"
+                hx-get="{% url 'blogs:categories_pagination' page_obj.next_page_number %}"
+                hx-target="#categories-items"
+                hx-swap="beforeend"
+                hx-indicator="#loading-indicator">
+            Загрузить ещё
+        </button>
+    </div>
+    {% else %}
+    <div class="d-flex justify-content-center mt-4">
+        <span class="text-muted">Все категории загружены</span>
+    </div>
+    {% endif %}
+</div>

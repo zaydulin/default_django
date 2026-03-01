@@ -130,12 +130,10 @@ class ArticlesView(CustomHtmxMixin, ListView):
     paginate_by = 6
 
     def get_template_names(self):
-        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
-
-        # Для пагинационных запросов возвращаем другой шаблон
-        if is_htmx and self.request.GET.get('page'):
-            return ["moderation/blogs/partials/blog_page_content.html"]
-
+        if self.request.headers.get('HX-Request'):
+            if self.request.GET.get('page'):
+                return ["moderation/blogs/partials/articles_rows.html"]
+            return ["moderation/blogs/partials/articles_rows.html"]
         return super().get_template_names()
 
     def render_to_response(self, context, **response_kwargs):
@@ -148,8 +146,7 @@ class ArticlesView(CustomHtmxMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         # Для пагинационных запросов добавляем флаг
-        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            context['is_pagination_request'] = True
+        context['is_pagination_request'] = bool(self.request.headers.get('HX-Request') and self.request.GET.get('page'))
 
         # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
         try:
@@ -203,7 +200,7 @@ class ArticlesView(CustomHtmxMixin, ListView):
 
 class ArticlesPaginationView(ListView):
     model = Blogs
-    template_name = "moderation/blogs/partials/blog_items.html"  # Только элементы
+    template_name = "moderation/blogs/partials/articles_rows.html"  # Используем тот же шаблон
     context_object_name = "blogs"
     paginate_by = 6
 
@@ -214,81 +211,97 @@ class ArticlesPaginationView(ListView):
 
 
 class BlogFormView(LoginRequiredMixin, View):
-    """Единый view для создания и редактирования блогов через попап"""
+    """Единый view для создания и редактирования блогов"""
 
     def get(self, request, pk=None):
-        """GET запрос - возвращает форму в offcanvas"""
+        """GET запрос - возвращает форму"""
         if pk:
-            # Редактирование существующего блога
             blog = get_object_or_404(Blogs, pk=pk)
             form = BlogForm(instance=blog)
             title = f"Редактирование: {blog.name}"
         else:
-            # Создание нового блога
             form = BlogForm()
             title = "Создание новой статьи"
-            blog = None
 
         context = {
             'form': form,
             'title': title,
-            'blog': blog,
         }
 
-        # Для HTMX запросов возвращаем только форму
-        if request.headers.get('HX-Request'):
-            return render(request, 'moderation/blogs/partials/blog_form.html', context)
-
-        # Для обычных запросов (если нужно)
-        return render(request, 'moderation/blogs/blog_form_full.html', context)
+        return render(request, 'moderation/blogs/partials/blog_form.html', context)
 
     def post(self, request, pk=None):
         """POST запрос - сохраняет форму"""
         if pk:
-            # Редактирование
             blog = get_object_or_404(Blogs, pk=pk)
             form = BlogForm(request.POST, request.FILES, instance=blog)
-            action = 'updated'
         else:
-            # Создание
             form = BlogForm(request.POST, request.FILES)
-            action = 'created'
 
         if form.is_valid():
             blog = form.save(commit=False)
 
-            # Если создаем новый блог, добавляем автора
             if not pk:
                 blog.author = request.user
 
             blog.save()
-
-            # Сохраняем ManyToMany поля
             form.save_m2m()
 
-            # Для HTMX возвращаем обновленный элемент списка
             if request.headers.get('HX-Request'):
-                # Получаем обновленный список блогов для замены
-                blogs = Blogs.objects.all().order_by('-create')[:6]  # Последние 6
+                # Получаем обновленный список (первая страница)
+                blogs = Blogs.objects.all().order_by('-create')
+                paginator = Paginator(blogs, 6)
+                page_obj = paginator.get_page(1)
 
-                response_html = f'''
-                <div id="offcanvas-body-content" hx-swap-oob="true">
-                    <div class="alert alert-success">Блог успешно {action}</div>
+                # Рендерим строки через шаблон
+                rows_html = render_to_string(
+                    'moderation/blogs/partials/articles_rows.html',
+                    {'blogs': page_obj},
+                    request
+                )
+
+                # Рендерим пагинацию
+                pagination_html = render_to_string(
+                    'moderation/blogs/partials/articles_pagination.html',  # Создайте этот шаблон
+                    {'page_obj': page_obj},
+                    request
+                )
+
+                # Формируем ответ
+                response = HttpResponse()
+
+                # Обновляем tbody
+                response.write(f'''
+                <tbody id="articles-items" hx-swap-oob="outerHTML">
+                    {rows_html}
+                </tbody>
+                ''')
+
+                # Обновляем пагинацию
+                response.write(f'''
+                <div id="pagination-container" hx-swap-oob="outerHTML">
+                    {pagination_html}
                 </div>
-                <div id="blog-items" hx-swap-oob="innerHTML">
-                    {render_to_string('moderation/blogs/partials/blog_list.html', {'blogs': blogs, 'is_pagination_request': False}, request)}
-                </div>
-                <script>
-                    var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
-                    if (offcanvas) {{
-                        setTimeout(() => {{
-                            offcanvas.hide();
+                ''')
+
+                # Сообщение об успехе
+                response.write(f'''
+                <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
+                    <div class="alert alert-success">
+                        Статья "{blog.name}" успешно сохранена
+                    </div>
+                    <script>
+                        setTimeout(function() {{
+                            var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                            if (offcanvas) {{
+                                offcanvas.hide();
+                            }}
                         }}, 1500);
-                    }}
-                </script>
-                '''
+                    </script>
+                </div>
+                ''')
 
-                return HttpResponse(response_html)
+                return response
 
             return redirect('blogs:articles_list')
 
@@ -297,11 +310,10 @@ class BlogFormView(LoginRequiredMixin, View):
             context = {
                 'form': form,
                 'title': f"{'Редактирование' if pk else 'Создание'} статьи",
-                'blog': blog if pk else None,
             }
             return render(request, 'moderation/blogs/partials/blog_form.html', context)
 
-        return render(request, 'moderation/blogs/blog_form_full.html', {'form': form})
+        return render(request, 'moderation/blogs/partials/blog_form.html', {'form': form})
 
 
 class CategoriesView(CustomHtmxMixin, ListView):
@@ -312,10 +324,8 @@ class CategoriesView(CustomHtmxMixin, ListView):
 
     def get_template_names(self):
         if self.request.headers.get('HX-Request'):
-            if self.request.GET.get('page'):
-                return ["moderation/blogs/partials/categories_rows.html"]
             return ["moderation/blogs/partials/categories_rows.html"]
-        return super().get_template_names()
+        return ["moderation/blogs/categories.html"]
 
 
 
@@ -329,8 +339,6 @@ class CategoriesView(CustomHtmxMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         context['is_pagination_request'] = bool(self.request.headers.get('HX-Request') and self.request.GET.get('page'))
-        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            context['is_pagination_request'] = True
 
         # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
         try:
@@ -381,9 +389,10 @@ class CategoriesView(CustomHtmxMixin, ListView):
                 'block_head': '<meta name="robots" content="noindex">'
             }
 
+
 class CategoriesPaginationView(ListView):
     model = CategorysBlogs
-    template_name = "moderation/blogs/partials/categories_items.html"  # Только элементы
+    template_name = "moderation/blogs/partials/pagination_response.html"  # Новый шаблон
     context_object_name = "categories"
     paginate_by = 6
 
@@ -391,7 +400,6 @@ class CategoriesPaginationView(ListView):
         context = super().get_context_data(**kwargs)
         context['is_pagination_request'] = True
         return context
-
 
 class CategoriesFormView(LoginRequiredMixin, View):
     """Единый view для создания и редактирования категорий"""
