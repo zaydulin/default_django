@@ -10,11 +10,14 @@
             <div class="card-body">
                 <h5 class="card-title">{{ blog.name }}</h5>
                 <p class="card-text">{{ blog.description|truncatewords:20 }}</p>
-                <a href="{% url 'blogs:blog_detail' blog.slug %}"
-                   hx-get="{% url 'blogs:blog_detail' blog.slug %}"
-                   hx-target="#content-body"
-                   hx-push-url="true"
-                   class="btn btn-primary">Читать</a>
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <a href="{% url 'blogs:blog_detail' blog.slug %}"
+                       hx-get="{% url 'blogs:blog_detail' blog.slug %}"
+                       hx-target="#content-body"
+                       hx-push-url="true"
+                       class="btn btn-primary">Читать</a>
+                    {% include "active/blogs/partials/like_button.html" with blog=blog is_liked=blog.is_liked %}
+                </div>
             </div>
         </div>
     </div>
@@ -30,11 +33,14 @@
             <div class="card-body">
                 <h5 class="card-title">{{ blog.name }}</h5>
                 <p class="card-text">{{ blog.description|truncatewords:20 }}</p>
-                <a href="{% url 'blogs:blog_detail' blog.slug %}"
-                   hx-get="{% url 'blogs:blog_detail' blog.slug %}"
-                   hx-target="#content-body"
-                   hx-push-url="true"
-                   class="btn btn-primary">Читать</a>
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <a href="{% url 'blogs:blog_detail' blog.slug %}"
+                       hx-get="{% url 'blogs:blog_detail' blog.slug %}"
+                       hx-target="#content-body"
+                       hx-push-url="true"
+                       class="btn btn-primary">Читать</a>
+                    {% include "active/blogs/partials/like_button.html" with blog=blog is_liked=blog.is_liked %}
+                </div>
             </div>
         </div>
     </div>

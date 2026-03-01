@@ -8,6 +8,7 @@ urlpatterns = [
     path("blogs/", views.BlogView.as_view(), name="list"),
     path('page/<int:page>/', views.BlogPaginationView.as_view(), name='pagination'),
     path("blogs/<slug:slug>/", views.BlogDetailView.as_view(), name="blog_detail"),
+    path("blogs/<int:blog_id>/like/", views.BlogLikeToggleView.as_view(), name="blog_like_toggle"),
     # Модерация
     path('moderation/articles/', views.ArticlesView.as_view(), name='articles_list'),
     path('moderation/articles-pagination/<int:page>/', views.ArticlesPaginationView.as_view(), name='articles_pagination'),
@@ -23,6 +24,7 @@ urlpatterns = [
     path('moderation/tags-form/', views.TagsFormView.as_view(), name='tags_form'),
     path('moderation/tags-form/<int:pk>/', views.TagsFormView.as_view(), name='tags_form'),
     path("moderation/likes/", views.LikesView.as_view(), name="likes_list"),
+    path("moderation/likes-page/<int:page>/", views.LikesPaginationView.as_view(), name="likes_pagination"),
     path("moderation/comments/", views.CommentsView.as_view(), name="comments_list"),
     path("moderation/complaints/", views.ComplaintsView.as_view(), name="complaints_list"),
 

@@ -1,32 +1,31 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+
 {% block content %}
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<div id="likes-list">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Статья</th>
+                <th scope="col">Slug статьи</th>
+                <th scope="col">Дата</th>
+            </tr>
+            </thead>
+            <tbody id="likes-items">
+                {% include "moderation/blogs/partials/likes_rows.html" %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="pagination-container">
+        {% include "moderation/blogs/partials/likes_pagination.html" %}
+    </div>
 </div>
-<!-- Offcanvas справа на всю ширину -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-    </div>
-    <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
-    </div>
-    <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
-    </div>
+
+<div id="loading-indicator" class="text-center my-3" style="display:none;">
+    <div class="spinner-border text-primary" role="status"></div>
 </div>
-{% endblock demo %}
+{% endblock %}

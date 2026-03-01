@@ -12,6 +12,9 @@
 <!-- Header Section -->
 <!-- FAQ Section -->
 <section class="container my-5">
+  <div class="mb-3">
+    {% include "active/blogs/partials/like_button.html" with blog=blog is_liked=blog.is_liked %}
+  </div>
   {{ blog.description|safe }}
 </section>
 <div class="container my-5">

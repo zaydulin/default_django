@@ -81,3 +81,30 @@ class Blogs(models.Model):
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Статьи"
+
+class LikesBlogs(models.Model):
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name='Автор',
+        on_delete=models.CASCADE,
+        related_name='likes_blogs',
+    )
+    blog = models.ForeignKey(
+        Blogs,
+        verbose_name="Блог",
+        on_delete=models.CASCADE,
+        related_name='likes',
+    )
+    create = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+
+    def __str__(self):
+        return f"{self.author} -> {self.blog}"
+
+    class Meta:
+        verbose_name = "Лайк"
+        verbose_name_plural = "Лайки"
+        constraints = [
+            models.UniqueConstraint(fields=['author', 'blog'], name='unique_author_blog_like'),
+        ]
+        ordering = ['-create']
+    

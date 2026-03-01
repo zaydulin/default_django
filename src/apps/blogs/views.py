@@ -2,13 +2,14 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.http import require_http_methods
+from django.db.models import Count
 
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView
 from django.shortcuts import render, get_object_or_404, redirect
 from moderation.models import Collaborations
 from webmain.forms import SubscriptionForm
-from blogs.models import TagsBlogs,  CategorysBlogs, Blogs
+from blogs.models import TagsBlogs,  CategorysBlogs, Blogs, LikesBlogs
 from django.utils.text import slugify
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError
@@ -31,19 +32,22 @@ class BlogView(CustomHtmxSiteMixin, ListView):
     context_object_name = "blogs"
     paginate_by = 6
 
+    def get_queryset(self):
+        return Blogs.objects.all().annotate(likes_count=Count('likes'))
+
     def get_template_names(self):
         is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
 
         # Для пагинационных запросов возвращаем другой шаблон
         if is_htmx and self.request.GET.get('page'):
-            return ["active/blogs/partials/blog_page_content.html"]
+            return ["active/blogs/partials/blog_items.html"]
 
         return super().get_template_names()
 
     def render_to_response(self, context, **response_kwargs):
         # Для HTMX пагинации возвращаем только контент
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
-            return render(self.request, "active/blogs/partials/blog_page_content.html", context)
+            return render(self.request, "active/blogs/partials/blog_items.html", context)
         return super().render_to_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
@@ -52,6 +56,21 @@ class BlogView(CustomHtmxSiteMixin, ListView):
         # Для пагинационных запросов добавляем флаг
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
             context['is_pagination_request'] = True
+
+        if self.request.user.is_authenticated:
+            page_obj = context.get('page_obj')
+            blog_ids = [blog.id for blog in page_obj.object_list] if page_obj else []
+            liked_ids = set(
+                LikesBlogs.objects.filter(author=self.request.user, blog_id__in=blog_ids)
+                .values_list('blog_id', flat=True)
+            )
+        else:
+            liked_ids = set()
+
+        page_obj = context.get('page_obj')
+        if page_obj:
+            for blog in page_obj.object_list:
+                blog.is_liked = blog.id in liked_ids
 
         # Параметры из базы данных для страницы "Авторизация" (pagetype=5)
         try:
@@ -108,15 +127,47 @@ class BlogPaginationView(ListView):
     context_object_name = "blogs"
     paginate_by = 6
 
+    def get_queryset(self):
+        return Blogs.objects.all().annotate(likes_count=Count('likes'))
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['is_pagination_request'] = True
+
+        if self.request.user.is_authenticated:
+            page_obj = context.get('page_obj')
+            blog_ids = [blog.id for blog in page_obj.object_list] if page_obj else []
+            liked_ids = set(
+                LikesBlogs.objects.filter(author=self.request.user, blog_id__in=blog_ids)
+                .values_list('blog_id', flat=True)
+            )
+        else:
+            liked_ids = set()
+
+        page_obj = context.get('page_obj')
+        if page_obj:
+            for blog in page_obj.object_list:
+                blog.is_liked = blog.id in liked_ids
         return context
 
 class BlogDetailView(CustomHtmxSiteMixin, DetailView):
     model = Blogs
     template_name = "active/blogs/blog_detail.html"
     context_object_name = "blog"
+
+    def get_queryset(self):
+        return Blogs.objects.all().annotate(likes_count=Count('likes'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        blog = context['blog']
+
+        if self.request.user.is_authenticated:
+            blog.is_liked = LikesBlogs.objects.filter(author=self.request.user, blog=blog).exists()
+        else:
+            blog.is_liked = False
+
+        return context
 
 
 """Модерация"""
@@ -662,12 +713,60 @@ class TagsFormView(LoginRequiredMixin, View):
 
 
 
-class LikesView(CustomHtmxMixin, View):
+class LikesView(CustomHtmxMixin, ListView):
+    model = LikesBlogs
     template_name = 'moderation/blogs/likes.html'
+    context_object_name = "likes"
+    paginate_by = 15
 
-    def get(self, request, *args, **kwargs):
+    def get_queryset(self):
+        return LikesBlogs.objects.select_related('author', 'blog').all()
+
+    def get_template_names(self):
+        if self.request.headers.get('HX-Request'):
+            return ["moderation/blogs/partials/likes_rows.html"]
+        return ["moderation/blogs/likes.html"]
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
+            return render(self.request, "moderation/blogs/partials/likes_rows.html", context)
+        return super().render_to_response(context, **response_kwargs)
+
+
+class LikesPaginationView(ListView):
+    model = LikesBlogs
+    template_name = "moderation/blogs/partials/pagination_likes_response.html"
+    context_object_name = "likes"
+    paginate_by = 15
+
+    def get_queryset(self):
+        return LikesBlogs.objects.select_related('author', 'blog').all()
+
+
+class BlogLikeToggleView(View):
+    template_name = "active/blogs/partials/like_button.html"
+
+    def post(self, request, blog_id):
+        blog = get_object_or_404(Blogs.objects.annotate(likes_count=Count('likes')), pk=blog_id)
+
+        if not request.user.is_authenticated:
+            context = {
+                "blog": blog,
+                "is_liked": False,
+            }
+            return render(request, self.template_name, context, status=401)
+
+        like, created = LikesBlogs.objects.get_or_create(author=request.user, blog=blog)
+        if not created:
+            like.delete()
+            is_liked = False
+        else:
+            is_liked = True
+
+        blog = Blogs.objects.annotate(likes_count=Count('likes')).get(pk=blog.pk)
         context = {
-            'title': 'Лайки',
+            "blog": blog,
+            "is_liked": is_liked,
         }
         return render(request, self.template_name, context)
 
@@ -690,4 +789,3 @@ class ComplaintsView(CustomHtmxMixin, View):
             'title': 'Жалобы',
         }
         return render(request, self.template_name, context)
-

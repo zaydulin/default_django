@@ -30,3 +30,8 @@ class BlogsAdmin(admin.ModelAdmin):
     save_on_top = True
 
 
+@admin.register(LikesBlogs)
+class LikesBlogsAdmin(admin.ModelAdmin):
+    list_display = ["id", "author", "blog", "create"]
+    list_select_related = ["author", "blog"]
+    search_fields = ["author__username", "blog__name"]
