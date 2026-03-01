@@ -311,13 +311,13 @@ class CategoriesView(CustomHtmxMixin, ListView):
     paginate_by = 6
 
     def get_template_names(self):
-        is_htmx = bool(self.request.META.get('HTTP_HX_REQUEST'))
-
-        # Для пагинационных запросов возвращаем другой шаблон
-        if is_htmx and self.request.GET.get('page'):
-            return ["moderation/blogs/partials/categories_page_content.html"]
-
+        if self.request.headers.get('HX-Request'):
+            if self.request.GET.get('page'):
+                return ["moderation/blogs/partials/categories_rows.html"]
+            return ["moderation/blogs/partials/categories_rows.html"]
         return super().get_template_names()
+
+
 
     def render_to_response(self, context, **response_kwargs):
         # Для HTMX пагинации возвращаем только контент
@@ -328,7 +328,7 @@ class CategoriesView(CustomHtmxMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Для пагинационных запросов добавляем флаг
+        context['is_pagination_request'] = bool(self.request.headers.get('HX-Request') and self.request.GET.get('page'))
         if self.request.headers.get("HX-Request") and self.request.GET.get('page'):
             context['is_pagination_request'] = True
 
@@ -392,74 +392,93 @@ class CategoriesPaginationView(ListView):
         context['is_pagination_request'] = True
         return context
 
+
 class CategoriesFormView(LoginRequiredMixin, View):
-    """Единый view для создания и редактирования блогов через попап"""
+    """Единый view для создания и редактирования категорий"""
 
     def get(self, request, pk=None):
-        """GET запрос - возвращает форму в offcanvas"""
+        """GET запрос - возвращает форму"""
         if pk:
-            # Редактирование существующего блога
-            categories = get_object_or_404(CategorysBlogs, pk=pk)
-            form = CategoriesForm(instance=categories)
-            title = f"Редактирование: {categories.name}"
+            category = get_object_or_404(CategorysBlogs, pk=pk)
+            form = CategoriesForm(instance=category)
+            title = f"Редактирование: {category.name}"
         else:
-            # Создание нового блога
             form = CategoriesForm()
             title = "Создание новой категории"
-            categories = None
 
         context = {
             'form': form,
             'title': title,
-            'categories': categories,
         }
 
-        # Для HTMX запросов возвращаем только форму
-        if request.headers.get('HX-Request'):
-            return render(request, 'moderation/blogs/partials/categories_form.html', context)
-
-        # Для обычных запросов (если нужно)
-        return render(request, 'moderation/blogs/categories_form_full.html', context)
+        return render(request, 'moderation/blogs/partials/categories_form.html', context)
 
     def post(self, request, pk=None):
         """POST запрос - сохраняет форму"""
         if pk:
-            # Редактирование
-            categories = get_object_or_404(CategorysBlogs, pk=pk)
-            form = CategoriesForm(request.POST, request.FILES, instance=categories)
-            action = 'updated'
+            category = get_object_or_404(CategorysBlogs, pk=pk)
+            form = CategoriesForm(request.POST, request.FILES, instance=category)
         else:
-            # Создание
             form = CategoriesForm(request.POST, request.FILES)
-            action = 'created'
 
         if form.is_valid():
-            categories = form.save(commit=False)
-            categories.save()
+            category = form.save()
 
-            # Для HTMX возвращаем обновленный элемент списка
             if request.headers.get('HX-Request'):
-                # Получаем обновленный список блогов для замены
-                categories = CategorysBlogs.objects.all().order_by('-create')[:6]  # Последние 6
+                # Получаем обновленный список категорий (первая страница)
+                categories = CategorysBlogs.objects.all().order_by('-create')
+                paginator = Paginator(categories, 6)
+                page_obj = paginator.get_page(1)
 
-                response_html = f'''
-                <div id="offcanvas-body-content" hx-swap-oob="true">
-                    <div class="alert alert-success">Блог успешно {action}</div>
+                # Рендерим строки через шаблон
+                rows_html = render_to_string(
+                    'moderation/blogs/partials/categories_rows.html',
+                    {'categories': page_obj},
+                    request
+                )
+
+                # Рендерим пагинацию
+                pagination_html = render_to_string(
+                    'moderation/blogs/partials/categories_pagination.html',
+                    {'page_obj': page_obj},
+                    request
+                )
+
+                # Формируем ответ
+                response = HttpResponse()
+
+                # Обновляем tbody
+                response.write(f'''
+                <tbody id="categories-items" hx-swap-oob="outerHTML">
+                    {rows_html}
+                </tbody>
+                ''')
+
+                # Обновляем пагинацию
+                response.write(f'''
+                <div id="pagination-container" hx-swap-oob="outerHTML">
+                    {pagination_html}
                 </div>
-                <div id="blog-items" hx-swap-oob="innerHTML">
-                    {render_to_string('moderation/blogs/partials/categories_list.html', {'categories': categories, 'is_pagination_request': False}, request)}
-                </div>
-                <script>
-                    var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
-                    if (offcanvas) {{
-                        setTimeout(() => {{
-                            offcanvas.hide();
+                ''')
+
+                # Сообщение об успехе
+                response.write(f'''
+                <div id="offcanvas-body-content" hx-swap-oob="innerHTML">
+                    <div class="alert alert-success">
+                        Категория "{category.name}" успешно сохранена
+                    </div>
+                    <script>
+                        setTimeout(function() {{
+                            var offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'));
+                            if (offcanvas) {{
+                                offcanvas.hide();
+                            }}
                         }}, 1500);
-                    }}
-                </script>
-                '''
+                    </script>
+                </div>
+                ''')
 
-                return HttpResponse(response_html)
+                return response
 
             return redirect('blogs:categories_list')
 
@@ -467,12 +486,11 @@ class CategoriesFormView(LoginRequiredMixin, View):
         if request.headers.get('HX-Request'):
             context = {
                 'form': form,
-                'title': f"{'Редактирование' if pk else 'Создание'} статьи",
-                'categories': categories if pk else None,
+                'title': f"{'Редактирование' if pk else 'Создание'} категории",
             }
             return render(request, 'moderation/blogs/partials/categories_form.html', context)
 
-        return render(request, 'moderation/blogs/categories_form_full.html', {'form': form})
+        return render(request, 'moderation/blogs/partials/categories_form.html', {'form': form})
 
 class TagsView(CustomHtmxMixin, ListView):
     model = TagsBlogs

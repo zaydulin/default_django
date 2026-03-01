@@ -1,10 +1,7 @@
 {% load static %}
-<form id="blog-form"
-      hx-post="{% if categories %}{% url 'blogs:categories_form' categories.id %}{% else %}{% url 'blogs:categories_form' %}{% endif %}"
+<form hx-post="{% if form.instance.pk %}{% url 'blogs:categories_form' form.instance.pk %}{% else %}{% url 'blogs:categories_form' %}{% endif %}"
       hx-target="#offcanvas-body-content"
-      hx-encoding="multipart/form-data"
-      hx-indicator="#form-loading"
-      enctype="multipart/form-data">
+      hx-encoding="multipart/form-data">
 
     {% csrf_token %}
 
@@ -40,52 +37,7 @@
         {% endif %}
     </div>
 
-    <!-- Категории и теги -->
-    <div class="mb-3">
-        <label for="{{ form.category.id_for_label }}" class="form-label">Категории</label>
-        {{ form.category }}
-        {% if form.category.errors %}
-            <div class="invalid-feedback d-block">{{ form.category.errors }}</div>
-        {% endif %}
-    </div>
-
-    <div class="mb-3">
-        <label for="{{ form.tags.id_for_label }}" class="form-label">Теги</label>
-        {{ form.tags }}
-        {% if form.tags.errors %}
-            <div class="invalid-feedback d-block">{{ form.tags.errors }}</div>
-        {% endif %}
-    </div>
-
     <!-- Файлы -->
-    <div class="mb-3">
-        <label for="{{ form.previev.id_for_label }}" class="form-label">Превью</label>
-        {% if categories and categories.previev %}
-            <div class="mb-2">
-                <img src="{{ categories.previev.url }}" alt="Текущее превью" style="max-height: 50px;">
-                <small class="text-muted d-block">Текущее: {{ categories.previev.name }}</small>
-            </div>
-        {% endif %}
-        {{ form.previev }}
-        {% if form.previev.errors %}
-            <div class="invalid-feedback d-block">{{ form.previev.errors }}</div>
-        {% endif %}
-    </div>
-
-    <div class="mb-3">
-        <label for="{{ form.cover.id_for_label }}" class="form-label">Обложка</label>
-        {% if categories and categories.cover %}
-            <div class="mb-2">
-                <img src="{{ categories.cover.url }}" alt="Текущая обложка" style="max-height: 50px;">
-                <small class="text-muted d-block">Текущая: {{ categories.cover.name }}</small>
-            </div>
-        {% endif %}
-        {{ form.cover }}
-        {% if form.cover.errors %}
-            <div class="invalid-feedback d-block">{{ form.cover.errors }}</div>
-        {% endif %}
-    </div>
-
     <div class="mb-3">
         <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
         {% if categories and categories.image %}
@@ -160,4 +112,17 @@
 <script>
     // Обновляем заголовок offcanvas при загрузке формы
     document.getElementById('offcanvasRightLabel').innerText = '{{ title }}';
+
+    // Функция для закрытия offcanvas
+    window.hideOffcanvas = function() {
+        var offcanvasElement = document.getElementById('offcanvasRight');
+        var offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+        if (offcanvas) {
+            offcanvas.hide();
+        } else {
+            // Если экземпляр не создан, создаем новый
+            offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+            offcanvas.hide();
+        }
+    };
 </script>

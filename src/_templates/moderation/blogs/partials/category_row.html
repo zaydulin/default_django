@@ -1,0 +1,23 @@
+<tr id="category-{{ category.id }}">
+    <th scope="row">{{ category.id }}</th>
+    <td style="width: 100px;">
+        {% if category.image %}
+            <img src="{{ category.image.url }}" class="img-thumbnail" alt="{{ category.name }}" style="max-width: 80px; max-height: 60px;">
+        {% else %}
+            <span class="text-muted">Нет фото</span>
+        {% endif %}
+    </td>
+    <td>
+        <strong>{{ category.name }}</strong>
+    </td>
+    <td>{{ category.description|truncatewords:20 }}</td>
+    <td>
+        <button class="btn btn-sm btn-primary"
+                hx-get="{% url 'blogs:categories_form' category.id %}"
+                hx-target="#offcanvas-body-content"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasRight">
+            <i class="bi bi-pencil"></i> Ред.
+        </button>
+    </td>
+</tr>

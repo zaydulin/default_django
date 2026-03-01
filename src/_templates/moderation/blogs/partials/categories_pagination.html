@@ -1,12 +1,12 @@
-<!-- moderation/blogs/partials/blog_pagination.html -->
+<!-- moderation/blogs/partials/categories_pagination.html -->
 {% if page_obj.has_next %}
 <div class="d-flex justify-content-center mt-4">
     <button class="btn btn-outline-primary"
             hx-get="{% url 'blogs:categories_pagination' page_obj.next_page_number %}"
-            hx-target="#blog-items"
+            hx-target="#categories-items"
             hx-swap="beforeend"
             hx-indicator="#loading-indicator"
-            hx-select=".col, #pagination-container">
+            hx-select="tr, #pagination-container">
         Загрузить ещё
     </button>
 </div>

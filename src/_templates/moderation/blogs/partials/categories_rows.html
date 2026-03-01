@@ -1,0 +1,24 @@
+{% if is_pagination_request %}
+
+{% for category in categories %}
+    {% include "moderation/blogs/partials/category_row.html" %}
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">
+        Нет категорий
+    </td>
+</tr>
+{% endfor %}
+
+{% else %}
+{% for category in categories %}
+    {% include "moderation/blogs/partials/category_row.html" %}
+{% empty %}
+<tr>
+    <td colspan="5" class="text-center text-muted">
+        Нет категорий
+    </td>
+</tr>
+{% endfor %}
+
+{% endif %}
