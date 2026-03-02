@@ -1,443 +1,1441 @@
+
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+{% block title %}Звонки{% endblock title %}
+{% block description %}Список звонков, факсов и голосовой почты{% endblock description %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'moderation/css/pages/calls.css' %}">
+<style>
+  .calls-container {
+    min-height: calc(100vh - 200px);
+  }
+
+  /* Left side - Content */
+  .calls-list-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .calls-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f5f5f5;
+  }
+
+  .calls-tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s;
+    border: none;
+    background: transparent;
+    position: relative;
+  }
+
+  .calls-tab.active {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    background: white;
+  }
+
+  .calls-tab:hover:not(.active) {
+    background: rgba(0,0,0,0.02);
+  }
+
+  .tab-icon {
+    margin-right: 8px;
+    font-size: 18px;
+  }
+
+  .badge-counter {
+    margin-left: 8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  /* Call/Fax/Voicemail items */
+  .call-item, .fax-item, .voicemail-item {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .call-item:hover, .fax-item:hover, .voicemail-item:hover {
+    background-color: #f8f9fa;
+  }
+
+  .call-item:last-child, .fax-item:last-child, .voicemail-item:last-child {
+    border-bottom: none;
+  }
+
+  .call-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-right: 16px;
+    object-fit: cover;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-weight: 500;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .call-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .call-name {
+    font-weight: 500;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .call-detail {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #666;
+  }
+
+  .call-type-icon {
+    margin-right: 6px;
+    font-size: 16px;
+  }
+
+  .incoming { color: #28a745; }
+  .outgoing { color: #007bff; }
+  .missed { color: #dc3545; }
+
+  .call-time {
+    font-size: 12px;
+    color: #999;
+    margin-left: 8px;
+  }
+
+  .call-badge {
+    margin-left: 8px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .call-actions-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .call-action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 18px;
+  }
+
+  .call-action-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .call-action-btn.audio {
+    background: #e3f2fd;
+    color: #007bff;
+  }
+
+  .call-action-btn.audio:hover {
+    background: #007bff;
+    color: white;
+  }
+
+  .call-action-btn.video {
+    background: #e8f5e9;
+    color: #28a745;
+  }
+
+  .call-action-btn.video:hover {
+    background: #28a745;
+    color: white;
+  }
+
+  /* Right side - Sidebar */
+  .calls-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .sidebar-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+  }
+
+  .quick-actions {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 20px 0;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    padding: 16px;
+    border-radius: 12px;
+    min-width: 100px;
+  }
+
+  .quick-action-btn:hover {
+    transform: translateY(-2px);
+    background: #f8f9fa;
+  }
+
+  .quick-action-btn.active {
+    background: #e3f2fd;
+  }
+
+  .quick-action-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: white;
+  }
+
+  .quick-action-icon.fax {
+    background: linear-gradient(135deg, #9b59b6, #8e44ad);
+  }
+
+  .quick-action-icon.voicemail {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+  }
+
+  .quick-action-label {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .employees-section h6 {
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+  }
+
+  .employee-search {
+    margin-bottom: 16px;
+  }
+
+  .employee-search input {
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .employee-search input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+  }
+
+  .employee-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .employee-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background 0.2s;
+  }
+
+  .employee-item:hover {
+    background: #f8f9fa;
+    margin: 0 -12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 6px;
+  }
+
+  .employee-item:last-child {
+    border-bottom: none;
+  }
+
+  .employee-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .employee-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .employee-name {
+    font-weight: 500;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .employee-position {
+    font-size: 12px;
+    color: #999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .employee-extension {
+    font-size: 13px;
+    color: #007bff;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  .employee-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .employee-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+  }
+
+  .employee-action-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .employee-action-btn.audio {
+    background: #e3f2fd;
+    color: #007bff;
+  }
+
+  .employee-action-btn.audio:hover {
+    background: #007bff;
+    color: white;
+  }
+
+  .employee-action-btn.video {
+    background: #e8f5e9;
+    color: #28a745;
+  }
+
+  .employee-action-btn.video:hover {
+    background: #28a745;
+    color: white;
+  }
+
+  /* Fax specific */
+  .fax-icon-large {
+    font-size: 24px;
+  }
+
+  .fax-pages {
+    background: rgba(0,0,0,0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+
+  /* Voicemail specific */
+  .voicemail-wave {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 30px;
+    margin: 8px 0;
+  }
+
+  .wave-bar {
+    width: 3px;
+    background: #007bff;
+    border-radius: 2px;
+    animation: wave 1s ease-in-out infinite;
+  }
+
+  .wave-bar:nth-child(1) { height: 12px; animation-delay: 0s; }
+  .wave-bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { height: 16px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { height: 24px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(5) { height: 18px; animation-delay: 0.4s; }
+  .wave-bar:nth-child(6) { height: 22px; animation-delay: 0.5s; }
+  .wave-bar:nth-child(7) { height: 14px; animation-delay: 0.6s; }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.5); }
+    50% { transform: scaleY(1); }
+  }
+
+  .voicemail-duration {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .play-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .play-btn:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+  }
+
+  /* Tab content sections */
+  .tab-content-section {
+    display: none;
+  }
+
+  .tab-content-section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Modal styles */
+  .modal-content {
+    border-radius: 16px;
+    border: none;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    border-bottom: 1px solid #e9ecef;
+    padding: 16px 24px;
+  }
+
+  .modal-body {
+    padding: 24px;
+  }
+
+  /* Audio call modal */
+  .audio-call-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 600;
+    color: white;
+    position: relative;
+  }
+
+  .audio-call-avatar.pulsing::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    opacity: 0.6;
+    animation: pulse-ring 1.5s infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  .call-timer {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #007bff;
+    margin: 16px 0;
+    letter-spacing: 2px;
+  }
+
+  .call-status {
+    color: #6c757d;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .call-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .call-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 24px;
+  }
+
+  .call-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .call-btn-answer {
+    background: #28a745;
+    color: white;
+  }
+
+  .call-btn-decline {
+    background: #dc3545;
+    color: white;
+  }
+
+  .call-btn-secondary {
+    background: #e9ecef;
+    color: #495057;
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  /* Video call modal */
+  .video-container {
+    position: relative;
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .video-main {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .video-placeholder {
+    text-align: center;
+    color: white;
+  }
+
+  .video-placeholder i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+
+  .video-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 600;
+    color: white;
+    margin: 0 auto 12px;
+  }
+
+  .video-self {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 120px;
+    height: 90px;
+    background: #333;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+  }
+
+  .video-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 12px;
+    margin-top: 16px;
+  }
+
+  .video-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 24px;
+    color: white;
+  }
+
+  .video-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .video-btn-mute {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .video-btn-camera {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .video-btn-end {
+    background: #dc3545;
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .video-btn-swap {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .video-info {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .video-info h5 {
+    margin-bottom: 4px;
+  }
+
+  .video-timer {
+    color: #6c757d;
+    font-size: 14px;
+  }
+
+  @media (max-width: 991px) {
+    .calls-sidebar {
+      margin-top: 24px;
+    }
+
+    .video-main {
+      aspect-ratio: 4/3;
+    }
+
+    .employee-actions {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .employee-action-btn {
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+    }
+  }
+</style>
+{% endblock head %}
 {% block content %}
-<div class="col app-chat-contacts app-sidebar flex-grow-0 overflow-hidden border-end" id="app-chat-contacts">
-    <div class="sidebar-header px-6 border-bottom d-flex align-items-center">
-        <div class="d-flex align-items-center me-6 me-lg-0">
-            <div class="flex-shrink-0 avatar avatar-online me-4" data-bs-toggle="sidebar" data-overlay="app-overlay-ex" data-target="#app-chat-sidebar-left">
-                <img class="user-avatar rounded-circle cursor-pointer" src="../../assets/img/avatars/1.png" alt="Avatar">
-            </div>
-            <div class="flex-grow-1 input-group input-group-merge rounded-pill">
-                <span class="input-group-text" id="basic-addon-search31"><i class="icon-base bx bx-search icon-sm"></i></span>
-                <input type="text" class="form-control chat-search-input" placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon-search31">
-            </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+  <div class="row calls-container">
+    <!-- Left side - Content -->
+    <div class="col-lg-8 col-md-12">
+      <div class="calls-list-section">
+        <!-- Tabs -->
+        <div class="calls-tabs">
+          <button class="calls-tab active" onclick="switchTab('calls')" id="tab-calls">
+            <i class="icon-base bx bx-phone tab-icon"></i>
+            Звонки
+          </button>
+          <button class="calls-tab" onclick="switchTab('fax')" id="tab-fax">
+            <i class="icon-base bx bx-paperclip tab-icon"></i>
+            Факсы
+            <span class="badge-counter">3</span>
+          </button>
+          <button class="calls-tab" onclick="switchTab('voicemail')" id="tab-voicemail">
+            <i class="icon-base bx bx-voicemail tab-icon"></i>
+            Голосовая почта
+            <span class="badge-counter">5</span>
+          </button>
         </div>
-        <i class="icon-base bx bx-x icon-lg cursor-pointer position-absolute top-50 end-0 translate-middle d-lg-none d-block" data-overlay="" data-bs-toggle="sidebar" data-target="#app-chat-contacts"></i>
+
+        <!-- Calls Section -->
+        <div id="callsSection" class="tab-content-section active">
+          <!-- Incoming call -->
+          <div class="call-item">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">АС</div>
+            <div class="call-info">
+              <div class="call-name">
+                Анна Смирнова
+                <span class="call-time">14:30</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-arrow-to-bottom call-type-icon incoming"></i>
+                <span>Входящий</span>
+                <span class="ms-2 text-muted">5:23</span>
+              </div>
+            </div>
+            <div class="call-actions-group">
+              <button class="call-action-btn audio" onclick="openCallModal('audio', 'Анна Смирнова', '+7 999 123-45-67', 'АС')" title="Аудиозвонок">
+                <i class="icon-base bx bx-phone"></i>
+              </button>
+              <button class="call-action-btn video" onclick="openCallModal('video', 'Анна Смирнова', '+7 999 123-45-67', 'АС')" title="Видеозвонок">
+                <i class="icon-base bx bx-video"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Outgoing call -->
+          <div class="call-item">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">ИП</div>
+            <div class="call-info">
+              <div class="call-name">
+                Иван Петров
+                <span class="call-time">12:10</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-arrow-to-top call-type-icon outgoing"></i>
+                <span>Исходящий</span>
+                <span class="ms-2 text-muted">2:15</span>
+              </div>
+            </div>
+            <div class="call-actions-group">
+              <button class="call-action-btn audio" onclick="openCallModal('audio', 'Иван Петров', '+7 999 765-43-21', 'ИП')" title="Аудиозвонок">
+                <i class="icon-base bx bx-phone"></i>
+              </button>
+              <button class="call-action-btn video" onclick="openCallModal('video', 'Иван Петров', '+7 999 765-43-21', 'ИП')" title="Видеозвонок">
+                <i class="icon-base bx bx-video"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Missed call -->
+          <div class="call-item">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">МК</div>
+            <div class="call-info">
+              <div class="call-name">
+                Мария Кузнецова
+                <span class="call-time">Вчера, 18:45</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-x-circle call-type-icon missed"></i>
+                <span>Пропущенный</span>
+                <span class="call-badge">1</span>
+              </div>
+            </div>
+            <div class="call-actions-group">
+              <button class="call-action-btn audio" onclick="openCallModal('audio', 'Мария Кузнецова', '+7 999 555-66-77', 'МК')" title="Аудиозвонок">
+                <i class="icon-base bx bx-phone"></i>
+              </button>
+              <button class="call-action-btn video" onclick="openCallModal('video', 'Мария Кузнецова', '+7 999 555-66-77', 'МК')" title="Видеозвонок">
+                <i class="icon-base bx bx-video"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Video call -->
+          <div class="call-item">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">ДС</div>
+            <div class="call-info">
+              <div class="call-name">
+                Дмитрий Соколов
+                <span class="call-time">Вчера, 10:20</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-video call-type-icon incoming"></i>
+                <span>Видеозвонок</span>
+                <span class="ms-2 text-muted">12:08</span>
+              </div>
+            </div>
+            <div class="call-actions-group">
+              <button class="call-action-btn audio" onclick="openCallModal('audio', 'Дмитрий Соколов', '+7 999 222-33-44', 'ДС')" title="Аудиозвонок">
+                <i class="icon-base bx bx-phone"></i>
+              </button>
+              <button class="call-action-btn video" onclick="openCallModal('video', 'Дмитрий Соколов', '+7 999 222-33-44', 'ДС')" title="Видеозвонок">
+                <i class="icon-base bx bx-video"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fax Section -->
+        <div id="faxSection" class="tab-content-section">
+          <!-- Fax 1 -->
+          <div class="fax-item" onclick="viewFax('Договор №45', 'Иван Петров', '2 стр.', '14:25')">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white;">
+              <i class="icon-base bx bx-paperclip fax-icon-large"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Договор №45
+                <span class="call-time">14:25</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-user call-type-icon"></i>
+                <span>Иван Петров</span>
+                <span class="fax-pages">2 стр.</span>
+              </div>
+            </div>
+            <i class="icon-base bx bx-download call-action-icon" onclick="event.stopPropagation(); downloadFax()"></i>
+          </div>
+
+          <!-- Fax 2 -->
+          <div class="fax-item" onclick="viewFax('Счет на оплату', 'Анна Смирнова', '1 стр.', 'Вчера')">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+              <i class="icon-base bx bx-paperclip fax-icon-large"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Счет на оплату
+                <span class="call-time">Вчера, 16:30</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-user call-type-icon"></i>
+                <span>Анна Смирнова</span>
+                <span class="fax-pages">1 стр.</span>
+                <span class="call-badge">NEW</span>
+              </div>
+            </div>
+            <i class="icon-base bx bx-download call-action-icon" onclick="event.stopPropagation(); downloadFax()"></i>
+          </div>
+
+          <!-- Fax 3 -->
+          <div class="fax-item" onclick="viewFax('Акт сверки', 'ООО Ромашка', '3 стр.', '20 фев')">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+              <i class="icon-base bx bx-paperclip fax-icon-large"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Акт сверки
+                <span class="call-time">20 фев, 11:15</span>
+              </div>
+              <div class="call-detail">
+                <i class="icon-base bx bx-building call-type-icon"></i>
+                <span>ООО Ромашка</span>
+                <span class="fax-pages">3 стр.</span>
+              </div>
+            </div>
+            <i class="icon-base bx bx-download call-action-icon" onclick="event.stopPropagation(); downloadFax()"></i>
+          </div>
+        </div>
+
+        <!-- Voicemail Section -->
+        <div id="voicemailSection" class="tab-content-section">
+          <!-- Voicemail 1 -->
+          <div class="voicemail-item" onclick="playVoicemail(this)">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white;">
+              <i class="icon-base bx bx-voicemail" style="font-size: 24px;"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Мария Кузнецова
+                <span class="call-time">14:30</span>
+              </div>
+              <div class="voicemail-wave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+              <div class="voicemail-duration">0:45</div>
+            </div>
+            <button class="play-btn" onclick="event.stopPropagation(); playVoicemail(this)">
+              <i class="icon-base bx bx-play"></i>
+            </button>
+          </div>
+
+          <!-- Voicemail 2 -->
+          <div class="voicemail-item" onclick="playVoicemail(this)">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;">
+              <i class="icon-base bx bx-voicemail" style="font-size: 24px;"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Иван Петров
+                <span class="call-time">Вчера, 18:20</span>
+              </div>
+              <div class="voicemail-wave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+              <div class="voicemail-duration">1:23</div>
+            </div>
+            <button class="play-btn" onclick="event.stopPropagation(); playVoicemail(this)">
+              <i class="icon-base bx bx-play"></i>
+            </button>
+          </div>
+
+          <!-- Voicemail 3 -->
+          <div class="voicemail-item" onclick="playVoicemail(this)">
+            <div class="call-avatar" style="background: linear-gradient(135deg, #2ecc71, #27ae60); color: white;">
+              <i class="icon-base bx bx-voicemail" style="font-size: 24px;"></i>
+            </div>
+            <div class="call-info">
+              <div class="call-name">
+                Дмитрий Соколов
+                <span class="call-time">20 фев, 10:15</span>
+              </div>
+              <div class="voicemail-wave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+              <div class="voicemail-duration">0:32</div>
+            </div>
+            <button class="play-btn" onclick="event.stopPropagation(); playVoicemail(this)">
+              <i class="icon-base bx bx-pause"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="sidebar-body ps ps--active-y">
-        <!-- Chats -->
-        <ul class="list-unstyled chat-contact-list py-2 mb-0" id="chat-list">
-            <li class="chat-contact-list-item chat-contact-list-item-title mt-0">
-                <h5 class="text-primary mb-0">Chats</h5>
-            </li>
-            <li class="chat-contact-list-item chat-list-item-0 d-none">
-                <h6 class="text-body-secondary mb-0">No Chats Found</h6>
-            </li>
-            <li class="chat-contact-list-item mb-1 active">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar avatar-online">
-                        <img src="../../assets/img/avatars/13.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="chat-contact-name text-truncate m-0 fw-normal">Waldemar Mannering</h6>
-                            <small class="chat-contact-list-item-time">5 Minutes</small>
-                        </div>
-                        <small class="chat-contact-status text-truncate">Refer friends. Get rewards.</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item mb-1">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar avatar-offline">
-                        <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="chat-contact-name text-truncate fw-normal m-0">Felecia Rower</h6>
-                            <small class="chat-contact-list-item-time">30 Minutes</small>
-                        </div>
-                        <small class="chat-contact-status text-truncate">I will purchase it for sure. 👍</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item mb-0">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar avatar-busy">
-                        <span class="avatar-initial rounded-circle bg-label-success">CM</span>
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="chat-contact-name text-truncate fw-normal m-0">Calvin Moore</h6>
-                            <small class="chat-contact-list-item-time">1 Day</small>
-                        </div>
-                        <small class="chat-contact-status text-truncate">If it takes long you can mail inbox user</small>
-                    </div>
-                </a>
-            </li>
-        </ul>
-        <!-- Contacts -->
-        <ul class="list-unstyled chat-contact-list mb-0 py-2" id="contact-list">
-            <li class="chat-contact-list-item chat-contact-list-item-title mt-0">
-                <h5 class="text-primary mb-0">Contacts</h5>
-            </li>
-            <li class="chat-contact-list-item contact-list-item-0 d-none">
-                <h6 class="text-body-secondary mb-0">No Contacts Found</h6>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Natalie Maxwell</h6>
-                        <small class="chat-contact-status text-truncate">UI/UX Designer</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Jess Cook</h6>
-                        <small class="chat-contact-status text-truncate">Business Analyst</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="avatar d-block flex-shrink-0">
-                        <span class="avatar-initial rounded-circle bg-label-primary">LM</span>
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Louie Mason</h6>
-                        <small class="chat-contact-status text-truncate">Resource Manager</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Krystal Norton</h6>
-                        <small class="chat-contact-status text-truncate">Business Executive</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/8.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Stacy Garrison</h6>
-                        <small class="chat-contact-status text-truncate">Marketing Ninja</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="avatar d-block flex-shrink-0">
-                        <span class="avatar-initial rounded-circle bg-label-success">CM</span>
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Calvin Moore</h6>
-                        <small class="chat-contact-status text-truncate">UX Engineer</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/10.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Mary Giles</h6>
-                        <small class="chat-contact-status text-truncate">Account Department</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/13.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Waldemar Mannering</h6>
-                        <small class="chat-contact-status text-truncate">AWS Support</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="avatar d-block flex-shrink-0">
-                        <span class="avatar-initial rounded-circle bg-label-danger">AJ</span>
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Amy Johnson</h6>
-                        <small class="chat-contact-status text-truncate">Frontend Developer</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">Felecia Rower</h6>
-                        <small class="chat-contact-status text-truncate">Cloud Engineer</small>
-                    </div>
-                </a>
-            </li>
-            <li class="chat-contact-list-item mb-0">
-                <a class="d-flex align-items-center">
-                    <div class="flex-shrink-0 avatar">
-                        <img src="../../assets/img/avatars/11.png" alt="Avatar" class="rounded-circle">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="chat-contact-name text-truncate m-0 fw-normal">William Stephens</h6>
-                        <small class="chat-contact-status text-truncate">Backend Developer</small>
-                    </div>
-                </a>
-            </li>
-        </ul>
-        <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 664px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 436px;"></div></div></div>
-</div>
-<div class="col app-chat-history d-block" id="app-chat-history">
-    <div class="chat-history-wrapper">
-        <div class="chat-history-header border-bottom">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex overflow-hidden align-items-center">
-                    <i class="icon-base bx bx-menu icon-lg cursor-pointer d-lg-none d-block me-4" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-contacts"></i>
-                    <div class="flex-shrink-0 avatar avatar-online">
-                        <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right">
-                    </div>
-                    <div class="chat-contact-info flex-grow-1 ms-4">
-                        <h6 class="m-0 fw-normal">Felecia Rower</h6>
-                        <small class="user-status text-body">NextJS developer</small>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center">
-                <span class="btn btn-text-secondary text-secondary cursor-pointer d-sm-inline-flex d-none me-1 btn-icon rounded-pill">
-                  <i class="icon-base bx bx-phone icon-md"></i>
-                </span>
-                    <span class="btn btn-text-secondary text-secondary cursor-pointer d-sm-inline-flex d-none me-1 btn-icon rounded-pill">
-                  <i class="icon-base bx bx-video icon-md"></i>
-                </span>
-                    <span class="btn btn-text-secondary text-secondary cursor-pointer d-sm-inline-flex d-none me-1 btn-icon rounded-pill">
-                  <i class="icon-base bx bx-search icon-md"></i>
-                </span>
-                    <div class="dropdown">
-                        <button class="btn btn-icon btn-text-secondary text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="true" id="chat-header-actions"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></button>
-                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="chat-header-actions">
-                            <a class="dropdown-item" href="javascript:void(0);">View Contact</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Mute Notifications</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Block Contact</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Clear Chat</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Report</a>
-                        </div>
-                    </div>
-                </div>
+
+    <!-- Right side - Sidebar -->
+    <div class="col-lg-4 col-md-12">
+      <div class="calls-sidebar">
+        <!-- Quick Actions -->
+        <div class="sidebar-card">
+          <div class="quick-actions">
+            <div class="quick-action-btn" id="btn-fax" onclick="openFax()">
+              <div class="quick-action-icon fax">
+                <i class="icon-base bx bx-paperclip"></i>
+              </div>
+              <span class="quick-action-label">Факсы</span>
             </div>
+            <div class="quick-action-btn" id="btn-voicemail" onclick="openVoicemail()">
+              <div class="quick-action-icon voicemail">
+                <i class="icon-base bx bx-voicemail"></i>
+              </div>
+              <span class="quick-action-label">Голосовая почта</span>
+            </div>
+          </div>
         </div>
-        <div class="chat-history-body ps">
-            <ul class="list-unstyled chat-history">
-                <li class="chat-message chat-message-right">
-                    <div class="d-flex overflow-hidden">
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">How can we help? We're here for you! 😄</p>
-                            </div>
-                            <div class="text-end text-body-secondary mt-1">
-                                <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                                <small>10:00 AM</small>
-                            </div>
-                        </div>
-                        <div class="user-avatar flex-shrink-0 ms-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message">
-                    <div class="d-flex overflow-hidden">
-                        <div class="user-avatar flex-shrink-0 me-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Hey John, I am looking for the best admin template.</p>
-                                <p class="mb-0">Could you please help me to find it out? 🤔</p>
-                            </div>
-                            <div class="chat-message-text mt-2">
-                                <p class="mb-0">It should be Bootstrap 5 compatible.</p>
-                            </div>
-                            <div class="text-body-secondary mt-1">
-                                <small>10:02 AM</small>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message chat-message-right">
-                    <div class="d-flex overflow-hidden">
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Sneat has all the components you'll ever need in a app.</p>
-                            </div>
-                            <div class="text-end text-body-secondary mt-1">
-                                <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                                <small>10:03 AM</small>
-                            </div>
-                        </div>
-                        <div class="user-avatar flex-shrink-0 ms-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message">
-                    <div class="d-flex overflow-hidden">
-                        <div class="user-avatar flex-shrink-0 me-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Looks clean and fresh UI. 😃</p>
-                            </div>
-                            <div class="chat-message-text mt-2">
-                                <p class="mb-0">It's perfect for my next project.</p>
-                            </div>
-                            <div class="chat-message-text mt-2">
-                                <p class="mb-0">How can I purchase it?</p>
-                            </div>
-                            <div class="text-body-secondary mt-1">
-                                <small>10:05 AM</small>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message chat-message-right">
-                    <div class="d-flex overflow-hidden">
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Thanks, you can purchase it.</p>
-                            </div>
-                            <div class="text-end text-body-secondary mt-1">
-                                <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                                <small>10:06 AM</small>
-                            </div>
-                        </div>
-                        <div class="user-avatar flex-shrink-0 ms-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message">
-                    <div class="d-flex overflow-hidden">
-                        <div class="user-avatar flex-shrink-0 me-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">I will purchase it for sure. 👍</p>
-                            </div>
-                            <div class="chat-message-text mt-2">
-                                <p class="mb-0">Thanks.</p>
-                            </div>
-                            <div class="text-body-secondary mt-1">
-                                <small>10:08 AM</small>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message chat-message-right">
-                    <div class="d-flex overflow-hidden">
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Great, Feel free to get in touch.</p>
-                            </div>
-                            <div class="text-end text-body-secondary mt-1">
-                                <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                                <small>10:10 AM</small>
-                            </div>
-                        </div>
-                        <div class="user-avatar flex-shrink-0 ms-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message">
-                    <div class="d-flex overflow-hidden">
-                        <div class="user-avatar flex-shrink-0 me-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                        <div class="chat-message-wrapper flex-grow-1">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Do you have design files for Sneat?</p>
-                            </div>
-                            <div class="text-body-secondary mt-1">
-                                <small>10:15 AM</small>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="chat-message chat-message-right">
-                    <div class="d-flex overflow-hidden">
-                        <div class="chat-message-wrapper flex-grow-1 w-50">
-                            <div class="chat-message-text">
-                                <p class="mb-0">Yes that's correct documentation file, Design files are included with the template.</p>
-                            </div>
-                            <div class="text-end text-body-secondary mt-1">
-                                <i class="icon-base bx bx-check-double icon-16px me-1"></i>
-                                <small>10:15 AM</small>
-                            </div>
-                        </div>
-                        <div class="user-avatar flex-shrink-0 ms-4">
-                            <div class="avatar avatar-sm">
-                                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-        <!-- Chat message form -->
-        <div class="chat-history-footer shadow-xs">
-            <form class="form-send-message d-flex justify-content-between align-items-center ">
-                <input class="form-control message-input border-0 me-4 shadow-none" placeholder="Type your message here...">
-                <div class="message-actions d-flex align-items-center">
-                <span class="btn btn-text-secondary btn-icon rounded-pill cursor-pointer">
-                  <i class="speech-to-text icon-base bx bx-microphone icon-md text-heading"></i>
-                </span>
-                    <label for="attach-doc" class="form-label mb-0">
-                  <span class="btn btn-text-secondary btn-icon rounded-pill cursor-pointer mx-1">
-                    <i class="icon-base bx bx-paperclip icon-md text-heading"></i>
-                  </span>
-                        <input type="file" id="attach-doc" hidden="">
-                    </label>
-                    <button class="btn btn-primary d-flex send-msg-btn">
-                        <span class="align-middle d-md-inline-block d-none">Send</span>
-                        <i class="icon-base bx bx-paper-plane icon-sm ms-md-2 ms-0"></i>
-                    </button>
-                </div>
-            </form>
+
+        <!-- Employees List -->
+        <div class="sidebar-card employees-section">
+          <h6>Сотрудники</h6>
+          <div class="employee-search">
+            <input type="text" placeholder="ФИО, должность или короткий номер" id="employeeSearch">
+          </div>
+          <div class="employee-list" id="employeeList">
+            <!-- Employee 1 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">АС</div>
+              <div class="employee-info">
+                <div class="employee-name">Анна Смирнова</div>
+                <div class="employee-position">Менеджер по продажам</div>
+              </div>
+              <span class="employee-extension">103</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Анна Смирнова', '+7 999 123-45-67', 'АС')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Анна Смирнова', '+7 999 123-45-67', 'АС')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Employee 2 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">ИП</div>
+              <div class="employee-info">
+                <div class="employee-name">Иван Петров</div>
+                <div class="employee-position">Технический специалист</div>
+              </div>
+              <span class="employee-extension">104</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Иван Петров', '+7 999 765-43-21', 'ИП')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Иван Петров', '+7 999 765-43-21', 'ИП')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Employee 3 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">МК</div>
+              <div class="employee-info">
+                <div class="employee-name">Мария Кузнецова</div>
+                <div class="employee-position">Руководитель отдела</div>
+              </div>
+              <span class="employee-extension">102</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Мария Кузнецова', '+7 999 555-66-77', 'МК')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Мария Кузнецова', '+7 999 555-66-77', 'МК')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Employee 4 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;">ДС</div>
+              <div class="employee-info">
+                <div class="employee-name">Дмитрий Соколов</div>
+                <div class="employee-position">IT-специалист</div>
+              </div>
+              <span class="employee-extension">101</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Дмитрий Соколов', '+7 999 222-33-44', 'ДС')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Дмитрий Соколов', '+7 999 222-33-44', 'ДС')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Employee 5 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;">ЕВ</div>
+              <div class="employee-info">
+                <div class="employee-name">Елена Васильева</div>
+                <div class="employee-position">Бухгалтер</div>
+              </div>
+              <span class="employee-extension">701</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Елена Васильева', '+7 999 888-99-00', 'ЕВ')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Елена Васильева', '+7 999 888-99-00', 'ЕВ')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Employee 6 -->
+            <div class="employee-item">
+              <div class="employee-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #555;">АМ</div>
+              <div class="employee-info">
+                <div class="employee-name">Александр Морозов</div>
+                <div class="employee-position">Директор</div>
+              </div>
+              <span class="employee-extension">401</span>
+              <div class="employee-actions">
+                <button class="employee-action-btn audio" onclick="openCallModal('audio', 'Александр Морозов', '+7 999 111-22-33', 'АМ')" title="Аудиозвонок">
+                  <i class="icon-base bx bx-phone"></i>
+                </button>
+                <button class="employee-action-btn video" onclick="openCallModal('video', 'Александр Морозов', '+7 999 111-22-33', 'АМ')" title="Видеозвонок">
+                  <i class="icon-base bx bx-video"></i>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
+<!-- Audio Call Modal -->
+<div class="modal fade" id="audioCallModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="endCall()"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="audio-call-avatar pulsing" id="audioCallAvatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          АС
+        </div>
+        <h4 id="audioCallName">Анна Смирнова</h4>
+        <p class="text-muted" id="audioCallNumber">+7 999 123-45-67</p>
+        <div class="call-timer" id="audioCallTimer">00:00</div>
+        <div class="call-status" id="audioCallStatus">Идет звонок...</div>
+
+        <div class="call-actions">
+          <button class="call-btn call-btn-secondary" onclick="toggleMute()" title="Отключить звук">
+            <i class="icon-base bx bx-microphone" id="muteIcon"></i>
+          </button>
+          <button class="call-btn call-btn-answer" onclick="answerCall()" id="answerBtn" title="Ответить">
+            <i class="icon-base bx bx-phone"></i>
+          </button>
+          <button class="call-btn call-btn-decline" onclick="endCall()" title="Завершить">
+            <i class="icon-base bx bx-phone-off"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Video Call Modal -->
+<div class="modal fade" id="videoCallModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="videoCallName">Дмитрий Соколов</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="endCall()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="video-info mb-3">
+          <p class="text-muted mb-1" id="videoCallNumber">+7 999 222-33-44</p>
+          <div class="call-timer" id="videoCallTimer" style="font-size: 24px;">00:00</div>
+        </div>
+
+        <div class="video-container">
+          <div class="video-main" id="videoMain">
+            <div class="video-placeholder">
+              <div class="video-avatar-large" id="videoAvatarLarge" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                ДС
+              </div>
+              <div>Ожидание видео...</div>
+            </div>
+          </div>
+          <div class="video-self">
+            <i class="icon-base bx bx-user" style="font-size: 32px;"></i>
+          </div>
+        </div>
+
+        <div class="video-controls">
+          <button class="video-btn video-btn-mute" onclick="toggleVideoMute()" title="Отключить звук">
+            <i class="icon-base bx bx-microphone" id="videoMuteIcon"></i>
+          </button>
+          <button class="video-btn video-btn-camera" onclick="toggleCamera()" title="Включить/выключить камеру">
+            <i class="icon-base bx bx-video" id="cameraIcon"></i>
+          </button>
+          <button class="video-btn video-btn-end" onclick="endCall()" title="Завершить">
+            <i class="icon-base bx bx-phone-off"></i>
+          </button>
+          <button class="video-btn video-btn-swap" onclick="swapCamera()" title="Сменить камеру">
+            <i class="icon-base bx bx-revision"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let callTimerInterval;
+  let callSeconds = 0;
+  let currentCallType = 'audio';
+  let isMuted = false;
+  let isCameraOn = true;
+
+  // Tab switching
+  function switchTab(tab) {
+    document.querySelectorAll('.calls-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+
+    document.querySelectorAll('.tab-content-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(tab + 'Section').classList.add('active');
+
+    document.querySelectorAll('.quick-action-btn').forEach(btn => btn.classList.remove('active'));
+    if (tab === 'fax') {
+      document.getElementById('btn-fax').classList.add('active');
+    } else if (tab === 'voicemail') {
+      document.getElementById('btn-voicemail').classList.add('active');
+    }
+  }
+
+  // Quick actions
+  function openFax() {
+    switchTab('fax');
+  }
+
+  function openVoicemail() {
+    switchTab('voicemail');
+  }
+
+  // Open call modal
+  function openCallModal(type, name, number, initials) {
+    currentCallType = type;
+    callSeconds = 0;
+    isMuted = false;
+    isCameraOn = true;
+
+    const avatarColor = getAvatarColor(initials);
+
+    if (type === 'video') {
+      // Setup video call modal
+      document.getElementById('videoCallName').textContent = name;
+      document.getElementById('videoCallNumber').textContent = number;
+      document.getElementById('videoAvatarLarge').textContent = initials;
+      document.getElementById('videoAvatarLarge').style.background = avatarColor;
+
+      const modal = new bootstrap.Modal(document.getElementById('videoCallModal'));
+      modal.show();
+
+      // Reset controls
+      document.getElementById('videoMuteIcon').classList.remove('bx-microphone-off');
+      document.getElementById('videoMuteIcon').classList.add('bx-microphone');
+      document.getElementById('cameraIcon').classList.remove('bx-video-off');
+      document.getElementById('cameraIcon').classList.add('bx-video');
+
+      // Start timer
+      updateTimer();
+      callTimerInterval = setInterval(() => {
+        callSeconds++;
+        updateTimer();
+      }, 1000);
+    } else {
+      // Setup audio call modal
+      const avatarEl = document.getElementById('audioCallAvatar');
+      avatarEl.textContent = initials;
+      avatarEl.style.background = avatarColor;
+
+      document.getElementById('audioCallName').textContent = name;
+      document.getElementById('audioCallNumber').textContent = number;
+      document.getElementById('audioCallStatus').textContent = 'Идет звонок...';
+      document.getElementById('answerBtn').style.display = 'flex';
+      document.getElementById('muteIcon').classList.remove('bx-microphone-off');
+      document.getElementById('muteIcon').classList.add('bx-microphone');
+
+      const modal = new bootstrap.Modal(document.getElementById('audioCallModal'));
+      modal.show();
+
+      // Start timer
+      updateTimer();
+      callTimerInterval = setInterval(() => {
+        callSeconds++;
+        updateTimer();
+      }, 1000);
+    }
+  }
+
+  // Get avatar color based on initials
+  function getAvatarColor(initials) {
+    const colors = [
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
+    ];
+    let hash = 0;
+    for (let i = 0; i < initials.length; i++) {
+      hash = initials.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
+  // Update timer
+  function updateTimer() {
+    const minutes = Math.floor(callSeconds / 60).toString().padStart(2, '0');
+    const seconds = (callSeconds % 60).toString().padStart(2, '0');
+    const timeStr = `${minutes}:${seconds}`;
+
+    if (currentCallType === 'video') {
+      document.getElementById('videoCallTimer').textContent = timeStr;
+    } else {
+      document.getElementById('audioCallTimer').textContent = timeStr;
+    }
+  }
+
+  // Answer call
+  function answerCall() {
+    document.getElementById('audioCallStatus').textContent = 'Разговор...';
+    document.getElementById('answerBtn').style.display = 'none';
+  }
+
+  // Toggle mute
+  function toggleMute() {
+    isMuted = !isMuted;
+    const icon = document.getElementById('muteIcon');
+    if (isMuted) {
+      icon.classList.remove('bx-microphone');
+      icon.classList.add('bx-microphone-off');
+    } else {
+      icon.classList.remove('bx-microphone-off');
+      icon.classList.add('bx-microphone');
+    }
+  }
+
+  // Toggle video mute
+  function toggleVideoMute() {
+    isMuted = !isMuted;
+    const icon = document.getElementById('videoMuteIcon');
+    if (isMuted) {
+      icon.classList.remove('bx-microphone');
+      icon.classList.add('bx-microphone-off');
+    } else {
+      icon.classList.remove('bx-microphone-off');
+      icon.classList.add('bx-microphone');
+    }
+  }
+
+  // Toggle camera
+  function toggleCamera() {
+    isCameraOn = !isCameraOn;
+    const icon = document.getElementById('cameraIcon');
+    if (isCameraOn) {
+      icon.classList.remove('bx-video-off');
+      icon.classList.add('bx-video');
+    } else {
+      icon.classList.remove('bx-video');
+      icon.classList.add('bx-video-off');
+    }
+  }
+
+  // Swap camera
+  function swapCamera() {
+    alert('Смена камеры');
+  }
+
+  // End call
+  function endCall() {
+    clearInterval(callTimerInterval);
+    callSeconds = 0;
+
+    // Reset states
+    isMuted = false;
+    isCameraOn = true;
+
+    // Close modals
+    const audioModal = bootstrap.Modal.getInstance(document.getElementById('audioCallModal'));
+    const videoModal = bootstrap.Modal.getInstance(document.getElementById('videoCallModal'));
+
+    if (audioModal) audioModal.hide();
+    if (videoModal) videoModal.hide();
+  }
+
+  // View fax
+  function viewFax(title, from, pages, time) {
+    alert(`Факс: ${title}\nОт: ${from}\nСтраниц: ${pages}\nПолучен: ${time}`);
+  }
+
+  // Download fax
+  function downloadFax() {
+    alert('Скачивание факса...');
+  }
+
+  // Play voicemail
+  function playVoicemail(element) {
+    const btn = element.querySelector('.play-btn') || element;
+    const icon = btn.querySelector('i');
+
+    if (icon.classList.contains('bx-play')) {
+      icon.classList.remove('bx-play');
+      icon.classList.add('bx-pause');
+    } else {
+      icon.classList.remove('bx-pause');
+      icon.classList.add('bx-play');
+    }
+  }
+
+  // Search employees
+  document.getElementById('employeeSearch').addEventListener('input', function(e) {
+    const search = e.target.value.toLowerCase();
+    const employees = document.querySelectorAll('.employee-item');
+
+    employees.forEach(emp => {
+      const name = emp.querySelector('.employee-name').textContent.toLowerCase();
+      const position = emp.querySelector('.employee-position').textContent.toLowerCase();
+      const ext = emp.querySelector('.employee-extension').textContent;
+
+      if (name.includes(search) || position.includes(search) || ext.includes(search)) {
+        emp.style.display = 'flex';
+      } else {
+        emp.style.display = 'none';
+      }
+    });
+  });
+</script>
 {% endblock content %}
