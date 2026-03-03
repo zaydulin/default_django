@@ -8,25 +8,1421 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<div class="flex-grow-1 container-p-y container-fluid">
+
+    <!-- 1. Виджеты статистики (под товары) -->
+    <div class="card mb-6">
+        <div class="card-widget-separator-wrapper">
+          <div class="card-body card-widget-separator">
+            <div class="row gy-4 gy-sm-1">
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+                  <div>
+                    <h4 class="mb-0">1,248</h4>
+                    <p class="mb-0">Всего товаров</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 me-sm-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-package icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+                <hr class="d-none d-sm-block d-lg-none me-6">
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+                  <div>
+                    <h4 class="mb-0">856</h4>
+                    <p class="mb-0">В наличии</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2 me-lg-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-check-circle icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+                <hr class="d-none d-sm-block d-lg-none">
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+                  <div>
+                    <h4 class="mb-0">312</h4>
+                    <p class="mb-0">Заканчиваются</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2 me-sm-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-low-vision icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h4 class="mb-0">80</h4>
+                    <p class="mb-0">Нет в наличии</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-x-circle icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- 2. Таблица товаров -->
+    <style>
+        .card .table th, .card .table td { text-align: left !important; }
+        .text-truncate-custom {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <div class="card mb-6">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Список товаров</h5>
+
+          <div class="d-flex gap-2 flex-wrap">
+
+            <!-- Кнопка: Добавить товар -->
+            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addProductModal">
+              <i class="icon-base bx bx-plus icon-sm me-1"></i>
+              <span class="d-none d-sm-inline">Добавить товар</span>
+            </button>
+
+            <!-- Кнопка: Перезагрузка -->
+            <button class="btn btn-primary btn-sm" type="button" title="Перезагрузить">
+              <i class="icon-base bx bx-refresh icon-sm"></i>
+            </button>
+
+            <!-- Кнопка: Удалить -->
+            <button class="btn btn-primary btn-sm" type="button" title="Удалить выбранное">
+              <i class="icon-base bx bx-trash icon-sm"></i>
+            </button>
+
+            <!-- Выпадающий список: Поиск -->
+            <div class="dropdown">
+              <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="icon-base bx bx-search me-1"></i>
+                <span class="d-none d-sm-inline">Поиск по...</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Название товара')">Название товара</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Артикул')">Артикул</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Категория')">Категория</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Цена')">Цена</a></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="table-responsive text-nowrap">
+          <table class="table text-start">
+            <thead class="text-start">
+              <tr>
+                <th style="width: 40px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll">
+                    </div>
+                </th>
+                <th>Товар</th>
+                <th>Категория</th>
+                <th>На складе</th>
+                <th>Артикул</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0 text-start">
+              <!-- Строка 1 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="avatar w-px-40 h-px-40 me-2">
+                            <span class="avatar-initial bg-label-primary rounded">
+                                <i class="icon-base bx bx-box icon-sm"></i>
+                            </span>
+                        </span>
+                        <div>
+                            <strong class="text-truncate-custom d-block">Смартфон XYZ Pro</strong>
+                            <small class="text-muted">Электроника</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-label-primary">Электроника</span></td>
+                <td><span class="badge bg-label-success">В наличии</span></td>
+                <td><code>ART-001</code></td>
+                <td><strong>29 990 ₽</strong></td>
+                <td>156 шт.</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editProductModal"
+                         data-id="ART-001"
+                         data-name="Смартфон XYZ Pro"
+                         data-category="Электроника"
+                         data-stock="В наличии"
+                         data-price="29990"
+                         data-quantity="156"
+                         data-description="Мощный смартфон с отличной камерой"
+                         data-supplier="ООО Техномир"
+                         data-weight="0.2"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Строка 2 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="avatar w-px-40 h-px-40 me-2">
+                            <span class="avatar-initial bg-label-info rounded">
+                                <i class="icon-base bx bx-laptop icon-sm"></i>
+                            </span>
+                        </span>
+                        <div>
+                            <strong class="text-truncate-custom d-block">Ноутбук UltraBook 15</strong>
+                            <small class="text-muted">Компьютеры</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-label-info">Компьютеры</span></td>
+                <td><span class="badge bg-label-warning">Заканчивается</span></td>
+                <td><code>ART-002</code></td>
+                <td><strong>89 990 ₽</strong></td>
+                <td>12 шт.</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editProductModal"
+                         data-id="ART-002"
+                         data-name="Ноутбук UltraBook 15"
+                         data-category="Компьютеры"
+                         data-stock="Заканчивается"
+                         data-price="89990"
+                         data-quantity="12"
+                         data-description="Легкий и производительный ноутбук"
+                         data-supplier="ЗАО Компьютерный мир"
+                         data-weight="1.5"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Строка 3 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <span class="avatar w-px-40 h-px-40 me-2">
+                            <span class="avatar-initial bg-label-success rounded">
+                                <i class="icon-base bx bx-headphone icon-sm"></i>
+                            </span>
+                        </span>
+                        <div>
+                            <strong class="text-truncate-custom d-block">Наушники Wireless Pro</strong>
+                            <small class="text-muted">Аксессуары</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-label-success">Аксессуары</span></td>
+                <td><span class="badge bg-label-success">В наличии</span></td>
+                <td><code>ART-003</code></td>
+                <td><strong>7 990 ₽</strong></td>
+                <td>340 шт.</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editProductModal"
+                         data-id="ART-003"
+                         data-name="Наушники Wireless Pro"
+                         data-category="Аксессуары"
+                         data-stock="В наличии"
+                         data-price="7990"
+                         data-quantity="340"
+                         data-description="Беспроводные наушники с шумоподавлением"
+                         data-supplier="ИП АудиоТех"
+                         data-weight="0.3"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="table-border-bottom-0 text-start">
+              <tr>
+                <th class="rounded-start-bottom">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAllFooter">
+                    </div>
+                </th>
+                <th>Товар</th>
+                <th>Категория</th>
+                <th>На складе</th>
+                <th>Артикул</th>
+                <th>Цена</th>
+                <th>Кол-во</th>
+                <th class="rounded-end-bottom">Действия</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+    </div>
 </div>
-<!-- Offcanvas справа на всю ширину -->
+
+<!-- Модальное окно: Поиск -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">Поиск</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="searchInput" class="form-label" id="searchLabel">Поиск по...</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Введите значение...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Найти</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Добавить товар (полноэкранное) -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <!-- Header -->
+      <div class="modal-header border-bottom">
+        <div class="d-flex align-items-center">
+          <button type="button" class="btn btn-icon btn-sm btn-text-secondary rounded-pill me-2" data-bs-dismiss="modal">
+            <i class="icon-base bx bx-arrow-back"></i>
+          </button>
+          <div>
+            <h5 class="modal-title mb-0">Добавить новый товар</h5>
+            <small class="text-muted">Заказы, размещённые в вашем магазине</small>
+          </div>
+        </div>
+        <div class="d-flex gap-2 ms-auto">
+          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отменить</button>
+          <button type="button" class="btn btn-label-primary">Сохранить черновик</button>
+          <button type="button" class="btn btn-primary">Опубликовать товар</button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <div class="row g-4">
+          <!-- Левая колонка -->
+          <div class="col-lg-8">
+            <!-- Информация о товаре -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-4">Информация о товаре</h6>
+
+                <div class="mb-3">
+                  <label class="form-label" for="addProductName">Название</label>
+                  <input type="text" class="form-control" id="addProductName" placeholder="Название товара">
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="addProductSKU">Артикул</label>
+                    <input type="text" class="form-control" id="addProductSKU" placeholder="Артикул">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="addProductBarcode">Штрих-код</label>
+                    <input type="text" class="form-control" id="addProductBarcode" placeholder="0123-4567">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Описание (необязательно)</label>
+                  <div class="border rounded">
+                    <div class="border-bottom p-2 bg-body">
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-bold"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-italic"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-underline"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-list-ul"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-list-ol"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-link"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary"><i class="icon-base bx bx-image"></i></button>
+                    </div>
+                    <textarea class="form-control border-0" id="addProductDescription" rows="6" placeholder="Product Description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Изображение товара -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="mb-0">Изображение товара</h6>
+                  <a href="javascript:void(0);" class="text-primary">Добавить медиа по URL</a>
+                </div>
+
+                <div class="border border-dashed rounded p-5 text-center" style="min-height: 250px; background: #f8f9fa;">
+                  <div class="avatar w-px-64 h-px-64 mb-3 mx-auto">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-upload icon-2xl"></i>
+                    </span>
+                  </div>
+                  <h5 class="mb-2">Перетащите изображение сюда</h5>
+                  <p class="text-muted mb-3">или</p>
+                  <button type="button" class="btn btn-label-primary">Выбрать изображение</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Варианты -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Варианты</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Опции</label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <select class="form-select select-with-search" id="addVariantOption" data-placeholder="Размер">
+                        <option value=""></option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                      </select>
+                    </div>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control" placeholder="Введите размер">
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-sm">
+                  <i class="icon-base bx bx-plus me-1"></i>Добавить ещё вариант
+                </button>
+              </div>
+            </div>
+
+            <!-- Запасы -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Запасы</h6>
+
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="d-grid gap-2">
+                      <button type="button" class="btn btn-primary" id="addBtnReplenishment" onclick="switchAddInventoryTab('replenishment')">
+                        <i class="icon-base bx bx-package me-1"></i>Пополнение
+                      </button>
+                      <button type="button" class="btn btn-label-secondary" id="addBtnAttributes" onclick="switchAddInventoryTab('attributes')">
+                        <i class="icon-base bx bx-link me-1"></i>Атрибуты
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <!-- Контент: Пополнение -->
+                    <div id="addInventoryReplenishment">
+                      <div class="mb-3">
+                        <label class="form-label">Добавить на склад</label>
+                        <div class="d-flex gap-2">
+                          <input type="number" class="form-control" id="addInitialQuantity" placeholder="Количество">
+                          <button type="button" class="btn btn-primary" onclick="addInitialStock()">Подтвердить</button>
+                        </div>
+                      </div>
+
+                      <div class="mt-3" id="addStockInfo" style="display: none;">
+                        <p class="mb-1">Товара в наличии сейчас: <strong id="addCurrentStock">0</strong></p>
+                        <p class="mb-1">Товара в пути: <strong>0</strong></p>
+                        <p class="mb-1">Последнее пополнение: <strong id="addLastReplenishment">-</strong></p>
+                        <p class="mb-0">Всего товара за всё время: <strong id="addTotalStock">0</strong></p>
+                      </div>
+                    </div>
+
+                    <!-- Контент: Атрибуты -->
+                    <div id="addInventoryAttributes" style="display: none;">
+                      <h6 class="mb-3">Атрибуты</h6>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addAttrFragile">
+                        <label class="form-check-label" for="addAttrFragile">Хрупкий товар</label>
+                      </div>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addAttrBiodegradable">
+                        <label class="form-check-label" for="addAttrBiodegradable">Биоразлагаемый</label>
+                      </div>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="addAttrFrozen" onchange="toggleAddFrozenField()">
+                        <label class="form-check-label" for="addAttrFrozen">Замороженный продукт</label>
+                        <div id="addFrozenField" style="display: none; margin-top: 10px;">
+                          <input type="text" class="form-control" placeholder="Макс. допустимая температура">
+                        </div>
+                      </div>
+
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="addAttrExpiration" onchange="toggleAddExpirationField()">
+                        <label class="form-check-label" for="addAttrExpiration">Срок годности товара</label>
+                        <div id="addExpirationField" style="display: none; margin-top: 10px;">
+                          <input type="date" class="form-control" id="addExpirationDate">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая колонка -->
+          <div class="col-lg-4">
+            <!-- Цены -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Цены</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Базовая цена</label>
+                  <input type="number" class="form-control" id="addProductPrice" placeholder="Цена">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Цена со скидкой</label>
+                  <input type="number" class="form-control" id="addProductSalePrice" placeholder="Цена со скидкой">
+                </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="addProductTax" checked>
+                  <label class="form-check-label" for="addProductTax">
+                    Взимать налог на этот товар
+                  </label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label mb-0">В наличии</label>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="addProductInStock" checked>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Организация -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Организация</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Продавец</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="addProductSeller" data-placeholder="Выберите продавца">
+                      <option value=""></option>
+                      <option value="1">ООО Техномир</option>
+                      <option value="2">ЗАО Компьютерный мир</option>
+                      <option value="3">ИП АудиоТех</option>
+                      <option value="4">ООО ГаджетРус</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Категория</label>
+                  <div class="d-flex gap-2">
+                    <div class="dropdown-container flex-grow-1">
+                      <select class="form-select select-with-search" id="addProductCategory" data-placeholder="Выберите категорию">
+                        <option value=""></option>
+                        <option value="Электроника">Электроника</option>
+                        <option value="Компьютеры">Компьютеры</option>
+                        <option value="Аксессуары">Аксессуары</option>
+                        <option value="Гаджеты">Гаджеты</option>
+                        <option value="Планшеты">Планшеты</option>
+                        <option value="Мужская одежда">Мужская одежда</option>
+                        <option value="Женская одежда">Женская одежда</option>
+                        <option value="Детская одежда">Детская одежда</option>
+                      </select>
+                    </div>
+                    <button type="button" class="btn btn-icon btn-primary">
+                      <i class="icon-base bx bx-plus"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Коллекция</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="addProductCollection" data-placeholder="Коллекция">
+                      <option value=""></option>
+                      <option value="1">Летняя коллекция 2024</option>
+                      <option value="2">Новинки</option>
+                      <option value="3">Распродажа</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Статус</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="addProductStatus" data-placeholder="Статус">
+                      <option value="Опубликовано" selected>Опубликовано</option>
+                      <option value="Черновик">Черновик</option>
+                      <option value="Архив">Архив</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-0">
+                  <label class="form-label">Теги</label>
+                  <div class="dropdown-container mb-2">
+                    <select class="form-select select-with-search" id="addProductTags" data-placeholder="Добавить тег" multiple>
+                      <option value="1">Обычный</option>
+                      <option value="2">Стандартный</option>
+                      <option value="3">Премиум</option>
+                      <option value="4">Новинка</option>
+                      <option value="5">Хит продаж</option>
+                    </select>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-2" id="addSelectedTags"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Переключение вкладок в разделе Запасы (для добавления)
+    function switchAddInventoryTab(tab) {
+        const replenishmentContent = document.getElementById('addInventoryReplenishment');
+        const attributesContent = document.getElementById('addInventoryAttributes');
+        const btnReplenishment = document.getElementById('addBtnReplenishment');
+        const btnAttributes = document.getElementById('addBtnAttributes');
+
+        if (tab === 'replenishment') {
+            replenishmentContent.style.display = 'block';
+            attributesContent.style.display = 'none';
+            btnReplenishment.classList.remove('btn-label-secondary');
+            btnReplenishment.classList.add('btn-primary');
+            btnAttributes.classList.remove('btn-primary');
+            btnAttributes.classList.add('btn-label-secondary');
+        } else {
+            replenishmentContent.style.display = 'none';
+            attributesContent.style.display = 'block';
+            btnAttributes.classList.remove('btn-label-secondary');
+            btnAttributes.classList.add('btn-primary');
+            btnReplenishment.classList.remove('btn-primary');
+            btnReplenishment.classList.add('btn-label-secondary');
+        }
+    }
+
+    // Показать/скрыть поле для замороженного продукта (для добавления)
+    function toggleAddFrozenField() {
+        const checkbox = document.getElementById('addAttrFrozen');
+        const field = document.getElementById('addFrozenField');
+        field.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Показать/скрыть поле для срока годности (для добавления)
+    function toggleAddExpirationField() {
+        const checkbox = document.getElementById('addAttrExpiration');
+        const field = document.getElementById('addExpirationField');
+        field.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Добавление начального количества на склад
+    function addInitialStock() {
+        const quantity = document.getElementById('addInitialQuantity').value;
+        if (quantity && quantity > 0) {
+            document.getElementById('addStockInfo').style.display = 'block';
+            document.getElementById('addCurrentStock').textContent = quantity;
+            document.getElementById('addTotalStock').textContent = quantity;
+            const now = new Date();
+            document.getElementById('addLastReplenishment').textContent = now.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+    }
+
+    // Удаление тега (для добавления)
+    function removeAddTag(element) {
+        element.parentElement.remove();
+    }
+
+    // Инициализация тегов для добавления
+    document.addEventListener('DOMContentLoaded', function() {
+        const addTagsSelect = document.getElementById('addProductTags');
+        if (addTagsSelect) {
+            addTagsSelect.addEventListener('change', function() {
+                const container = document.getElementById('addSelectedTags');
+                const selectedOptions = Array.from(this.selectedOptions);
+
+                // Очищаем контейнер
+                container.innerHTML = '';
+
+                // Добавляем выбранные теги
+                selectedOptions.forEach(function(option) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge bg-label-secondary d-flex align-items-center gap-1';
+                    badge.innerHTML = `
+                        ${option.textContent}
+                        <i class="icon-base bx bx-x cursor-pointer" onclick="removeAddTag(this)"></i>
+                    `;
+                    container.appendChild(badge);
+                });
+            });
+        }
+    });
+</script>
+<!-- Модальное окно: Редактировать товар (полноэкранное) -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <!-- Header -->
+      <div class="modal-header border-bottom">
+        <div class="d-flex align-items-center">
+          <button type="button" class="btn btn-icon btn-sm btn-text-secondary rounded-pill me-2" data-bs-dismiss="modal">
+            <i class="icon-base bx bx-arrow-back"></i>
+          </button>
+          <div>
+            <h5 class="modal-title mb-0">Редактировать товар</h5>
+            <small class="text-muted">Заказы, размещённые в вашем магазине</small>
+          </div>
+        </div>
+        <div class="d-flex gap-2 ms-auto">
+          <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отменить</button>
+          <button type="button" class="btn btn-label-primary">Сохранить черновик</button>
+          <button type="button" class="btn btn-primary">Опубликовать товар</button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+        <div class="row g-4">
+          <!-- Левая колонка -->
+          <div class="col-lg-8">
+            <!-- Информация о товаре -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-4">Информация о товаре</h6>
+
+                <div class="mb-3">
+                  <label class="form-label" for="editProductName">Название</label>
+                  <input type="text" class="form-control" id="editProductName" placeholder="Название товара">
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="editProductSKU">Артикул</label>
+                    <input type="text" class="form-control" id="editProductSKU" placeholder="Артикул">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="editProductBarcode">Штрих-код</label>
+                    <input type="text" class="form-control" id="editProductBarcode" placeholder="0123-4567">
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Описание (необязательно)</label>
+                  <div class="border rounded">
+                    <div class="border-bottom p-2 bg-body">
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-bold"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-italic"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-underline"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-list-ul"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-list-ol"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary me-1"><i class="icon-base bx bx-link"></i></button>
+                      <button type="button" class="btn btn-icon btn-sm btn-text-secondary"><i class="icon-base bx bx-image"></i></button>
+                    </div>
+                    <textarea class="form-control border-0" id="editProductDescription" rows="6" placeholder="Product Description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Изображение товара -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="mb-0">Изображение товара</h6>
+                  <a href="javascript:void(0);" class="text-primary">Добавить медиа по URL</a>
+                </div>
+
+                <div class="border border-dashed rounded p-5 text-center" style="min-height: 250px; background: #f8f9fa;">
+                  <div class="avatar w-px-64 h-px-64 mb-3 mx-auto">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-upload icon-2xl"></i>
+                    </span>
+                  </div>
+                  <h5 class="mb-2">Перетащите изображение сюда</h5>
+                  <p class="text-muted mb-3">или</p>
+                  <button type="button" class="btn btn-label-primary">Выбрать изображение</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Варианты -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Варианты</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Опции</label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <select class="form-select select-with-search" id="editVariantOption" data-placeholder="Размер">
+                        <option value=""></option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                      </select>
+                    </div>
+                    <div class="col-md-8">
+                      <input type="text" class="form-control" placeholder="Введите размер">
+                    </div>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary btn-sm">
+                  <i class="icon-base bx bx-plus me-1"></i>Добавить ещё вариант
+                </button>
+              </div>
+            </div>
+
+            <!-- Запасы -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Запасы</h6>
+
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="d-grid gap-2">
+                      <button type="button" class="btn btn-primary" id="btnReplenishment" onclick="switchInventoryTab('replenishment')">
+                        <i class="icon-base bx bx-package me-1"></i>Пополнение
+                      </button>
+                      <button type="button" class="btn btn-label-secondary" id="btnAttributes" onclick="switchInventoryTab('attributes')">
+                        <i class="icon-base bx bx-link me-1"></i>Атрибуты
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <!-- Контент: Пополнение -->
+                    <div id="inventoryReplenishment">
+                      <div class="mb-3">
+                        <label class="form-label">Добавить на склад</label>
+                        <div class="d-flex gap-2">
+                          <input type="number" class="form-control" placeholder="Количество">
+                          <button type="button" class="btn btn-primary">Подтвердить</button>
+                        </div>
+                      </div>
+
+                      <div class="mt-3">
+                        <p class="mb-1">Товара в наличии сейчас: <strong>54</strong></p>
+                        <p class="mb-1">Товара в пути: <strong>390</strong></p>
+                        <p class="mb-1">Последнее пополнение: <strong>24 июня 2023</strong></p>
+                        <p class="mb-0">Всего товара за всё время: <strong>2430</strong></p>
+                      </div>
+                    </div>
+
+                    <!-- Контент: Атрибуты -->
+                    <div id="inventoryAttributes" style="display: none;">
+                      <h6 class="mb-3">Атрибуты</h6>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="attrFragile">
+                        <label class="form-check-label" for="attrFragile">Хрупкий товар</label>
+                      </div>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="attrBiodegradable">
+                        <label class="form-check-label" for="attrBiodegradable">Биоразлагаемый</label>
+                      </div>
+
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="attrFrozen" onchange="toggleFrozenField()">
+                        <label class="form-check-label" for="attrFrozen">Замороженный продукт</label>
+                        <div id="frozenField" style="display: none; margin-top: 10px;">
+                          <input type="text" class="form-control" placeholder="Макс. допустимая температура">
+                        </div>
+                      </div>
+
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="attrExpiration" onchange="toggleExpirationField()">
+                        <label class="form-check-label" for="attrExpiration">Срок годности товара</label>
+                        <div id="expirationField" style="display: none; margin-top: 10px;">
+                          <input type="date" class="form-control" id="expirationDate" value="2026-03-04">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Правая колонка -->
+          <div class="col-lg-4">
+            <!-- Цены -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Цены</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Базовая цена</label>
+                  <input type="number" class="form-control" id="editProductPrice" placeholder="Цена">
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Цена со скидкой</label>
+                  <input type="number" class="form-control" id="editProductSalePrice" placeholder="Цена со скидкой">
+                </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" id="editProductTax" checked>
+                  <label class="form-check-label" for="editProductTax">
+                    Взимать налог на этот товар
+                  </label>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label mb-0">В наличии</label>
+                  <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" id="editProductInStock" checked>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Организация -->
+            <div class="card mb-4">
+              <div class="card-body">
+                <h6 class="mb-3">Организация</h6>
+
+                <div class="mb-3">
+                  <label class="form-label">Продавец</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="editProductSeller" data-placeholder="Выберите продавца">
+                      <option value=""></option>
+                      <option value="1">ООО Техномир</option>
+                      <option value="2">ЗАО Компьютерный мир</option>
+                      <option value="3">ИП АудиоТех</option>
+                      <option value="4">ООО ГаджетРус</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Категория</label>
+                  <div class="d-flex gap-2">
+                    <div class="dropdown-container flex-grow-1">
+                      <select class="form-select select-with-search" id="editProductCategory" data-placeholder="Выберите категорию">
+                        <option value=""></option>
+                        <option value="Электроника">Электроника</option>
+                        <option value="Компьютеры">Компьютеры</option>
+                        <option value="Аксессуары">Аксессуары</option>
+                        <option value="Гаджеты">Гаджеты</option>
+                        <option value="Планшеты">Планшеты</option>
+                        <option value="Мужская одежда">Мужская одежда</option>
+                        <option value="Женская одежда">Женская одежда</option>
+                        <option value="Детская одежда">Детская одежда</option>
+                      </select>
+                    </div>
+                    <button type="button" class="btn btn-icon btn-primary">
+                      <i class="icon-base bx bx-plus"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Коллекция</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="editProductCollection" data-placeholder="Коллекция">
+                      <option value=""></option>
+                      <option value="1">Летняя коллекция 2024</option>
+                      <option value="2">Новинки</option>
+                      <option value="3">Распродажа</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Статус</label>
+                  <div class="dropdown-container">
+                    <select class="form-select select-with-search" id="editProductStatus" data-placeholder="Статус">
+                      <option value="Опубликовано">Опубликовано</option>
+                      <option value="Черновик">Черновик</option>
+                      <option value="Архив">Архив</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-0">
+                  <label class="form-label">Теги</label>
+                  <div class="dropdown-container mb-2">
+                    <select class="form-select select-with-search" id="editProductTags" data-placeholder="Добавить тег" multiple>
+                      <option value="1">Обычный</option>
+                      <option value="2">Стандартный</option>
+                      <option value="3">Премиум</option>
+                      <option value="4">Новинка</option>
+                      <option value="5">Хит продаж</option>
+                    </select>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 mt-2" id="selectedTags">
+                    <span class="badge bg-label-secondary d-flex align-items-center gap-1">
+                      Обычный
+                      <i class="icon-base bx bx-x cursor-pointer" onclick="removeTag(this)"></i>
+                    </span>
+                    <span class="badge bg-label-secondary d-flex align-items-center gap-1">
+                      Стандартный
+                      <i class="icon-base bx bx-x cursor-pointer" onclick="removeTag(this)"></i>
+                    </span>
+                    <span class="badge bg-label-secondary d-flex align-items-center gap-1">
+                      Премиум
+                      <i class="icon-base bx bx-x cursor-pointer" onclick="removeTag(this)"></i>
+                    </span>
+                    <span class="badge bg-label-secondary d-flex align-items-center gap-1">
+                      12313
+                      <i class="icon-base bx bx-x cursor-pointer" onclick="removeTag(this)"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-fullscreen .modal-content {
+    border: none;
+    border-radius: 0;
+  }
+
+  .modal-fullscreen .modal-header {
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+  }
+
+  .modal-fullscreen .modal-body {
+    padding: 2rem;
+    background: #f8f9fa;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .border-dashed {
+    border-style: dashed !important;
+  }
+
+  /* Стили для выпадающих списков с поиском */
+  .dropdown-container {
+    position: relative;
+  }
+
+  .select-with-search {
+    width: 100%;
+    padding: 0.53rem 1rem;
+    font-size: 0.9375rem;
+    border: 1px solid #d9dee3;
+    border-radius: 0.375rem;
+    background-color: #fff;
+    background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23697a8d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .select-with-search:focus {
+    border-color: #696cff;
+    box-shadow: 0 0 0 0.05rem rgba(105, 108, 255, 0.1);
+    outline: none;
+  }
+
+  .select-with-search[multiple] {
+    background-image: none;
+    height: auto;
+    padding: 0.375rem 0.75rem;
+  }
+
+  /* Кастомный dropdown с поиском */
+  .custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #696cff;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.25rem 1rem rgba(105, 108, 255, 0.2);
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .custom-select-dropdown.show {
+    display: block;
+  }
+
+  .custom-select-dropdown .search-input {
+    padding: 0.5rem;
+    border-bottom: 1px solid #d9dee3;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+  }
+
+  .custom-select-dropdown .search-input input {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #d9dee3;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .custom-select-dropdown .search-input input:focus {
+    border-color: #696cff;
+    outline: none;
+    box-shadow: 0 0 0 0.05rem rgba(105, 108, 255, 0.1);
+  }
+
+  .custom-select-dropdown .options-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+  }
+
+  .custom-select-dropdown .options-list li {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .custom-select-dropdown .options-list li:hover {
+    background-color: #f0f0f0;
+  }
+
+  .custom-select-dropdown .options-list li.selected {
+    background-color: #e7e7ff;
+    color: #696cff;
+  }
+
+  .custom-select-dropdown .options-list li.no-results {
+    color: #697a8d;
+    cursor: default;
+    padding: 1rem;
+    text-align: center;
+  }
+</style>
+
+{% endblock content %}
+
+{% block demo %}
+<!-- Offcanvas справа -->
+<div class="buy-now">
+    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Быстрое создание</a>
+</div>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Быстрое создание</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
+        <p>Форма быстрого создания товара...</p>
     </div>
     <div class="offcanvas-footer p-3 border-top">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
         <button type="button" class="btn btn-primary">Сохранить</button>
     </div>
 </div>
+
+<!-- Скрипты для работы модальных окон -->
+<script>
+    // Поиск
+    function openSearchModal(fieldType) {
+        var modalLabel = document.getElementById('searchLabel');
+        var modalTitle = document.getElementById('searchModalLabel');
+        var searchInput = document.getElementById('searchInput');
+
+        modalTitle.innerText = 'Поиск';
+        modalLabel.innerText = 'Поиск по: ' + fieldType;
+        searchInput.placeholder = 'Введите ' + fieldType.toLowerCase();
+
+        var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+        searchModal.show();
+    }
+
+    // Переключение вкладок в разделе Запасы
+    function switchInventoryTab(tab) {
+        const replenishmentContent = document.getElementById('inventoryReplenishment');
+        const attributesContent = document.getElementById('inventoryAttributes');
+        const btnReplenishment = document.getElementById('btnReplenishment');
+        const btnAttributes = document.getElementById('btnAttributes');
+
+        if (tab === 'replenishment') {
+            replenishmentContent.style.display = 'block';
+            attributesContent.style.display = 'none';
+            btnReplenishment.classList.remove('btn-label-secondary');
+            btnReplenishment.classList.add('btn-primary');
+            btnAttributes.classList.remove('btn-primary');
+            btnAttributes.classList.add('btn-label-secondary');
+        } else {
+            replenishmentContent.style.display = 'none';
+            attributesContent.style.display = 'block';
+            btnAttributes.classList.remove('btn-label-secondary');
+            btnAttributes.classList.add('btn-primary');
+            btnReplenishment.classList.remove('btn-primary');
+            btnReplenishment.classList.add('btn-label-secondary');
+        }
+    }
+
+    // Показать/скрыть поле для замороженного продукта
+    function toggleFrozenField() {
+        const checkbox = document.getElementById('attrFrozen');
+        const field = document.getElementById('frozenField');
+        field.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Показать/скрыть поле для срока годности
+    function toggleExpirationField() {
+        const checkbox = document.getElementById('attrExpiration');
+        const field = document.getElementById('expirationField');
+        field.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Удаление тега
+    function removeTag(element) {
+        element.parentElement.remove();
+    }
+
+    // Функция для закрытия всех dropdowns
+    function closeAllDropdowns() {
+        const allDropdowns = document.querySelectorAll('.custom-select-dropdown');
+        allDropdowns.forEach(function(dropdown) {
+            dropdown.classList.remove('show');
+        });
+    }
+
+    // Функция инициализации кастомного select с поиском
+    function initCustomSelect(selectElement) {
+        const isMultiple = selectElement.hasAttribute('multiple');
+        const placeholder = selectElement.getAttribute('data-placeholder') || 'Выберите...';
+
+        // Создаем контейнер
+        const container = document.createElement('div');
+        container.className = 'dropdown-container';
+        container.style.position = 'relative';
+
+        // Создаем отображаемое поле
+        const displayDiv = document.createElement('div');
+        displayDiv.className = 'form-select select-with-search';
+        displayDiv.textContent = placeholder;
+        displayDiv.style.cursor = 'pointer';
+
+        // Создаем dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'custom-select-dropdown';
+
+        // Поле поиска
+        const searchDiv = document.createElement('div');
+        searchDiv.className = 'search-input';
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Поиск...';
+        searchDiv.appendChild(searchInput);
+        dropdown.appendChild(searchDiv);
+
+        // Список опций
+        const optionsList = document.createElement('ul');
+        optionsList.className = 'options-list';
+
+        const options = Array.from(selectElement.options);
+        options.forEach(function(option) {
+            if (option.value) {
+                const li = document.createElement('li');
+                li.textContent = option.textContent;
+                li.dataset.value = option.value;
+
+                if (option.selected) {
+                    li.classList.add('selected');
+                    if (!isMultiple) {
+                        displayDiv.textContent = option.textContent;
+                    }
+                }
+
+                li.addEventListener('click', function() {
+                    if (isMultiple) {
+                        this.classList.toggle('selected');
+                        option.selected = this.classList.contains('selected');
+                        updateMultipleDisplay(displayDiv, selectElement, placeholder);
+                    } else {
+                        optionsList.querySelectorAll('li').forEach(l => l.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectElement.querySelectorAll('option').forEach(o => o.selected = false);
+                        option.selected = true;
+                        displayDiv.textContent = option.textContent;
+                        dropdown.classList.remove('show');
+                        // Закрываем все dropdowns при выборе
+                        closeAllDropdowns();
+                    }
+                });
+
+                optionsList.appendChild(li);
+            }
+        });
+
+        dropdown.appendChild(optionsList);
+        container.appendChild(displayDiv);
+        container.appendChild(dropdown);
+
+        // Поиск
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const lis = optionsList.querySelectorAll('li');
+            let hasResults = false;
+
+            lis.forEach(function(li) {
+                const text = li.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    li.style.display = 'block';
+                    hasResults = true;
+                } else {
+                    li.style.display = 'none';
+                }
+            });
+
+            if (!hasResults) {
+                const noResults = document.createElement('li');
+                noResults.className = 'no-results';
+                noResults.textContent = 'Ничего не найдено';
+                noResults.dataset.noResults = 'true';
+                optionsList.appendChild(noResults);
+            } else {
+                const noResultsEl = optionsList.querySelector('[data-no-results="true"]');
+                if (noResultsEl) {
+                    noResultsEl.remove();
+                }
+            }
+        });
+
+        // Открытие/закрытие dropdown
+        displayDiv.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isOpen = dropdown.classList.contains('show');
+
+            // Сначала закрываем все dropdowns
+            closeAllDropdowns();
+
+            // Если текущий был закрыт, открываем его
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                searchInput.focus();
+            }
+        });
+
+        // Закрытие при клике вне
+        document.addEventListener('click', function(e) {
+            if (!container.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Заменяем оригинальный select
+        selectElement.style.display = 'none';
+        selectElement.parentNode.insertBefore(container, selectElement);
+    }
+
+    function updateMultipleDisplay(displayDiv, selectElement, placeholder) {
+        const selectedOptions = Array.from(selectElement.selectedOptions);
+        if (selectedOptions.length === 0) {
+            displayDiv.textContent = placeholder;
+        } else if (selectedOptions.length === 1) {
+            displayDiv.textContent = selectedOptions[0].textContent;
+        } else {
+            displayDiv.textContent = `Выбрано: ${selectedOptions.length}`;
+        }
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        const selects = document.querySelectorAll('.select-with-search');
+
+        selects.forEach(function(select) {
+            initCustomSelect(select);
+        });
+
+        // Заполнение формы редактирования данными из таблицы
+        var editModal = document.getElementById('editProductModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+            // Получаем данные из data-атрибутов
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            var category = button.getAttribute('data-category');
+            var stock = button.getAttribute('data-stock');
+            var price = button.getAttribute('data-price');
+            var quantity = button.getAttribute('data-quantity');
+            var description = button.getAttribute('data-description');
+            var supplier = button.getAttribute('data-supplier');
+            var weight = button.getAttribute('data-weight');
+
+            // Заполняем форму
+            document.getElementById('editProductSKU').value = id;
+            document.getElementById('editProductName').value = name;
+            document.getElementById('editProductCategory').value = category;
+            document.getElementById('editProductPrice').value = price;
+            document.getElementById('editProductDescription').value = description;
+            document.getElementById('editProductSeller').value = supplier || '';
+
+            // Устанавливаем статус наличия
+            var inStock = stock === 'В наличии';
+            document.getElementById('editProductInStock').checked = inStock;
+        });
+    });
+</script>
 {% endblock demo %}

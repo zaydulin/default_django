@@ -12,147 +12,749 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<style>
+    /* Стили для модальных окон */
+    .modal-dialog-centered-custom {
+        max-width: 1100px;
+    }
+
+    .modal-backdrop.show {
+        opacity: 0.5;
+    }
+
+    /* Стили для вложенных модальных окон */
+    .modal.nested-modal {
+        padding-right: 0 !important;
+    }
+
+    .modal.nested-modal .modal-dialog {
+        margin: 1.75rem auto;
+    }
+
+    /* Боковая панель слева */
+    .booking-sidebar-left {
+        background-color: #f0f7ff;
+        border-right: 1px solid #d0e3f7;
+        padding: 20px;
+    }
+
+    /* Основная область */
+    .booking-main-content {
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    /* Правая панель */
+    .booking-sidebar-right {
+        border-left: 1px solid #d0e3f7;
+        padding: 20px;
+        background-color: #f8fbff;
+    }
+
+    /* Статусы - все в голубых оттенках */
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 2px solid transparent;
+        background-color: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .status-badge:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+    }
+
+    .status-badge.active {
+        background-color: #1976d2;
+        color: white;
+        border-color: #0d47a1;
+    }
+
+    /* Табы услуг - голубые */
+    .service-tabs .nav-link {
+        color: #546e7a;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 12px 24px;
+        font-weight: 500;
+        background-color: #f5f9ff;
+    }
+
+    .service-tabs .nav-link.active {
+        color: #1976d2;
+        border-bottom-color: #1976d2;
+        background: white;
+    }
+
+    .service-tabs .nav-link i {
+        margin-right: 8px;
+    }
+
+    /* Кнопки действий - голубые */
+    .action-button {
+        background-color: white;
+        border: 1px solid #bbdefb;
+        padding: 12px;
+        margin-bottom: 10px;
+        text-align: left;
+        width: 100%;
+        transition: all 0.2s;
+        color: #1976d2;
+    }
+
+    .action-button:hover {
+        background-color: #e3f2fd;
+        border-color: #1976d2;
+    }
+
+    .action-button i {
+        margin-right: 8px;
+        color: #1976d2;
+    }
+
+    /* Кнопка сохранения - голубая вместо желтой */
+    .btn-save-booking {
+        background-color: #1976d2;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 12px 24px;
+    }
+
+    .btn-save-booking:hover {
+        background-color: #1565c0;
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+    }
+
+    /* Поля формы */
+    .form-label-custom {
+        font-size: 0.875rem;
+        color: #546e7a;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+
+    .time-inputs .form-select {
+        max-width: 100px;
+    }
+
+    /* Пустое состояние */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #78909c;
+    }
+
+    .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    /* Модальное окно по центру */
+    .modal-dialog-centered {
+        display: flex;
+        align-items: center;
+        min-height: calc(100% - 3.5rem);
+    }
+
+    /* Список услуг и товаров */
+    .service-item, .product-item {
+        padding: 12px;
+        border: 1px solid #e3f2fd;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .service-item:hover, .product-item:hover {
+        background-color: #e3f2fd;
+        border-color: #1976d2;
+    }
+
+    .service-item.selected, .product-item.selected {
+        background-color: #bbdefb;
+        border-color: #1976d2;
+    }
+
+    .service-name, .product-name {
+        font-weight: 500;
+        color: #1565c0;
+    }
+
+    .service-duration, .product-price {
+        color: #546e7a;
+        font-size: 0.875rem;
+    }
+
+    /* Выбор цвета в выпадающем списке */
+    .color-select-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .color-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        display: inline-block;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* Alert в голубых тонах */
+    .alert-info-custom {
+        background-color: #e3f2fd;
+        border-color: #bbdefb;
+        color: #1565c0;
+    }
+
+    .alert-info-custom .alert-link {
+        color: #0d47a1;
+    }
+</style>
 {% endblock head %}
 {% block content %}
 
 <div class="container-fluid p-4">
     <div class="card app-calendar-wrapper">
         <div class="row g-0">
-            <!-- Calendar Sidebar -->
+            <!-- Боковая панель календаря -->
             <div class="col-auto app-calendar-sidebar border-end" id="app-calendar-sidebar">
                 <div class="border-bottom p-4">
-                    <button class="btn btn-primary w-100" data-bs-toggle="offcanvas" data-bs-target="#addEventSidebar" aria-controls="addEventSidebar">
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#bookingModal" aria-controls="bookingModal">
                         <i class="bx bx-plus me-2"></i>
-                        <span>Add Event</span>
+                        <span>Новый сеанс</span>
                     </button>
                 </div>
                 <div class="p-4">
-                    <!-- inline calendar (flatpickr) -->
+                    <!-- Встроенный календарь (flatpickr) -->
                     <div class="inline-calendar mb-4"></div>
 
                     <hr class="my-4" />
 
-                    <!-- Filter -->
+                    <!-- Фильтры -->
                     <div>
-                        <h5 class="mb-3">Event Filters</h5>
+                        <h5 class="mb-3">Сотрудники</h5>
 
                         <div class="form-check form-check-secondary mb-3">
                             <input class="form-check-input select-all" type="checkbox" id="selectAll" data-value="all" checked />
-                            <label class="form-check-label" for="selectAll">View All</label>
+                            <label class="form-check-label" for="selectAll">Показать все</label>
                         </div>
 
                         <div class="app-calendar-events-filter">
                             <div class="form-check form-check-danger mb-3">
                                 <input class="form-check-input input-filter" type="checkbox" id="select-personal" data-value="personal" checked />
-                                <label class="form-check-label" for="select-personal">Personal</label>
+                                <label class="form-check-label" for="select-personal">Лариса Долина</label>
                             </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input input-filter" type="checkbox" id="select-business" data-value="business" checked />
-                                <label class="form-check-label" for="select-business">Business</label>
+                                <label class="form-check-label" for="select-business">Лариса Долина</label>
                             </div>
                             <div class="form-check form-check-warning mb-3">
                                 <input class="form-check-input input-filter" type="checkbox" id="select-family" data-value="family" checked />
-                                <label class="form-check-label" for="select-family">Family</label>
+                                <label class="form-check-label" for="select-family">Лариса Долина</label>
                             </div>
                             <div class="form-check form-check-success mb-3">
                                 <input class="form-check-input input-filter" type="checkbox" id="select-holiday" data-value="holiday" checked />
-                                <label class="form-check-label" for="select-holiday">Holiday</label>
+                                <label class="form-check-label" for="select-holiday">Лариса Долина</label>
                             </div>
                             <div class="form-check form-check-info">
                                 <input class="form-check-input input-filter" type="checkbox" id="select-etc" data-value="etc" checked />
-                                <label class="form-check-label" for="select-etc">ETC</label>
+                                <label class="form-check-label" for="select-etc">Лариса Долина</label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- /Calendar Sidebar -->
+            <!-- /Боковая панель календаря -->
 
-            <!-- Calendar Content -->
+            <!-- Содержимое календаря -->
             <div class="col app-calendar-content">
                 <div class="card-body">
                     <!-- FullCalendar -->
                     <div id="calendar"></div>
                 </div>
             </div>
-            <!-- /Calendar Content -->
+            <!-- /Содержимое календаря -->
         </div>
     </div>
 </div>
 
-<!-- Add Event Offcanvas -->
-<div class="offcanvas offcanvas-end event-sidebar" tabindex="-1" id="addEventSidebar" aria-labelledby="addEventSidebarLabel" style="width: 400px;">
-    <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title" id="addEventSidebarLabel">Add Event</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+<!-- Основное модальное окно создания записи (по центру, не закрывается) -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-centered-custom">
+        <div class="modal-content" style="border-radius: 12px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="bookingModalLabel">Новая запись</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Левая колонка -->
+                    <div class="col-md-4 booking-sidebar-left">
+                        <form id="bookingForm">
+                            <!-- Сотрудник -->
+                            <div class="mb-3">
+                                <label class="form-label-custom">Сотрудник</label>
+                                <select class="form-select" id="employeeSelect">
+                                    <option value="1" selected>Алина</option>
+                                    <option value="2">Лариса Долина</option>
+                                    <option value="3">Иван Петров</option>
+                                </select>
+                            </div>
+
+                            <!-- Дата -->
+                            <div class="mb-3">
+                                <label class="form-label-custom">Дата</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker" id="bookingDate" placeholder="03.03.2026" />
+                                    <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                </div>
+                            </div>
+
+                            <!-- Время и длительность -->
+                            <div class="mb-3">
+                                <label class="form-label-custom">Время и Длительность записи</label>
+                                <div class="d-flex align-items-center gap-2 time-inputs mb-2">
+                                    <select class="form-select">
+                                        <option value="">Время</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="09:30">09:30</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="10:30">10:30</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="11:30">11:30</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="12:30">12:30</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="13:30">13:30</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="14:30">14:30</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="15:30">15:30</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="16:30">16:30</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="17:30">17:30</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="18:30">18:30</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="19:30">19:30</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                    <span class="text-muted">−</span>
+                                    <select class="form-select">
+                                        <option value="">Время</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="10:30">10:30</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="11:30">11:30</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="12:30">12:30</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="13:30">13:30</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="14:30">14:30</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="15:30">15:30</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="16:30">16:30</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="17:30">17:30</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="18:30">18:30</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="19:30">19:30</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="20:30">20:30</option>
+                                        <option value="21:00">21:00</option>
+                                    </select>
+                                    <button type="button" class="btn btn-sm btn-link text-danger">×</button>
+                                </div>
+                                <select class="form-select mb-2">
+                                    <option value="30">30 мин</option>
+                                    <option value="45">45 мин</option>
+                                    <option value="60" selected>1 ч</option>
+                                    <option value="90">1 ч 30 мин</option>
+                                    <option value="120">2 ч</option>
+                                    <option value="150">2 ч 30 мин</option>
+                                    <option value="180">3 ч</option>
+                                </select>
+                            </div>
+
+                            <!-- Технический перерыв -->
+                            <div class="mb-3">
+                                <label class="form-label-custom">Технический перерыв</label>
+                                <button type="button" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bx bx-plus me-1"></i>Добавить перерыв
+                                </button>
+                            </div>
+
+                            <!-- Закрепленные поля -->
+                            <div class="mb-3">
+                                <label class="form-label-custom">Закрепленные поля</label>
+                                <div class="mb-2">
+                                    <label class="form-label-custom d-block">Комментарий к записи</label>
+                                    <textarea class="form-control" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Кнопки действий -->
+                            <div class="d-grid gap-2">
+                                <button type="button" class="action-button" data-bs-toggle="modal" data-bs-target="#extendedFieldsModal">
+                                    <i class="bx bx-list-ul"></i>Расширенные поля
+                                </button>
+                                <button type="button" class="action-button">
+                                    <i class="bx bx-refresh"></i>Повторение записи
+                                </button>
+                                <button type="button" class="action-button" data-bs-toggle="modal" data-bs-target="#notificationsModal">
+                                    <i class="bx bx-bell"></i>Уведомления о визите
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Центральная колонка -->
+                    <div class="col-md-5 booking-main-content">
+                        <!-- Статусы -->
+                        <div class="mb-4">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <span class="status-badge active">
+                                    <i class="bx bx-time me-1"></i>Ожидание
+                                </span>
+                                <span class="status-badge">
+                                    <i class="bx bx-check me-1"></i>Пришел
+                                </span>
+                                <span class="status-badge">
+                                    <i class="bx bx-x me-1"></i>Не пришел
+                                </span>
+                                <span class="status-badge">
+                                    <i class="bx bx-check-circle me-1"></i>Подтвердил
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Табы Услуги/Товары -->
+                        <div class="mb-4">
+                            <ul class="nav nav-tabs service-tabs w-100" id="serviceTabs" role="tablist">
+                                <li class="nav-item flex-fill" role="presentation">
+                                    <button class="nav-link active w-100" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+                                        <i class="bx bx-package"></i>Услуги
+                                    </button>
+                                </li>
+                                <li class="nav-item flex-fill" role="presentation">
+                                    <button class="nav-link w-100" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab">
+                                        <i class="bx bx-cart"></i>Товары
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-3" id="serviceTabsContent">
+                                <div class="tab-pane fade show active" id="services" role="tabpanel">
+                                    <input type="text" class="form-control mb-3" placeholder="Поиск по услугам" />
+
+                                    <!-- Список услуг -->
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Стрижка женская</div>
+                                            <div class="service-duration">60 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Стрижка мужская</div>
+                                            <div class="service-duration">45 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Окрашивание волос</div>
+                                            <div class="service-duration">120 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Укладка волос</div>
+                                            <div class="service-duration">45 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Маникюр классический</div>
+                                            <div class="service-duration">60 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="service-item">
+                                        <div>
+                                            <div class="service-name">Педикюр</div>
+                                            <div class="service-duration">90 мин</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="products" role="tabpanel">
+                                    <!-- Список товаров -->
+                                    <div class="product-item">
+                                        <div>
+                                            <div class="product-name">Шампунь профессиональный</div>
+                                            <div class="product-price">1 200 ₽</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="product-item">
+                                        <div>
+                                            <div class="product-name">Кондиционер для волос</div>
+                                            <div class="product-price">950 ₽</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="product-item">
+                                        <div>
+                                            <div class="product-name">Маска для волос</div>
+                                            <div class="product-price">1 500 ₽</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="product-item">
+                                        <div>
+                                            <div class="product-name">Лак для волос</div>
+                                            <div class="product-price">650 ₽</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                    <div class="product-item">
+                                        <div>
+                                            <div class="product-name">Масло для волос</div>
+                                            <div class="product-price">1 100 ₽</div>
+                                        </div>
+                                        <i class="bx bx-plus-circle text-primary"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Правая колонка -->
+                    <div class="col-md-3 booking-sidebar-right">
+                        <div class="mb-3">
+                            <label class="form-label-custom">Имя</label>
+                            <input type="text" class="form-control" placeholder="Иван" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Телефон <i class="bx bx-info-circle text-muted"></i></label>
+                            <input type="tel" class="form-control" placeholder="000 000-00-00" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label-custom">Email</label>
+                            <input type="email" class="form-control" placeholder="example@mail.com" />
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="anotherVisitor">
+                            <label class="form-check-label small text-muted" for="anotherVisitor">
+                                Записывает другого посетителя
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 justify-content-end">
+                <button type="button" class="btn btn-save-booking">
+                    <i class="bx bx-check me-2"></i>Сохранить запись
+                </button>
+            </div>
+        </div>
     </div>
-    <div class="offcanvas-body">
-        <form class="event-form" id="eventForm" onsubmit="return false">
-            <div class="mb-3">
-                <label class="form-label" for="eventTitle">Title</label>
-                <input type="text" class="form-control" id="eventTitle" name="eventTitle" placeholder="Event Title" required />
+</div>
+
+<!-- Модальное окно расширенных полей (вложенное) -->
+<div class="modal fade nested-modal" id="extendedFieldsModal" tabindex="-1" aria-labelledby="extendedFieldsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; max-width: 500px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="extendedFieldsModalLabel">
+                    <i class="bx bx-list-ul me-2"></i>Расширенные поля
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="eventLabel">Label</label>
-                <select class="form-select select-event-label" id="eventLabel" name="eventLabel">
-                    <option value="Business" selected>Business</option>
-                    <option value="Personal">Personal</option>
-                    <option value="Family">Family</option>
-                    <option value="Holiday">Holiday</option>
-                    <option value="ETC">ETC</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="eventStartDate">Start Date</label>
-                <input type="text" class="form-control datepicker" id="eventStartDate" name="eventStartDate" placeholder="Select Start Date" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label" for="eventEndDate">End Date</label>
-                <input type="text" class="form-control datepicker" id="eventEndDate" name="eventEndDate" placeholder="Select End Date" />
-            </div>
-            <div class="mb-3">
-                <div class="form-check form-switch">
-                    <input type="checkbox" class="form-check-input" id="allDaySwitch" />
-                    <label class="form-check-label" for="allDaySwitch">All Day</label>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label-custom">Комментарий к записи</label>
+                    <textarea class="form-control" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Ресурсы</label>
+                    <select class="form-select">
+                        <option value="" selected>Не выбран</option>
+                        <option value="1">Кабинет 1</option>
+                        <option value="2">Кабинет 2</option>
+                        <option value="3">Кабинет 3</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Категории записи</label>
+                    <select class="form-select">
+                        <option value="" selected>Выберите категорию</option>
+                        <option value="1">Консультация</option>
+                        <option value="2">Процедура</option>
+                        <option value="3">Стрижка</option>
+                        <option value="4">Окрашивание</option>
+                        <option value="5">Уход</option>
+                        <option value="6">Маникюр</option>
+                        <option value="7">Педикюр</option>
+                        <option value="8">Укладка</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-custom">Цвет записи</label>
+                    <select class="form-select" id="colorSelect">
+                        <option value="1" data-color="#1976d2">Синий</option>
+                        <option value="2" data-color="#42a5f5">Голубой</option>
+                        <option value="3" data-color="#26c6da">Бирюзовый</option>
+                        <option value="4" data-color="#26a69a">Мятный</option>
+                        <option value="5" data-color="#66bb6a">Зеленый</option>
+                        <option value="6" data-color="#ffca28">Желтый</option>
+                        <option value="7" data-color="#ff7043">Оранжевый</option>
+                        <option value="8" data-color="#ab47bc">Фиолетовый</option>
+                        <option value="9" data-color="#8d6e63">Коричневый</option>
+                        <option value="10" data-color="#78909c">Серый</option>
+                    </select>
                 </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label" for="eventDescription">Description</label>
-                <textarea class="form-control" name="eventDescription" id="eventDescription" rows="3"></textarea>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Сохранить</button>
             </div>
-            <div class="d-flex justify-content-between mt-4">
-                <div>
-                    <button type="submit" class="btn btn-primary me-2">Add Event</button>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно уведомлений (вложенное) -->
+<div class="modal fade nested-modal" id="notificationsModal" tabindex="-1" aria-labelledby="notificationsModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 12px; max-width: 500px;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="notificationsModalLabel">
+                    <i class="bx bx-bell me-2"></i>Уведомления о визите
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Предупреждение в голубых тонах -->
+                <div class="alert alert-info-custom d-flex align-items-center" role="alert">
+                    <i class="bx bx-info-circle me-2 fs-5"></i>
+                    <div>
+                        <strong>У клиента не найдены согласия для отправки уведомлений</strong><br>
+                        <small>Узнайте, как их собрать и внести в систему в <a href="#" class="alert-link">Базе знаний</a></small>
+                    </div>
+                </div>
+
+                <!-- Уведомление -->
+                <div class="mb-4">
+                    <h6 class="mb-3">Уведомление</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="sendNotification" checked>
+                        <label class="form-check-label" for="sendNotification">
+                            Отправить уведомление с деталями записи сразу после сохранения
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Напоминание перед визитом -->
+                <div class="mb-4">
+                    <h6 class="mb-3">Напоминание перед визитом</h6>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Способ отправки</th>
+                                    <th>За сколько до визита</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="smsNotify" checked>
+                                            <label class="form-check-label" for="smsNotify">SMS</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm">
+                                            <option>1 час</option>
+                                            <option>2 часа</option>
+                                            <option>3 часа</option>
+                                            <option>1 день</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="emailNotify" checked>
+                                            <label class="form-check-label" for="emailNotify">Email</label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select form-select-sm">
+                                            <option>12 часов</option>
+                                            <option>1 день</option>
+                                            <option>2 дня</option>
+                                            <option>3 дня</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </form>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Сохранить</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Подключаем скрипты через CDN -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/locales-all.global.min.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing calendar...');
+    console.log('DOM загружен, инициализация календаря...');
 
     // Инициализация основного календаря
     var calendarEl = document.getElementById('calendar');
 
     if (!calendarEl) {
-        console.error('Calendar element not found!');
+        console.error('Элемент календаря не найден!');
         return;
     }
 
-    console.log('Calendar element found, creating calendar...');
+    console.log('Элемент календаря найден, создание календаря...');
 
     // Пример событий для календаря
     var events = [
         {
             id: '1',
-            title: 'Personal Event',
+            title: 'Личное событие',
             start: '2026-06-01',
             end: '2026-06-02',
             classNames: ['bg-danger'],
@@ -162,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             id: '2',
-            title: 'Business Meeting',
+            title: 'Рабочая встреча',
             start: '2026-06-03T10:30:00',
             end: '2026-06-03T12:30:00',
             classNames: ['bg-primary'],
@@ -172,7 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             id: '3',
-            title: 'Family Dinner',
+            title: 'Семейный ужин',
             start: '2026-06-15T18:00:00',
             end: '2026-06-15T21:00:00',
             classNames: ['bg-warning'],
@@ -182,7 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             id: '4',
-            title: 'Holiday',
+            title: 'Праздник',
             start: '2026-06-12',
             end: '2026-06-13',
             classNames: ['bg-success'],
@@ -192,7 +794,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             id: '5',
-            title: 'ETC Event',
+            title: 'Прочее событие',
             start: '2026-06-20',
             end: '2026-06-21',
             classNames: ['bg-info'],
@@ -205,7 +807,15 @@ document.addEventListener('DOMContentLoaded', function() {
     try {
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            initialDate: '2026-06-01', // Устанавливаем июнь 2026
+            initialDate: '2026-06-01',
+            locale: 'ru',
+            buttonText: {
+                today: 'Сегодня',
+                month: 'Месяц',
+                week: 'Неделя',
+                day: 'День',
+                list: 'Список'
+            },
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
@@ -219,58 +829,54 @@ document.addEventListener('DOMContentLoaded', function() {
             navLinks: true,
             height: 'auto',
             datesSet: function(info) {
-                console.log('Calendar view set to:', info.view.currentStart);
+                console.log('Вид календаря установлен на:', info.view.currentStart);
             },
             dateClick: function(info) {
-                console.log('Date clicked:', info.dateStr);
-                // Открываем форму добавления события
-                var addEventSidebar = new bootstrap.Offcanvas(document.getElementById('addEventSidebar'));
-                addEventSidebar.show();
+                console.log('Дата выбрана:', info.dateStr);
+                // Открываем модальное окно записи
+                var bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+                bookingModal.show();
 
                 // Заполняем дату в форме
-                var startDateInput = document.getElementById('eventStartDate');
-                var endDateInput = document.getElementById('eventEndDate');
-
-                if (startDateInput && startDateInput._flatpickr) {
-                    startDateInput._flatpickr.setDate(info.dateStr);
-                }
-                if (endDateInput && endDateInput._flatpickr) {
-                    endDateInput._flatpickr.setDate(info.dateStr);
+                var bookingDateInput = document.getElementById('bookingDate');
+                if (bookingDateInput && bookingDateInput._flatpickr) {
+                    bookingDateInput._flatpickr.setDate(info.dateStr);
                 }
             },
             eventClick: function(info) {
-                console.log('Event clicked:', info.event.title);
-                alert('Event: ' + info.event.title);
+                console.log('Событие выбрано:', info.event.title);
+                alert('Событие: ' + info.event.title);
             }
         });
 
         calendar.render();
-        console.log('Calendar rendered successfully');
+        console.log('Календарь успешно отрисован');
 
         // Сохраняем экземпляр календаря для использования в фильтрах
         window.calendar = calendar;
 
     } catch (error) {
-        console.error('Error creating calendar:', error);
+        console.error('Ошибка при создании календаря:', error);
     }
 
-    // Инициализация inline календаря (flatpickr)
+    // Инициализация встроенного календаря (flatpickr)
     var inlineCalendarEl = document.querySelector('.inline-calendar');
     if (inlineCalendarEl) {
         try {
             var inlineCalendar = flatpickr(inlineCalendarEl, {
                 inline: true,
                 defaultDate: '2026-06-01',
+                locale: 'ru',
                 onChange: function(selectedDates, dateStr) {
-                    console.log('Inline date selected:', dateStr);
+                    console.log('Дата выбрана во встроенном календаре:', dateStr);
                     if (window.calendar) {
                         window.calendar.gotoDate(dateStr);
                     }
                 }
             });
-            console.log('Inline calendar initialized');
+            console.log('Встроенный календарь инициализирован');
         } catch (error) {
-            console.error('Error initializing inline calendar:', error);
+            console.error('Ошибка при инициализации встроенного календаря:', error);
         }
     }
 
@@ -278,11 +884,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.datepicker').forEach(function(el) {
         try {
             flatpickr(el, {
-                dateFormat: 'Y-m-d',
-                allowInput: true
+                dateFormat: 'd.m.Y',
+                allowInput: true,
+                locale: 'ru',
+                defaultDate: '03.03.2026'
             });
         } catch (error) {
-            console.error('Error initializing datepicker:', error);
+            console.error('Ошибка при инициализации datepicker:', error);
         }
     });
 
@@ -297,7 +905,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 checkedValues.push(cb.getAttribute('data-value'));
             });
 
-            console.log('Filter changed:', checkedValues);
+            console.log('Фильтр изменён:', checkedValues);
 
             // Получаем все события
             var allEvents = window.calendar.getEvents();
@@ -314,7 +922,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Select All checkbox
+    // Чекбокс "Выбрать все"
     var selectAllCheckbox = document.getElementById('selectAll');
     if (selectAllCheckbox) {
         selectAllCheckbox.addEventListener('change', function(e) {
@@ -331,98 +939,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработка формы добавления события
-    var eventForm = document.getElementById('eventForm');
-    if (eventForm) {
-        eventForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            if (!window.calendar) return;
-
-            // Получаем данные формы
-            var title = document.getElementById('eventTitle').value;
-            if (!title) {
-                alert('Please enter event title');
-                return;
-            }
-
-            var label = document.getElementById('eventLabel').value;
-            var startDate = document.getElementById('eventStartDate').value;
-            var endDate = document.getElementById('eventEndDate').value || startDate;
-            var allDay = document.getElementById('allDaySwitch').checked;
-            var description = document.getElementById('eventDescription').value;
-
-            // Определяем класс и тип события
-            var className = 'bg-primary';
-            var calendarType = 'business';
-
-            switch(label) {
-                case 'Personal':
-                    className = 'bg-danger';
-                    calendarType = 'personal';
-                    break;
-                case 'Business':
-                    className = 'bg-primary';
-                    calendarType = 'business';
-                    break;
-                case 'Family':
-                    className = 'bg-warning';
-                    calendarType = 'family';
-                    break;
-                case 'Holiday':
-                    className = 'bg-success';
-                    calendarType = 'holiday';
-                    break;
-                case 'ETC':
-                    className = 'bg-info';
-                    calendarType = 'etc';
-                    break;
-            }
-
-            // Добавляем событие
-            window.calendar.addEvent({
-                title: title,
-                start: startDate,
-                end: endDate,
-                allDay: allDay,
-                classNames: [className],
-                extendedProps: {
-                    calendar: calendarType,
-                    description: description
-                }
+    // Обработка клика по статусам
+    document.querySelectorAll('.status-badge').forEach(function(badge) {
+        badge.addEventListener('click', function() {
+            document.querySelectorAll('.status-badge').forEach(function(b) {
+                b.classList.remove('active');
             });
-
-            console.log('Event added:', title);
-
-            // Закрываем offcanvas и очищаем форму
-            var addEventSidebar = bootstrap.Offcanvas.getInstance(document.getElementById('addEventSidebar'));
-            if (addEventSidebar) {
-                addEventSidebar.hide();
-            }
-            this.reset();
+            this.classList.add('active');
         });
-    }
+    });
+
+    // Обработка клика по услугам
+    document.querySelectorAll('.service-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+        });
+    });
+
+    // Обработка клика по товарам
+    document.querySelectorAll('.product-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+            this.classList.toggle('selected');
+        });
+    });
 });
 </script>
 {% endblock content %}
 {% block demo %}
 <!-- Кнопка для дополнительного offcanvas -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
-</div>
 
-<!-- Дополнительный offcanvas -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-    </div>
-    <div class="offcanvas-body">
-        <p>Контент попапа на всю ширину справа...</p>
-    </div>
-    <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+<!-- Дополнительное модальное окно -->
+<div class="modal fade" id="offcanvasRight" tabindex="-1" aria-labelledby="offcanvasRightLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offcanvasRightLabel">Создание</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Контент попапа по центру...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary">Сохранить</button>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock demo %}

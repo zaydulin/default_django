@@ -8,25 +8,489 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<div class="flex-grow-1 container-p-y container-fluid">
+
+    <!-- 1. Виджеты статистики (под склады) -->
+    <div class="card mb-6">
+        <div class="card-widget-separator-wrapper">
+          <div class="card-body card-widget-separator">
+            <div class="row gy-4 gy-sm-1">
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+                  <div>
+                    <h4 class="mb-0">12</h4>
+                    <p class="mb-0">Всего складов</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 me-sm-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-store icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+                <hr class="d-none d-sm-block d-lg-none me-6">
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+                  <div>
+                    <h4 class="mb-0">8</h4>
+                    <p class="mb-0">Активные</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2 me-lg-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-check-circle icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+                <hr class="d-none d-sm-block d-lg-none">
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+                  <div>
+                    <h4 class="mb-0">3</h4>
+                    <p class="mb-0">На ремонте</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2 me-sm-6">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-wrench icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h4 class="mb-0">1</h4>
+                    <p class="mb-0">Неактивные</p>
+                  </div>
+                  <span class="avatar w-px-40 h-px-40 p-2">
+                    <span class="avatar-initial bg-label-secondary rounded">
+                      <i class="icon-base bx bx-block icon-lg text-heading"></i>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- 2. Таблица складов -->
+    <style>
+        .card .table th, .card .table td { text-align: left !important; }
+        .text-truncate-custom {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+    <div class="card mb-6">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Список складов</h5>
+
+          <div class="d-flex gap-2 flex-wrap">
+
+            <!-- Кнопка: Добавить склад -->
+            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#addWarehouseModal">
+              <i class="icon-base bx bx-plus icon-sm me-1"></i>
+              <span class="d-none d-sm-inline">Добавить склад</span>
+            </button>
+
+            <!-- Кнопка: Перезагрузка -->
+            <button class="btn btn-primary btn-sm" type="button" title="Перезагрузить">
+              <i class="icon-base bx bx-refresh icon-sm"></i>
+            </button>
+
+            <!-- Кнопка: Удалить -->
+            <button class="btn btn-primary btn-sm" type="button" title="Удалить выбранное">
+              <i class="icon-base bx bx-trash icon-sm"></i>
+            </button>
+
+            <!-- Выпадающий список: Поиск -->
+            <div class="dropdown">
+              <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="icon-base bx bx-search me-1"></i>
+                <span class="d-none d-sm-inline">Поиск по...</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('ID')">ID</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Название')">Название</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Город')">Город</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Адрес')">Адрес</a></li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="table-responsive text-nowrap">
+          <table class="table text-start">
+            <thead class="text-start">
+              <tr>
+                <th style="width: 40px;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll">
+                    </div>
+                </th>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Город</th>
+                <th>Адрес</th>
+                <th>Почтовый индекс</th>
+                <th>Контактное Имя</th>
+                <th>Контактный номер</th>
+                <th>Контактная почта</th>
+                <th>Описание</th>
+                <th>Комментарий для доставки</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0 text-start">
+              <!-- Строка 1 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td><strong>#WH-001</strong></td>
+                <td class="text-truncate-custom">Склад "Северный"</td>
+                <td>Москва</td>
+                <td class="text-truncate-custom">ул. Ленина, 45</td>
+                <td>101000</td>
+                <td>Иван Петров</td>
+                <td>+7 (495) 123-45-67</td>
+                <td>sever@warehouse.ru</td>
+                <td class="text-truncate-custom">Основной склад</td>
+                <td class="text-truncate-custom">Въезд со двора</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editWarehouseModal" data-id="#WH-001" data-name="Склад &quot;Северный&quot;" data-city="Москва" data-address="ул. Ленина, 45" data-zip="101000" data-contact-name="Иван Петров" data-contact-phone="+7 (495) 123-45-67" data-contact-email="sever@warehouse.ru" data-description="Основной склад" data-delivery-comment="Въезд со двора"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Строка 2 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td><strong>#WH-002</strong></td>
+                <td class="text-truncate-custom">Склад "Южный"</td>
+                <td>Санкт-Петербург</td>
+                <td class="text-truncate-custom">пр. Невский, 78</td>
+                <td>190000</td>
+                <td>Анна Смирнова</td>
+                <td>+7 (812) 987-65-43</td>
+                <td>ug@warehouse.ru</td>
+                <td class="text-truncate-custom">Склад электроники</td>
+                <td class="text-truncate-custom">Круглосуточный доступ</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editWarehouseModal" data-id="#WH-002" data-name="Склад &quot;Южный&quot;" data-city="Санкт-Петербург" data-address="пр. Невский, 78" data-zip="190000" data-contact-name="Анна Смирнова" data-contact-phone="+7 (812) 987-65-43" data-contact-email="ug@warehouse.ru" data-description="Склад электроники" data-delivery-comment="Круглосуточный доступ"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Строка 3 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td><strong>#WH-003</strong></td>
+                <td class="text-truncate-custom">Склад "Восточный"</td>
+                <td>Екатеринбург</td>
+                <td class="text-truncate-custom">ул. Мира, 12</td>
+                <td>620000</td>
+                <td>Сергей Иванов</td>
+                <td>+7 (343) 555-44-33</td>
+                <td>vostok@warehouse.ru</td>
+                <td class="text-truncate-custom">Холодильное хранение</td>
+                <td class="text-truncate-custom">Зона разгрузки №3</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editWarehouseModal" data-id="#WH-003" data-name="Склад &quot;Восточный&quot;" data-city="Екатеринбург" data-address="ул. Мира, 12" data-zip="620000" data-contact-name="Сергей Иванов" data-contact-phone="+7 (343) 555-44-33" data-contact-email="vostok@warehouse.ru" data-description="Холодильное хранение" data-delivery-comment="Зона разгрузки №3"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Строка 4 -->
+              <tr>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="">
+                    </div>
+                </td>
+                <td><strong>#WH-004</strong></td>
+                <td class="text-truncate-custom">Склад "Западный"</td>
+                <td>Казань</td>
+                <td class="text-truncate-custom">ул. Пушкина, 99</td>
+                <td>420000</td>
+                <td>Ольга Козлова</td>
+                <td>+7 (843) 222-11-00</td>
+                <td>zapad@warehouse.ru</td>
+                <td class="text-truncate-custom">Оптовый склад</td>
+                <td class="text-truncate-custom">Предварительная запись</td>
+                <td>
+                  <div class="dropdown">
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#editWarehouseModal" data-id="#WH-004" data-name="Склад &quot;Западный&quot;" data-city="Казань" data-address="ул. Пушкина, 99" data-zip="420000" data-contact-name="Ольга Козлова" data-contact-phone="+7 (843) 222-11-00" data-contact-email="zapad@warehouse.ru" data-description="Оптовый склад" data-delivery-comment="Предварительная запись"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a>
+                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tfoot class="table-border-bottom-0 text-start">
+              <tr>
+                <th class="rounded-start-bottom">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAllFooter">
+                    </div>
+                </th>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Город</th>
+                <th>Адрес</th>
+                <th>Почтовый индекс</th>
+                <th>Контактное Имя</th>
+                <th>Контактный номер</th>
+                <th>Контактная почта</th>
+                <th>Описание</th>
+                <th>Комментарий для доставки</th>
+                <th class="rounded-end-bottom">Действия</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+    </div>
 </div>
-<!-- Offcanvas справа на всю ширину -->
+
+<!-- Модальное окно: Поиск -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">Поиск</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="searchInput" class="form-label" id="searchLabel">Поиск по...</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Введите значение...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Найти</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Добавить склад -->
+<div class="modal fade" id="addWarehouseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Добавить склад</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <label for="addWarehouseName" class="form-label">Название</label>
+              <input type="text" class="form-control" id="addWarehouseName" placeholder="Например: Склад Северный">
+            </div>
+            <div class="col-md-6">
+              <label for="addWarehouseCity" class="form-label">Город</label>
+              <input type="text" class="form-control" id="addWarehouseCity" placeholder="г. Москва">
+            </div>
+            <div class="col-12">
+              <label for="addWarehouseAddress" class="form-label">Адрес</label>
+              <input type="text" class="form-control" id="addWarehouseAddress" placeholder="ул. Ленина, 45">
+            </div>
+            <div class="col-md-6">
+              <label for="addWarehouseZip" class="form-label">Почтовый индекс</label>
+              <input type="text" class="form-control" id="addWarehouseZip" placeholder="101000">
+            </div>
+            <div class="col-md-6">
+              <label for="addContactName" class="form-label">Контактное Имя</label>
+              <input type="text" class="form-control" id="addContactName" placeholder="Иван Петров">
+            </div>
+            <div class="col-md-6">
+              <label for="addContactPhone" class="form-label">Контактный номер</label>
+              <input type="tel" class="form-control" id="addContactPhone" placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="col-md-6">
+              <label for="addContactEmail" class="form-label">Контактная почта</label>
+              <input type="email" class="form-control" id="addContactEmail" placeholder="email@example.com">
+            </div>
+            <div class="col-12">
+              <label for="addWarehouseDescription" class="form-label">Описание</label>
+              <textarea class="form-control" id="addWarehouseDescription" rows="3" placeholder="Краткое описание склада..."></textarea>
+            </div>
+            <div class="col-12">
+              <label for="addDeliveryComment" class="form-label">Комментарий склада для доставки</label>
+              <textarea class="form-control" id="addDeliveryComment" rows="2" placeholder="Особенности доставки..."></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Сохранить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Редактировать склад -->
+<div class="modal fade" id="editWarehouseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Редактировать склад</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editWarehouseForm">
+          <div class="row gy-3">
+            <div class="col-md-6">
+              <label for="editWarehouseId" class="form-label">ID</label>
+              <input type="text" class="form-control" id="editWarehouseId" readonly>
+            </div>
+            <div class="col-md-6">
+              <label for="editWarehouseName" class="form-label">Название</label>
+              <input type="text" class="form-control" id="editWarehouseName">
+            </div>
+            <div class="col-md-6">
+              <label for="editWarehouseCity" class="form-label">Город</label>
+              <input type="text" class="form-control" id="editWarehouseCity">
+            </div>
+            <div class="col-md-6">
+              <label for="editWarehouseZip" class="form-label">Почтовый индекс</label>
+              <input type="text" class="form-control" id="editWarehouseZip">
+            </div>
+            <div class="col-12">
+              <label for="editWarehouseAddress" class="form-label">Адрес</label>
+              <input type="text" class="form-control" id="editWarehouseAddress">
+            </div>
+            <div class="col-md-6">
+              <label for="editContactName" class="form-label">Контактное Имя</label>
+              <input type="text" class="form-control" id="editContactName">
+            </div>
+            <div class="col-md-6">
+              <label for="editContactPhone" class="form-label">Контактный номер</label>
+              <input type="tel" class="form-control" id="editContactPhone">
+            </div>
+            <div class="col-md-6">
+              <label for="editContactEmail" class="form-label">Контактная почта</label>
+              <input type="email" class="form-control" id="editContactEmail">
+            </div>
+            <div class="col-12">
+              <label for="editWarehouseDescription" class="form-label">Описание</label>
+              <textarea class="form-control" id="editWarehouseDescription" rows="3"></textarea>
+            </div>
+            <div class="col-12">
+              <label for="editDeliveryComment" class="form-label">Комментарий склада для доставки</label>
+              <textarea class="form-control" id="editDeliveryComment" rows="2"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Сохранить изменения</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block demo %}
+<!-- Offcanvas справа -->
+<div class="buy-now">
+    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Быстрое создание</a>
+</div>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Быстрое создание</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
+        <p>Форма быстрого создания...</p>
     </div>
     <div class="offcanvas-footer p-3 border-top">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
         <button type="button" class="btn btn-primary">Сохранить</button>
     </div>
 </div>
+
+<!-- Скрипты для работы модальных окон -->
+<script>
+    // Поиск
+    function openSearchModal(fieldType) {
+        var modalLabel = document.getElementById('searchLabel');
+        var modalTitle = document.getElementById('searchModalLabel');
+        var searchInput = document.getElementById('searchInput');
+
+        modalTitle.innerText = 'Поиск';
+        modalLabel.innerText = 'Поиск по: ' + fieldType;
+        searchInput.placeholder = 'Введите ' + fieldType.toLowerCase();
+
+        var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+        searchModal.show();
+    }
+
+    // Редактирование - заполнение формы данными из строки таблицы
+    document.addEventListener('DOMContentLoaded', function() {
+        var editModal = document.getElementById('editWarehouseModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+
+            // Получаем данные из data-атрибутов
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            var city = button.getAttribute('data-city');
+            var address = button.getAttribute('data-address');
+            var zip = button.getAttribute('data-zip');
+            var contactName = button.getAttribute('data-contact-name');
+            var contactPhone = button.getAttribute('data-contact-phone');
+            var contactEmail = button.getAttribute('data-contact-email');
+            var description = button.getAttribute('data-description');
+            var deliveryComment = button.getAttribute('data-delivery-comment');
+
+            // Заполняем форму
+            document.getElementById('editWarehouseId').value = id;
+            document.getElementById('editWarehouseName').value = name;
+            document.getElementById('editWarehouseCity').value = city;
+            document.getElementById('editWarehouseAddress').value = address;
+            document.getElementById('editWarehouseZip').value = zip;
+            document.getElementById('editContactName').value = contactName;
+            document.getElementById('editContactPhone').value = contactPhone;
+            document.getElementById('editContactEmail').value = contactEmail;
+            document.getElementById('editWarehouseDescription').value = description;
+            document.getElementById('editDeliveryComment').value = deliveryComment;
+        });
+    });
+</script>
 {% endblock demo %}

@@ -8,20 +8,279 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
+<div class="flex-grow-1 container-p-y container-fluid">
+    <!-- Виджеты статистики -->
+    <div class="card mb-6">
+    <div class="card-widget-separator-wrapper">
+      <div class="card-body card-widget-separator">
+        <div class="row gy-4 gy-sm-1">
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+              <div>
+                <h4 class="mb-0">56</h4>
+                <p class="mb-0">Новые</p>
+              </div>
+              <span class="avatar w-px-40 h-px-40 me-sm-6">
+                <span class="avatar-initial bg-label-secondary rounded">
+                  <i class="icon-base bx bx-calendar icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none me-6">
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+              <div>
+                <h4 class="mb-0">1,248</h4>
+                <p class="mb-0">Завершены</p>
+              </div>
+              <span class="avatar w-px-40 h-px-40 p-2 me-lg-6">
+                <span class="avatar-initial bg-label-secondary rounded">
+                  <i class="icon-base bx bx-check-double icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none">
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+              <div>
+                <h4 class="mb-0">124</h4>
+                <p class="mb-0">В работе</p>
+              </div>
+              <span class="avatar w-px-40 h-px-40 p-2 me-sm-6">
+                <span class="avatar-initial bg-label-secondary rounded">
+                  <i class="icon-base bx bx-wallet icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h4 class="mb-0">32</h4>
+                <p class="mb-0">Просрочено</p>
+              </div>
+              <span class="avatar w-px-40 h-px-40 p-2">
+                <span class="avatar-initial bg-label-secondary rounded">
+                  <i class="icon-base bx bx-error-alt icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Таблица -->
+<style>
+    .card .table th, .card .table td { text-align: left !important; }
+</style>
+<div class="card mb-6">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Тикеты</h5>
+
+      <div class="d-flex gap-2 flex-wrap">
+
+        <!-- 1. Выпадающий список: Руководитель -->
+        <div class="dropdown">
+          <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="icon-base bx bx-user me-1"></i>
+            <span class="d-none d-sm-inline">Под моим руководством</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="javascript:void(0);">Под моим руководством</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);">Общее</a></li>
+          </ul>
+        </div>
+
+        <!-- 2. Кнопка: Перезагрузка -->
+        <button class="btn btn-primary btn-sm" type="button" title="Перезагрузить">
+          <i class="icon-base bx bx-refresh icon-sm"></i>
+        </button>
+
+        <!-- 3. Кнопка: Мусор -->
+        <button class="btn btn-primary btn-sm" type="button" title="Удалить выбранное">
+          <i class="icon-base bx bx-trash icon-sm"></i>
+        </button>
+
+        <!-- 4. Выпадающий список: Поиск по (Открывает модальное окно) -->
+        <div class="dropdown">
+          <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="icon-base bx bx-search me-1"></i>
+            <span class="d-none d-sm-inline">Поиск по...</span>
+          </button>
+          <ul class="dropdown-menu">
+            <!-- Добавил onclick для открытия модалки -->
+            <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('ID')">ID</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Тема')">Тема</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Дата')">Дата</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Статус')">Статус</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+      <table class="table text-start">
+        <thead class="text-start">
+          <tr>
+            <th style="width: 40px;">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAll">
+                </div>
+            </th>
+            <th>ID</th>
+            <th>Тема</th>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th>Действия</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0 text-start">
+          <!-- Строка 1 -->
+          <tr>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                </div>
+            </td>
+            <td><strong>#1024</strong></td>
+            <td>Вопрос по оплате заказа</td>
+            <td>20.10.2023</td>
+            <td><span class="badge bg-label-primary">Новый</span></td>
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Строка 2 -->
+          <tr>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                </div>
+            </td>
+            <td><strong>#1025</strong></td>
+            <td>Проблема с доставкой</td>
+            <td>21.10.2023</td>
+            <td><span class="badge bg-label-warning">В работе</span></td>
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Строка 3 -->
+          <tr>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                </div>
+            </td>
+            <td><strong>#1026</strong></td>
+            <td>Возврат товара</td>
+            <td>22.10.2023</td>
+            <td><span class="badge bg-label-success">Завершен</span></td>
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <!-- Строка 4 -->
+          <tr>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="">
+                </div>
+            </td>
+            <td><strong>#1027</strong></td>
+            <td>Консультация по тарифам</td>
+            <td>23.10.2023</td>
+            <td><span class="badge bg-label-secondary">Ожидает</span></td>
+            <td>
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot class="table-border-bottom-0 text-start">
+          <tr>
+            <th class="rounded-start-bottom">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="selectAllFooter">
+                </div>
+            </th>
+            <th>ID</th>
+            <th>Тема</th>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th class="rounded-end-bottom">Действия</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
 {% endblock content %}
+
 {% block demo %}
-<!-- Кнопка -->
+<!-- Модальное окно поиска (Универсальное) -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="searchModalLabel">Поиск</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <!-- Label будет меняться через JS -->
+            <label for="searchInput" class="form-label" id="searchLabel">Поиск по...</label>
+            <input type="text" class="form-control" id="searchInput" placeholder="Введите значение...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary">Найти</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Кнопка создания (Offcanvas) -->
 <div class="buy-now">
     <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
 </div>
-<!-- Offcanvas справа на всю ширину -->
+<!-- Offcanvas справа -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Ваш контент -->
         <p>Контент попапа на всю ширину справа...</p>
     </div>
     <div class="offcanvas-footer p-3 border-top">
@@ -29,4 +288,23 @@
         <button type="button" class="btn btn-primary">Сохранить</button>
     </div>
 </div>
+
+<!-- Скрипт для работы модального окна поиска -->
+<script>
+    function openSearchModal(fieldType) {
+        // Находим элементы модального окна
+        var modalLabel = document.getElementById('searchLabel');
+        var modalTitle = document.getElementById('searchModalLabel');
+        var searchInput = document.getElementById('searchInput');
+        
+        // Устанавливаем текст в зависимости от выбора
+        modalTitle.innerText = 'Поиск';
+        modalLabel.innerText = 'Поиск по: ' + fieldType;
+        searchInput.placeholder = 'Введите ' + fieldType.toLowerCase();
+        
+        // Открываем модалку через Bootstrap API
+        var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+        searchModal.show();
+    }
+</script>
 {% endblock demo %}

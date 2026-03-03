@@ -6,8 +6,603 @@
 {% block propertydescription %}{% endblock propertydescription %}
 {% block propertyimage %}{% endblock propertyimage %}
 {% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'moderation/libs/select2/select2.css' %}" />
+ <link rel="stylesheet" href="{% static 'moderation/libs/jkanban/jkanban.css' %}" />
+
+<link rel="stylesheet" href="{% static 'moderation/libs/flatpickr/flatpickr.css' %}" />
+<link rel="stylesheet" href="{% static 'moderation/libs/quill/typography.css' %}" />
+<link rel="stylesheet" href="{% static 'moderation/libs/quill/katex.css' %}" />
+<link rel="stylesheet" href="{% static 'moderation/libs/quill/quill/editor.css' %}" />
+<link rel="stylesheet" href="{% static 'css/pages/app-kanban.css' %}" />
+{% endblock head %}
 {% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+
+  <div class="app-kanban">
+    <!-- Add new board -->
+    <div class="row">
+      <div class="col-12">
+
+      </div>
+    </div>
+
+    <!-- Kanban Wrapper -->
+    <div class="kanban-wrapper ps ps--active-x"><div class="kanban-container" style="width: 1096px;"><div data-id="board-in-progress" data-order="1" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board" contenteditable="true">In Progress</div>
+  <div class="dropdown">
+      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      </i>
+      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
+          <a class="dropdown-item delete-board" href="javascript:void(0)">
+              <i class="icon-base bx bx-trash icon-xs me-1"></i>
+              <span class="align-middle">Delete</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-rename icon-xs me-1"></i>
+              <span class="align-middle">Rename</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-archive icon-xs me-1"></i>
+              <span class="align-middle">Archive</span>
+          </a>
+      </div>
+  </div>
+<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="in-progress-1" data-comments="12" data-badge-text="UX" data-badge="success" data-due-date="5 April" data-attachments="4" data-assigned="12.png,5.png" data-members="Bruce,Clark">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-success">UX</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+<span class="kanban-text">Research FAQ page UX</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">4</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>12</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Bruce" data-bs-original-title="Bruce">
+                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Clark" data-bs-original-title="Clark">
+                <img src="../../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div><div class="kanban-item" data-eid="in-progress-2" data-comments="8" data-badge-text="Code Review" data-badge="danger" data-attachments="2" data-due-date="10 April" data-assigned="3.png,8.png" data-members="Helena,Iris">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-danger">Code Review</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+<span class="kanban-text">Review Javascript code</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">2</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>8</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Helena" data-bs-original-title="Helena">
+                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Iris" data-bs-original-title="Iris">
+                <img src="../../assets/img/avatars/8.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div></main><footer></footer></div><div data-id="board-in-review" data-order="2" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">In Review</div>
+  <div class="dropdown">
+      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      </i>
+      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
+          <a class="dropdown-item delete-board" href="javascript:void(0)">
+              <i class="icon-base bx bx-trash icon-xs me-1"></i>
+              <span class="align-middle">Delete</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-rename icon-xs me-1"></i>
+              <span class="align-middle">Rename</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-archive icon-xs me-1"></i>
+              <span class="align-middle">Archive</span>
+          </a>
+      </div>
+  </div>
+<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="in-review-1" data-comments="17" data-badge-text="Dashboard" data-badge="info" data-due-date="8 April" data-attachments="8" data-assigned="11.png,6.png" data-members="Laurel,Harley">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-info">Dashboard</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+<span class="kanban-text">Review completed Apps</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">8</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>17</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Laurel" data-bs-original-title="Laurel">
+                <img src="../../assets/img/avatars/11.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Harley" data-bs-original-title="Harley">
+                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div><div class="kanban-item" data-eid="in-review-2" data-comments="18" data-badge-text="Images" data-image="3.png" data-badge="warning" data-due-date="2 April" data-attachments="10" data-assigned="9.png,2.png,3.png,12.png" data-members="Jordan,Dianna,Vinnie,Lasa">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-warning">Images</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+
+              <img class="img-fluid rounded mb-2" src="../../assets/img/elements/3.png">
+          <span class="kanban-text">Find new images for pages</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">10</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>18</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Jordan" data-bs-original-title="Jordan">
+                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Dianna" data-bs-original-title="Dianna">
+                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Vinnie" data-bs-original-title="Vinnie">
+                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Lasa" data-bs-original-title="Lasa">
+                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div></main><footer></footer></div><div data-id="board-done" data-order="3" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">Done</div>
+  <div class="dropdown">
+      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      </i>
+      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
+          <a class="dropdown-item delete-board" href="javascript:void(0)">
+              <i class="icon-base bx bx-trash icon-xs me-1"></i>
+              <span class="align-middle">Delete</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-rename icon-xs me-1"></i>
+              <span class="align-middle">Rename</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-archive icon-xs me-1"></i>
+              <span class="align-middle">Archive</span>
+          </a>
+      </div>
+  </div>
+<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="done-1" data-comments="4" data-badge-text="App" data-badge="secondary" data-due-date="7 April" data-attachments="1" data-assigned="2.png,9.png,10.png" data-members="Kara,Nyssa,Darcey">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-secondary">App</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+<span class="kanban-text">Forms &amp; Tables section</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">1</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>4</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Kara" data-bs-original-title="Kara">
+                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Nyssa" data-bs-original-title="Nyssa">
+                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Darcey" data-bs-original-title="Darcey">
+                <img src="../../assets/img/avatars/10.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div><div class="kanban-item" data-eid="done-2" data-comments="21" data-badge-text="Charts &amp; Maps" data-badge="primary" data-due-date="7 April" data-attachments="6" data-assigned="1.png" data-members="Sarah">
+<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
+    <div class="item-badges">
+        <div class="badge bg-label-primary">Charts &amp; Maps</div>
+    </div>
+
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+
+</div>
+<span class="kanban-text">Completed Charts &amp; Maps</span>
+<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+    <div class="d-flex">
+        <span class="d-flex align-items-center me-2">
+            <i class="icon-base bx bx-paperclip me-1"></i>
+            <span class="attachments">6</span>
+        </span>
+        <span class="d-flex align-items-center ms-2">
+            <i class="icon-base bx bx-chat me-1"></i>
+            <span>21</span>
+        </span>
+    </div>
+    <div class="avatar-group d-flex align-items-center assigned-avatar">
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Sarah" data-bs-original-title="Sarah">
+                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle pull-up">
+            </div>
+
+    </div>
+</div>
+</div></main><footer></footer></div><div data-id="123" data-order="5" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">123</div>
+  <div class="dropdown">
+      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      </i>
+      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
+          <a class="dropdown-item delete-board" href="javascript:void(0)">
+              <i class="icon-base bx bx-trash icon-xs me-1"></i>
+              <span class="align-middle">Delete</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-rename icon-xs me-1"></i>
+              <span class="align-middle">Rename</span>
+          </a>
+          <a class="dropdown-item" href="javascript:void(0)">
+              <i class="icon-base bx bx-archive icon-xs me-1"></i>
+              <span class="align-middle">Archive</span>
+          </a>
+      </div>
+  </div>
+<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="123-1">
+<div class="dropdown kanban-tasks-item-dropdown">
+    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    </i>
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
+        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
+        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
+        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
+    </div>
+</div>
+<span class="kanban-text">1231313</span></div></main><footer></footer></div><form class="kanban-add-new-board">
+          <label class="kanban-add-board-btn" for="kanban-add-board-input">
+            <i class="icon-base bx bx-plus"></i>
+            <span class="align-middle">Add new</span>
+          </label>
+          <input type="text" class="form-control w-px-250 kanban-add-board-input mb-4 d-none" placeholder="Add Board Title" id="kanban-add-board-input" required="">
+          <div class="mb-4 kanban-add-board-input d-none">
+            <button class="btn btn-primary btn-sm me-3">Add</button>
+            <button type="button" class="btn btn-label-secondary btn-sm kanban-add-board-cancel-btn">Cancel</button>
+          </div>
+        </form></div><div class="ps__rail-x" style="left: 0px; bottom: 0px; width: 736px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 430px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+
+    <!-- Edit Task/Task & Activities -->
+    <div class="offcanvas offcanvas-end kanban-update-item-sidebar">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title">Edit Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body pt-0">
+        <div class="nav-align-top">
+          <ul class="nav nav-tabs mb-6 rounded-0" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-update" aria-selected="true" role="tab">
+                <i class="icon-base bx bx-edit icon-sm me-1_5"></i>
+                <span class="align-middle">Edit</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-activity" aria-selected="false" tabindex="-1" role="tab">
+                <i class="icon-base bx bx-bar-chart icon-sm me-1_5"></i>
+                <span class="align-middle">Activity</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content p-0">
+          <!-- Update item/tasks -->
+          <div class="tab-pane fade show active" id="tab-update" role="tabpanel">
+            <form>
+              <div class="mb-8 mt-2">
+                <label class="form-label" for="title">Title</label>
+                <input type="text" id="title" class="form-control" placeholder="Enter Title">
+              </div>
+              <div class="mb-8">
+                <label class="form-label" for="due-date">Due Date</label>
+                <div class="flatpickr-wrapper"><input type="hidden" id="due-date" class="form-control flatpickr-input" placeholder="Enter Due Date"><input class="form-control form-control input" placeholder="Enter Due Date" tabindex="0" type="text" readonly="readonly"><div class="flatpickr-calendar animate static" tabindex="-1"><div class="flatpickr-months"><span class="flatpickr-prev-month"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17 17"><g></g><path d="M5.207 8.471l7.146 7.147-0.707 0.707-7.853-7.854 7.854-7.853 0.707 0.707-7.147 7.146z"></path></svg></span><div class="flatpickr-month"><div class="flatpickr-current-month"><span class="cur-month">March </span><div class="numInputWrapper"><input class="numInput cur-year" type="number" tabindex="-1" aria-label="Year"><span class="arrowUp"></span><span class="arrowDown"></span></div></div></div><span class="flatpickr-next-month"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17 17"><g></g><path d="M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z"></path></svg></span></div><div class="flatpickr-innerContainer"><div class="flatpickr-rContainer"><div class="flatpickr-weekdays"><div class="flatpickr-weekdaycontainer">
+      <span class="flatpickr-weekday">
+        Sun</span><span class="flatpickr-weekday">Mon</span><span class="flatpickr-weekday">Tue</span><span class="flatpickr-weekday">Wed</span><span class="flatpickr-weekday">Thu</span><span class="flatpickr-weekday">Fri</span><span class="flatpickr-weekday">Sat
+      </span>
+      </div></div><div class="flatpickr-days" tabindex="-1"><div class="dayContainer"><span class="flatpickr-day" aria-label="March 1, 2026" tabindex="-1">1</span><span class="flatpickr-day" aria-label="March 2, 2026" tabindex="-1">2</span><span class="flatpickr-day today" aria-label="March 3, 2026" aria-current="date" tabindex="-1">3</span><span class="flatpickr-day" aria-label="March 4, 2026" tabindex="-1">4</span><span class="flatpickr-day" aria-label="March 5, 2026" tabindex="-1">5</span><span class="flatpickr-day" aria-label="March 6, 2026" tabindex="-1">6</span><span class="flatpickr-day" aria-label="March 7, 2026" tabindex="-1">7</span><span class="flatpickr-day" aria-label="March 8, 2026" tabindex="-1">8</span><span class="flatpickr-day" aria-label="March 9, 2026" tabindex="-1">9</span><span class="flatpickr-day" aria-label="March 10, 2026" tabindex="-1">10</span><span class="flatpickr-day" aria-label="March 11, 2026" tabindex="-1">11</span><span class="flatpickr-day" aria-label="March 12, 2026" tabindex="-1">12</span><span class="flatpickr-day" aria-label="March 13, 2026" tabindex="-1">13</span><span class="flatpickr-day" aria-label="March 14, 2026" tabindex="-1">14</span><span class="flatpickr-day" aria-label="March 15, 2026" tabindex="-1">15</span><span class="flatpickr-day" aria-label="March 16, 2026" tabindex="-1">16</span><span class="flatpickr-day" aria-label="March 17, 2026" tabindex="-1">17</span><span class="flatpickr-day" aria-label="March 18, 2026" tabindex="-1">18</span><span class="flatpickr-day" aria-label="March 19, 2026" tabindex="-1">19</span><span class="flatpickr-day" aria-label="March 20, 2026" tabindex="-1">20</span><span class="flatpickr-day" aria-label="March 21, 2026" tabindex="-1">21</span><span class="flatpickr-day" aria-label="March 22, 2026" tabindex="-1">22</span><span class="flatpickr-day" aria-label="March 23, 2026" tabindex="-1">23</span><span class="flatpickr-day" aria-label="March 24, 2026" tabindex="-1">24</span><span class="flatpickr-day" aria-label="March 25, 2026" tabindex="-1">25</span><span class="flatpickr-day" aria-label="March 26, 2026" tabindex="-1">26</span><span class="flatpickr-day" aria-label="March 27, 2026" tabindex="-1">27</span><span class="flatpickr-day" aria-label="March 28, 2026" tabindex="-1">28</span><span class="flatpickr-day" aria-label="March 29, 2026" tabindex="-1">29</span><span class="flatpickr-day" aria-label="March 30, 2026" tabindex="-1">30</span><span class="flatpickr-day" aria-label="March 31, 2026" tabindex="-1">31</span><span class="flatpickr-day nextMonthDay" aria-label="April 1, 2026" tabindex="-1">1</span><span class="flatpickr-day nextMonthDay" aria-label="April 2, 2026" tabindex="-1">2</span><span class="flatpickr-day nextMonthDay" aria-label="April 3, 2026" tabindex="-1">3</span><span class="flatpickr-day nextMonthDay" aria-label="April 4, 2026" tabindex="-1">4</span><span class="flatpickr-day nextMonthDay" aria-label="April 5, 2026" tabindex="-1">5</span><span class="flatpickr-day nextMonthDay" aria-label="April 6, 2026" tabindex="-1">6</span><span class="flatpickr-day nextMonthDay" aria-label="April 7, 2026" tabindex="-1">7</span><span class="flatpickr-day nextMonthDay" aria-label="April 8, 2026" tabindex="-1">8</span><span class="flatpickr-day nextMonthDay" aria-label="April 9, 2026" tabindex="-1">9</span><span class="flatpickr-day nextMonthDay" aria-label="April 10, 2026" tabindex="-1">10</span><span class="flatpickr-day nextMonthDay" aria-label="April 11, 2026" tabindex="-1">11</span></div></div></div></div></div></div>
+              </div>
+              <div class="mb-8">
+                <label class="form-label" for="label"> Label</label>
+                <div class="position-relative"><select class="select2 select2-label form-select select2-hidden-accessible" id="label" data-select2-id="label" tabindex="-1" aria-hidden="true">
+                  <option data-color="bg-label-success" value="UX" data-select2-id="2">UX</option>
+                  <option data-color="bg-label-warning" value="Images" data-select2-id="3">Images</option>
+                  <option data-color="bg-label-info" value="Info">Info</option>
+                  <option data-color="bg-label-danger" value="Code Review">Code Review</option>
+                  <option data-color="bg-label-secondary" value="App">App</option>
+                  <option data-color="bg-label-primary" value="Charts &amp; Maps">Charts &amp; Maps</option>
+                </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="1" style="width: 352px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-label-container"><span class="select2-selection__rendered" id="select2-label-container" role="textbox" aria-readonly="true" title="Images"><div class="badge bg-label-warning"> Images</div></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></div>
+              </div>
+              <div class="mb-6">
+                <label class="form-label">Assigned</label>
+                <div class="assigned d-flex flex-wrap">
+            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Jordan" data-bs-original-title="Jordan">
+                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle">
+            </div>
+
+            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Dianna" data-bs-original-title="Dianna">
+                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle">
+            </div>
+
+            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Vinnie" data-bs-original-title="Vinnie">
+                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle">
+            </div>
+
+            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Lasa" data-bs-original-title="Lasa">
+                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle">
+            </div>
+
+        <div class="avatar avatar-xs ms-1">
+            <span class="avatar-initial rounded-circle bg-label-secondary">
+                <i class="icon-base bx bx-plus icon-xs text-heading"></i>
+            </span>
+        </div></div>
+              </div>
+              <div class="mb-6">
+                <label class="form-label" for="attachments">Attachments</label>
+                <div>
+                  <input type="file" class="form-control" id="attachments">
+                </div>
+              </div>
+              <div class="mb-6">
+                <label class="form-label">Comment</label>
+                <div class="comment-editor border-bottom-0 ql-container ql-snow"><div class="ql-editor ql-blank" contenteditable="true" data-placeholder="Write a Comment..."><p><br></p></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div>
+                <div class="d-flex justify-content-end">
+                  <div class="comment-toolbar ql-toolbar ql-snow">
+                    <span class="ql-formats me-0">
+                      <button class="ql-bold" type="button"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path><path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path></svg></button>
+                      <button class="ql-italic" type="button"><svg viewBox="0 0 18 18"><line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line><line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line><line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line></svg></button>
+                      <button class="ql-underline" type="button"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path><rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect></svg></button>
+                      <button class="ql-link" type="button"><svg viewBox="0 0 18 18"><line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line><path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path><path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path></svg></button>
+                      <button class="ql-image" type="button"><svg viewBox="0 0 18 18"><rect class="ql-stroke" height="10" width="12" x="3" y="4"></rect><circle class="ql-fill" cx="6" cy="7" r="1"></circle><polyline class="ql-even ql-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline></svg></button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="d-flex flex-wrap">
+                  <button type="button" class="btn btn-primary me-4" data-bs-dismiss="offcanvas">Update</button>
+                  <button type="button" class="btn btn-label-danger" data-bs-dismiss="offcanvas">Delete</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Activities -->
+          <div class="tab-pane fade text-heading" id="tab-activity" role="tabpanel">
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-success rounded-circle">HJ</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Jordan</span> Left the board.</p>
+                <small class="text-body-secondary">Today 11:00 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Dianna</span> mentioned <span class="text-primary">@bruce</span> in a comment.</p>
+                <small class="text-body-secondary">Today 10:20 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Martian</span> added moved Charts &amp; Maps task to the done board.</p>
+                <small class="text-body-secondary">Today 10:00 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Barry</span> Commented on App review task.</p>
+                <small class="text-body-secondary">Today 8:32 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-dark rounded-circle">BW</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Bruce</span> was assigned task of code review.</p>
+                <small class="text-body-secondary">Today 8:30 PM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-danger rounded-circle">CK</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Clark</span> assigned task UX Research to <span class="text-primary">@martian</span></p>
+                <small class="text-body-secondary">Today 8:00 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Ray</span> Added moved <span>Forms &amp; Tables</span> task from in progress to done.</p>
+                <small class="text-body-secondary">Today 7:45 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Barry</span> Complete all the tasks assigned to him.</p>
+                <small class="text-body-secondary">Today 7:17 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-success rounded-circle">HJ</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Jordan</span> added task to update new images.</p>
+                <small class="text-body-secondary">Today 7:00 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Dianna</span> moved task <span>FAQ UX</span> from in progress to done board.</p>
+                <small class="text-body-secondary">Today 7:00 AM</small>
+              </div>
+            </div>
+            <div class="media mb-4 d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-danger rounded-circle">CK</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Clark</span> added new board with name <span>Done</span>.</p>
+                <small class="text-body-secondary">Yesterday 3:00 PM</small>
+              </div>
+            </div>
+            <div class="media d-flex align-items-center">
+              <div class="avatar me-3 flex-shrink-0">
+                <span class="avatar-initial bg-label-dark rounded-circle">BW</span>
+              </div>
+              <div class="media-body">
+                <p class="mb-0"><span>Bruce</span> added new task in progress board.</p>
+                <small class="text-body-secondary">Yesterday 12:00 PM</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+        </div>
 {% endblock content %}
 {% block demo %}
 <!-- Кнопка -->
@@ -30,3 +625,15 @@
     </div>
 </div>
 {% endblock demo %}
+{% block extra_js_top %}{% endblock extra_js_top %}
+<!-- Core JS -->
+<!-- build:js assets/vendor/js/theme.js  -->
+<script src="{% static 'moderation/libs/moment/moment.js' %}"></script>
+<script src="{% static 'moderation/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'moderation/libs/select2/select2.js' %}"></script>
+<script src="{% static 'moderation/libs/jkanban/jkanban.js' %}"></script>
+<script src="{% static 'moderation/libs/quill/katex.js' %}"></script>
+<script src="{% static 'moderation/libs/quill/quill.js' %}"></script>
+<script src="{% static 'moderation/app-kanban.js' %}"></script>
+
+{% block extra_js_bottom %}{% endblock extra_js_bottom %}

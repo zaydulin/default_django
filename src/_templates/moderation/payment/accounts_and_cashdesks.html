@@ -1,32 +1,566 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
+
+{% block title %}Счета-фактуры{% endblock title %}
 {% block description %}{% endblock description %}
 {% block propertytitle %}{% endblock propertytitle %}
 {% block propertydescription %}{% endblock propertydescription %}
 {% block propertyimage %}{% endblock propertyimage %}
 {% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+
+{% block head %}
+<style>
+    /* Минимальные необходимые стили */
+    .text-truncate-custom {
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+    }
+    .btn-buy-now {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .offcanvas-footer {
+        border-top: 1px solid #dee2e6;
+        padding: 1rem;
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+</style>
+{% endblock head %}
+
 {% block content %}
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<div class="container-fluid py-4">
+
+    <!-- 🔹 Виджеты статистики -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row gy-3">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
+                        <div>
+                            <h4 class="mb-0">24</h4>
+                            <p class="mb-0 text-muted small">Клиенты</p>
+                        </div>
+                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
+                            <i class="bx bx-user"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
+                        <div>
+                            <h4 class="mb-0">165</h4>
+                            <p class="mb-0 text-muted small">Счета-фактуры</p>
+                        </div>
+                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
+                            <i class="bx bx-file"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
+                        <div>
+                            <h4 class="mb-0">2 460 ₽</h4>
+                            <p class="mb-0 text-muted small">Оплачено</p>
+                        </div>
+                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
+                            <i class="bx bx-check-double"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h4 class="mb-0">876 ₽</h4>
+                            <p class="mb-0 text-muted small">Неоплачено</p>
+                        </div>
+                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
+                            <i class="bx bx-error-circle"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 ТАБЛИЦА СЧЕТОВ-ФАКТУР -->
+    <div class="card">
+        <div class="card-header border-bottom py-3">
+            <div class="row g-3 align-items-center">
+
+                <!-- ЛЕВАЯ часть: Показывать по + Новый счет -->
+                <div class="col-md-auto d-flex align-items-center gap-2">
+                    <label class="text-muted small mb-0 me-1">Показывать по:</label>
+                    <select id="invoicesPerPage" class="form-select form-select-sm" style="width:auto">
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm ms-2" id="btnNewInvoice" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
+                        <i class="bx bx-plus me-1"></i>
+                        <span>Новый счет-фактура</span>
+                    </button>
+                </div>
+
+                <!-- ПРАВАЯ часть: Поиск + Фильтр статуса -->
+                <div class="col-md-auto ms-auto d-flex align-items-center gap-2">
+                    <!-- Поиск -->
+                    <div class="input-group input-group-sm" style="min-width:220px">
+                        <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
+                        <input type="search"
+                               id="invoiceSearch"
+                               class="form-control border-start-0 ps-0"
+                               placeholder="Поиск...">
+                    </div>
+
+                    <!-- Фильтр статуса -->
+                    <select id="invoiceStatusFilter" class="form-select form-select-sm text-capitalize" style="width:auto">
+                        <option value="">Все статусы</option>
+                        <option value="uploaded">Загружено</option>
+                        <option value="draft">Черновик</option>
+                        <option value="paid">Оплаченный</option>
+                        <option value="partial">Частичная оплата</option>
+                        <option value="overdue">Просрочено</option>
+                        <option value="refunded">Оплачен</option>
+                    </select>
+
+                    <!-- Экспорт -->
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bx bx-export"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">CSV</a></li>
+                            <li><a class="dropdown-item" href="#">Excel</a></li>
+                            <li><a class="dropdown-item" href="#">PDF</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🔹 Таблица -->
+        <div class="table-responsive px-3 pb-3">
+            <table class="table table-hover align-middle mb-0" style="width:100%; table-layout: fixed;">
+                <colgroup>
+                    <col style="width: 40px;">
+                    <col style="width: 100px;">
+                    <col style="width: 110px;">
+                    <col style="width: auto;">
+                    <col style="width: 110px;">
+                    <col style="width: 110px;">
+                    <col style="width: 110px;">
+                    <col style="width: 140px;">
+                </colgroup>
+
+                <thead class="table-light">
+                    <tr class="text-center">
+                        <th>
+                            <input class="form-check-input" type="checkbox" id="selectAll">
+                        </th>
+                        <th class="text-start">Номер</th>
+                        <th>Статус</th>
+                        <th class="text-start">Клиент</th>
+                        <th class="text-end">Общий</th>
+                        <th>Дата выпуска</th>
+                        <th class="text-end">Баланс</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+
+                <tbody id="invoicesTableBody">
+                    <!-- Строка 1 -->
+                    <tr data-invoice-id="101">
+                        <td class="text-center">
+                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="101">
+                        </td>
+                        <td>
+                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-001</a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Оплаченный</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar avatar-xs bg-primary-subtle text-primary-emphasis rounded-circle me-2">
+                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
+                                </span>
+                                <span class="text-truncate-custom">ООО "Ромашка"</span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-medium">15 000.00 ₽</td>
+                        <td class="text-center text-muted small">15.02.2026</td>
+                        <td class="text-end text-success fw-medium">0 ₽</td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-001">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Строка 2 -->
+                    <tr data-invoice-id="102">
+                        <td class="text-center">
+                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="102">
+                        </td>
+                        <td>
+                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-002</a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">Частичная оплата</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar avatar-xs bg-info-subtle text-info-emphasis rounded-circle me-2">
+                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
+                                </span>
+                                <span class="text-truncate-custom">ИП Петров</span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-medium">8 500.00 ₽</td>
+                        <td class="text-center text-muted small">14.02.2026</td>
+                        <td class="text-end text-warning fw-medium">3 500.00 ₽</td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-002">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Строка 3 -->
+                    <tr data-invoice-id="103">
+                        <td class="text-center">
+                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="103">
+                        </td>
+                        <td>
+                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-003</a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Черновик</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar avatar-xs bg-primary-subtle text-primary-emphasis rounded-circle me-2">
+                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
+                                </span>
+                                <span class="text-truncate-custom">ООО "Вектор"</span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-medium">22 300.00 ₽</td>
+                        <td class="text-center text-muted small">12.02.2026</td>
+                        <td class="text-end fw-medium">22 300.00 ₽</td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-003">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Строка 4 -->
+                    <tr data-invoice-id="104">
+                        <td class="text-center">
+                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="104">
+                        </td>
+                        <td>
+                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-004</a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill">Просрочено</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar avatar-xs bg-danger-subtle text-danger-emphasis rounded-circle me-2">
+                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
+                                </span>
+                                <span class="text-truncate-custom">ЗАО "Стар"</span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-medium">5 200.00 ₽</td>
+                        <td class="text-center text-muted small">01.02.2026</td>
+                        <td class="text-end fw-medium">5 200.00 ₽</td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-004">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Строка 5 -->
+                    <tr data-invoice-id="105">
+                        <td class="text-center">
+                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="105">
+                        </td>
+                        <td>
+                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-005</a>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-info-subtle text-info-emphasis rounded-pill">Загружено</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="avatar avatar-xs bg-success-subtle text-success-emphasis rounded-circle me-2">
+                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
+                                </span>
+                                <span class="text-truncate-custom">ИП Сидорова</span>
+                            </div>
+                        </td>
+                        <td class="text-end fw-medium">12 750.00 ₽</td>
+                        <td class="text-center text-muted small">28.01.2026</td>
+                        <td class="text-end fw-medium">12 750.00 ₽</td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center gap-1">
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-005">
+                                    <i class="bx bx-trash"></i>
+                                </button>
+                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
+                                    <i class="bx bx-show"></i>
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
+                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 🔹 Пагинация -->
+        <div class="card-footer px-3 pb-3">
+            <nav>
+                <ul class="pagination justify-content-end mb-0">
+                    <li class="page-item disabled"><span class="page-link">«</span></li>
+                    <li class="page-item disabled"><span class="page-link">‹</span></li>
+                    <li class="page-item active"><span class="page-link">1</span></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">›</a></li>
+                    <li class="page-item"><a class="page-link" href="#">»</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
 </div>
-<!-- Offcanvas справа на всю ширину -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
+
+<!-- 🔹 Модальное окно: Подтверждение удаления -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удаление счета-фактуры</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить счет-фактуру <strong id="deleteInvoiceNumber"></strong>?</p>
+                <p class="text-muted small mb-0">Это действие нельзя отменить.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔹 Offcanvas: Создание счета-фактуры -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Новый счет-фактура</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
+        <form id="createInvoiceForm">
+            <div class="mb-3">
+                <label class="form-label">Номер счета</label>
+                <input type="text" name="number" class="form-control" placeholder="INV-001" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Клиент</label>
+                <select name="client" class="form-select" required>
+                    <option value="">Выберите клиента</option>
+                    <option value="1">ООО "Ромашка"</option>
+                    <option value="2">ИП Петров</option>
+                    <option value="3">ООО "Вектор"</option>
+                    <option value="4">ЗАО "Стар"</option>
+                    <option value="5">ИП Сидорова</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Сумма (₽)</label>
+                <input type="number" name="total" class="form-control" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Статус</label>
+                <select name="status" class="form-select">
+                    <option value="draft">Черновик</option>
+                    <option value="uploaded">Загружено</option>
+                    <option value="paid">Оплаченный</option>
+                    <option value="partial">Частичная оплата</option>
+                    <option value="overdue">Просрочено</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Дата выпуска</label>
+                <input type="date" name="issue_date" class="form-control">
+            </div>
+        </form>
     </div>
-    <div class="offcanvas-footer p-3 border-top">
+    <div class="offcanvas-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+        <button type="submit" form="createInvoiceForm" class="btn btn-primary">Сохранить</button>
     </div>
 </div>
-{% endblock demo %}
+
+<!-- 🔹 Плавающая кнопка "Создать" -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1020">
+    <button class="btn btn-danger btn-buy-now shadow" id="btnFloatingCreate" title="Новый счет-фактура">
+        <i class="bx bx-plus"></i>
+    </button>
+</div>
+
+<!-- 🔹 Скрипты -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Чекбокс "Выбрать все"
+    const selectAll = document.getElementById('selectAll');
+    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+    if (selectAll) {
+        selectAll.addEventListener('change', () => {
+            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
+        });
+    }
+
+    // Поиск по таблице
+    const searchInput = document.getElementById('invoiceSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            document.querySelectorAll('#invoicesTableBody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+            });
+        });
+    }
+
+    // Удаление: модальное окно
+    const deleteModal = document.getElementById('deleteConfirmModal');
+    const deleteInvoiceNumber = document.getElementById('deleteInvoiceNumber');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    let invoiceToDelete = null;
+
+    if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            deleteInvoiceNumber.textContent = button.dataset.invoiceNumber;
+            invoiceToDelete = button.closest('tr');
+        });
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.addEventListener('click', function() {
+                if (invoiceToDelete) {
+                    invoiceToDelete.style.transition = 'opacity 0.3s';
+                    invoiceToDelete.style.opacity = '0';
+                    setTimeout(() => {
+                        invoiceToDelete.remove();
+                        bootstrap.Modal.getInstance(deleteModal).hide();
+                    }, 300);
+                }
+            });
+        }
+    }
+
+    // Открытие Offcanvas
+    const openOffcanvas = () => {
+        const offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasRight'));
+        offcanvas.show();
+    };
+    document.getElementById('btnNewInvoice')?.addEventListener('click', openOffcanvas);
+    document.getElementById('btnFloatingCreate')?.addEventListener('click', openOffcanvas);
+
+    // Обработка формы создания
+    document.getElementById('createInvoiceForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Счет-фактура создан! (демо)');
+        bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'))?.hide();
+        this.reset();
+    });
+});
+</script>
+{% endblock content %}
+
+{% block demo %}{% endblock demo %}
