@@ -15,52 +15,52 @@
 
   <div class="app-chat card overflow-hidden">
     <div class="row g-0">
-      <!-- Sidebar Left -->
+      <!-- Левая боковая панель -->
       <div class="col app-chat-sidebar-left app-sidebar overflow-hidden" id="app-chat-sidebar-left">
         <div class="chat-sidebar-left-user sidebar-header d-flex flex-column justify-content-center align-items-center flex-wrap px-6 pt-12">
           <div class="avatar avatar-xl avatar-online chat-sidebar-avatar">
-            <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+            <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
           </div>
           <h5 class="mt-4 mb-0">John Doe</h5>
-          <span>Admin</span>
+          <span>Администратор</span>
           <i class="icon-base bx bx-x icon-lg cursor-pointer close-sidebar" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-left"></i>
         </div>
         <div class="sidebar-body px-6 pb-6 ps ps--active-y">
           <div class="my-6">
             <div class="maxLength-wrapper">
-              <label for="chat-sidebar-left-user-about" class="text-uppercase text-body-secondary mb-1">About</label>
-              <textarea id="chat-sidebar-left-user-about" class="form-control chat-sidebar-left-user-about maxLength-example" rows="3" maxlength="120">Hey there, we’re just writing to let you know that you’ve been subscribed to a repository on GitHub.</textarea>
+              <label for="chat-sidebar-left-user-about" class="text-uppercase text-body-secondary mb-1">О себе</label>
+              <textarea id="chat-sidebar-left-user-about" class="form-control chat-sidebar-left-user-about maxLength-example" rows="3" maxlength="120">Привет! Мы просто пишем, чтобы сообщить, что вы подписались на репозиторий на GitHub.</textarea>
               <small id="textarea-maxlength-info" class="maxLength label-success">100/120</small>
             </div>
           </div>
           <div class="my-6">
-            <p class="text-uppercase text-body-secondary mb-1">Status</p>
+            <p class="text-uppercase text-body-secondary mb-1">Статус</p>
             <div class="d-grid gap-2 pt-2 text-heading ms-2">
               <div class="form-check form-check-success">
                 <input name="chat-user-status" class="form-check-input" type="radio" value="active" id="user-active" checked="">
-                <label class="form-check-label" for="user-active">Online</label>
+                <label class="form-check-label" for="user-active">В сети</label>
               </div>
               <div class="form-check form-check-warning">
                 <input name="chat-user-status" class="form-check-input" type="radio" value="away" id="user-away">
-                <label class="form-check-label" for="user-away">Away</label>
+                <label class="form-check-label" for="user-away">Отошёл</label>
               </div>
               <div class="form-check form-check-danger">
                 <input name="chat-user-status" class="form-check-input" type="radio" value="busy" id="user-busy">
-                <label class="form-check-label" for="user-busy">Do not Disturb</label>
+                <label class="form-check-label" for="user-busy">Не беспокоить</label>
               </div>
               <div class="form-check form-check-secondary">
                 <input name="chat-user-status" class="form-check-input" type="radio" value="offline" id="user-offline">
-                <label class="form-check-label" for="user-offline">Offline</label>
+                <label class="form-check-label" for="user-offline">Не в сети</label>
               </div>
             </div>
           </div>
           <div class="my-6">
-            <p class="text-uppercase text-body-secondary mb-1">Settings</p>
+            <p class="text-uppercase text-body-secondary mb-1">Настройки</p>
             <ul class="list-unstyled d-grid gap-4 ms-2 pt-2 text-heading">
               <li class="d-flex justify-content-between align-items-center">
                 <div>
                   <i class="icon-base bx bx-lock-alt me-1"></i>
-                  <span class="align-middle">Two-step Verification</span>
+                  <span class="align-middle">Двухэтапная проверка</span>
                 </div>
                 <div class="form-check form-switch mb-0 me-1">
                   <input type="checkbox" class="form-check-input" checked="">
@@ -69,7 +69,7 @@
               <li class="d-flex justify-content-between align-items-center">
                 <div>
                   <i class="icon-base bx bx-bell me-1"></i>
-                  <span class="align-middle">Notification</span>
+                  <span class="align-middle">Уведомления</span>
                 </div>
                 <div class="form-check form-switch mb-0 me-1">
                   <input type="checkbox" class="form-check-input">
@@ -77,69 +77,69 @@
               </li>
               <li>
                 <i class="icon-base bx bx-user me-1"></i>
-                <span class="align-middle">Invite Friends</span>
+                <span class="align-middle">Пригласить друзей</span>
               </li>
               <li>
                 <i class="icon-base bx bx-trash me-1"></i>
-                <span class="align-middle">Delete Account</span>
+                <span class="align-middle">Удалить аккаунт</span>
               </li>
             </ul>
           </div>
           <div class="d-flex mt-6">
-            <button class="btn btn-primary w-100" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-left"><i class="icon-base bx bx-log-out icon-sm me-2"></i>Logout</button>
+            <button class="btn btn-primary w-100" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-left"><i class="icon-base bx bx-log-out icon-sm me-2"></i>Выйти</button>
           </div>
           <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 539px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 479px;"></div></div></div>
       </div>
-      <!-- /Sidebar Left-->
+      <!-- /Левая боковая панель -->
 
-      <!-- Chat & Contacts -->
+      <!-- Чаты и контакты -->
       <div class="col app-chat-contacts app-sidebar flex-grow-0 overflow-hidden border-end" id="app-chat-contacts">
         <div class="sidebar-header px-6 border-bottom d-flex align-items-center">
           <div class="d-flex align-items-center me-6 me-lg-0">
             <div class="flex-shrink-0 avatar avatar-online me-4" data-bs-toggle="sidebar" data-overlay="app-overlay-ex" data-target="#app-chat-sidebar-left">
-              <img class="user-avatar rounded-circle cursor-pointer" src="../../assets/img/avatars/1.png" alt="Avatar">
+              <img class="user-avatar rounded-circle cursor-pointer" src="../../assets/img/avatars/1.png" alt="Аватар">
             </div>
             <div class="flex-grow-1 input-group input-group-merge rounded-pill">
               <span class="input-group-text" id="basic-addon-search31"><i class="icon-base bx bx-search icon-sm"></i></span>
-              <input type="text" class="form-control chat-search-input" placeholder="Search..." aria-label="Search..." aria-describedby="basic-addon-search31">
+              <input type="text" class="form-control chat-search-input" placeholder="Поиск..." aria-label="Поиск..." aria-describedby="basic-addon-search31">
             </div>
           </div>
           <i class="icon-base bx bx-x icon-lg cursor-pointer position-absolute top-50 end-0 translate-middle d-lg-none d-block" data-overlay="" data-bs-toggle="sidebar" data-target="#app-chat-contacts"></i>
         </div>
         <div class="sidebar-body ps ps--active-y">
-          <!-- Chats -->
+          <!-- Чаты -->
           <ul class="list-unstyled chat-contact-list py-2 mb-0" id="chat-list">
             <li class="chat-contact-list-item chat-contact-list-item-title mt-0">
-              <h5 class="text-primary mb-0">Chats</h5>
+              <h5 class="text-primary mb-0">Чаты</h5>
             </li>
             <li class="chat-contact-list-item chat-list-item-0 d-none">
-              <h6 class="text-body-secondary mb-0">No Chats Found</h6>
+              <h6 class="text-body-secondary mb-0">Чаты не найдены</h6>
             </li>
             <li class="chat-contact-list-item mb-1 active">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar avatar-online">
-                  <img src="../../assets/img/avatars/13.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/13.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="chat-contact-name text-truncate m-0 fw-normal">Waldemar Mannering</h6>
-                    <small class="chat-contact-list-item-time">5 Minutes</small>
+                    <small class="chat-contact-list-item-time">5 мин</small>
                   </div>
-                  <small class="chat-contact-status text-truncate">Refer friends. Get rewards.</small>
+                  <small class="chat-contact-status text-truncate">Пригласи друзей. Получай бонусы.</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item mb-1">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar avatar-offline">
-                  <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="chat-contact-name text-truncate fw-normal m-0">Felecia Rower</h6>
-                    <small class="chat-contact-list-item-time">30 Minutes</small>
+                    <small class="chat-contact-list-item-time">30 мин</small>
                   </div>
-                  <small class="chat-contact-status text-truncate">I will purchase it for sure. 👍</small>
+                  <small class="chat-contact-status text-truncate">Я обязательно куплю. 👍</small>
                 </div>
               </a>
             </li>
@@ -151,40 +151,40 @@
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="chat-contact-name text-truncate fw-normal m-0">Calvin Moore</h6>
-                    <small class="chat-contact-list-item-time">1 Day</small>
+                    <small class="chat-contact-list-item-time">1 день</small>
                   </div>
-                  <small class="chat-contact-status text-truncate">If it takes long you can mail inbox user</small>
+                  <small class="chat-contact-status text-truncate">Если долго, можно написать на почту</small>
                 </div>
               </a>
             </li>
           </ul>
-          <!-- Contacts -->
+          <!-- Контакты -->
           <ul class="list-unstyled chat-contact-list mb-0 py-2" id="contact-list">
             <li class="chat-contact-list-item chat-contact-list-item-title mt-0">
-              <h5 class="text-primary mb-0">Contacts</h5>
+              <h5 class="text-primary mb-0">Контакты</h5>
             </li>
             <li class="chat-contact-list-item contact-list-item-0 d-none">
-              <h6 class="text-body-secondary mb-0">No Contacts Found</h6>
+              <h6 class="text-body-secondary mb-0">Контакты не найдены</h6>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Natalie Maxwell</h6>
-                  <small class="chat-contact-status text-truncate">UI/UX Designer</small>
+                  <small class="chat-contact-status text-truncate">UI/UX дизайнер</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/5.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Jess Cook</h6>
-                  <small class="chat-contact-status text-truncate">Business Analyst</small>
+                  <small class="chat-contact-status text-truncate">Бизнес-аналитик</small>
                 </div>
               </a>
             </li>
@@ -195,29 +195,29 @@
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Louie Mason</h6>
-                  <small class="chat-contact-status text-truncate">Resource Manager</small>
+                  <small class="chat-contact-status text-truncate">Менеджер ресурсов</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/7.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/7.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Krystal Norton</h6>
-                  <small class="chat-contact-status text-truncate">Business Executive</small>
+                  <small class="chat-contact-status text-truncate">Руководитель</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/8.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/8.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Stacy Garrison</h6>
-                  <small class="chat-contact-status text-truncate">Marketing Ninja</small>
+                  <small class="chat-contact-status text-truncate">Маркетолог</small>
                 </div>
               </a>
             </li>
@@ -228,29 +228,29 @@
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Calvin Moore</h6>
-                  <small class="chat-contact-status text-truncate">UX Engineer</small>
+                  <small class="chat-contact-status text-truncate">UX инженер</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/10.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/10.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Mary Giles</h6>
-                  <small class="chat-contact-status text-truncate">Account Department</small>
+                  <small class="chat-contact-status text-truncate">Бухгалтерия</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/13.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/13.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Waldemar Mannering</h6>
-                  <small class="chat-contact-status text-truncate">AWS Support</small>
+                  <small class="chat-contact-status text-truncate">Поддержка AWS</small>
                 </div>
               </a>
             </li>
@@ -261,48 +261,48 @@
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Amy Johnson</h6>
-                  <small class="chat-contact-status text-truncate">Frontend Developer</small>
+                  <small class="chat-contact-status text-truncate">Frontend разработчик</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">Felecia Rower</h6>
-                  <small class="chat-contact-status text-truncate">Cloud Engineer</small>
+                  <small class="chat-contact-status text-truncate">Cloud инженер</small>
                 </div>
               </a>
             </li>
             <li class="chat-contact-list-item mb-0">
               <a class="d-flex align-items-center">
                 <div class="flex-shrink-0 avatar">
-                  <img src="../../assets/img/avatars/11.png" alt="Avatar" class="rounded-circle">
+                  <img src="../../assets/img/avatars/11.png" alt="Аватар" class="rounded-circle">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="chat-contact-name text-truncate m-0 fw-normal">William Stephens</h6>
-                  <small class="chat-contact-status text-truncate">Backend Developer</small>
+                  <small class="chat-contact-status text-truncate">Backend разработчик</small>
                 </div>
               </a>
             </li>
           </ul>
           <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 664px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 436px;"></div></div></div>
       </div>
-      <!-- /Chat contacts -->
+      <!-- /Чаты и контакты -->
 
-      <!-- Chat conversation -->
+      <!-- Заглушка выбора контакта -->
       <div class="col app-chat-conversation d-none align-items-center justify-content-center flex-column" id="app-chat-conversation">
         <div class="bg-label-primary p-8 rounded-circle">
           <i class="icon-base bx bx-message-alt-detail icon-48px"></i>
         </div>
-        <p class="my-4">Select a contact to start a conversation.</p>
-        <button class="btn btn-primary app-chat-conversation-btn" id="app-chat-conversation-btn">Select Contact</button>
+        <p class="my-4">Выберите контакт, чтобы начать разговор.</p>
+        <button class="btn btn-primary app-chat-conversation-btn" id="app-chat-conversation-btn">Выбрать контакт</button>
       </div>
-      <!-- /Chat conversation -->
+      <!-- /Заглушка выбора контакта -->
 
-      <!-- Chat History -->
+      <!-- История чата -->
       <div class="col app-chat-history d-block" id="app-chat-history">
         <div class="chat-history-wrapper">
           <div class="chat-history-header border-bottom">
@@ -310,11 +310,11 @@
               <div class="d-flex overflow-hidden align-items-center">
                 <i class="icon-base bx bx-menu icon-lg cursor-pointer d-lg-none d-block me-4" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-contacts"></i>
                 <div class="flex-shrink-0 avatar avatar-online">
-                  <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right">
+                  <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right">
                 </div>
                 <div class="chat-contact-info flex-grow-1 ms-4">
                   <h6 class="m-0 fw-normal">Felecia Rower</h6>
-                  <small class="user-status text-body">NextJS developer</small>
+                  <small class="user-status text-body">NextJS разработчик</small>
                 </div>
               </div>
               <div class="d-flex align-items-center">
@@ -330,11 +330,11 @@
                 <div class="dropdown">
                   <button class="btn btn-icon btn-text-secondary text-secondary rounded-pill dropdown-toggle hide-arrow" data-bs-toggle="dropdown" aria-expanded="true" id="chat-header-actions"><i class="icon-base bx bx-dots-vertical-rounded icon-md"></i></button>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="chat-header-actions">
-                    <a class="dropdown-item" href="javascript:void(0);">View Contact</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Mute Notifications</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Block Contact</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Clear Chat</a>
-                    <a class="dropdown-item" href="javascript:void(0);">Report</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Просмотреть контакт</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Отключить уведомления</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Заблокировать контакт</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Очистить чат</a>
+                    <a class="dropdown-item" href="javascript:void(0);">Пожаловаться</a>
                   </div>
                 </div>
               </div>
@@ -346,16 +346,16 @@
                 <div class="d-flex overflow-hidden">
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">How can we help? We're here for you! 😄</p>
+                      <p class="mb-0">Чем мы можем помочь? Мы здесь для вас! 😄</p>
                     </div>
                     <div class="text-end text-body-secondary mt-1">
                       <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                      <small>10:00 AM</small>
+                      <small>10:00</small>
                     </div>
                   </div>
                   <div class="user-avatar flex-shrink-0 ms-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                 </div>
@@ -364,19 +364,18 @@
                 <div class="d-flex overflow-hidden">
                   <div class="user-avatar flex-shrink-0 me-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Hey John, I am looking for the best admin template.</p>
-                      <p class="mb-0">Could you please help me to find it out? 🤔</p>
+                      <p class="mb-0">Привет, Джон, я ищу лучший шаблон админки. Не мог бы ты помочь мне его найти? 🤔</p>
                     </div>
                     <div class="chat-message-text mt-2">
-                      <p class="mb-0">It should be Bootstrap 5 compatible.</p>
+                      <p class="mb-0">Он должен быть совместим с Bootstrap 5.</p>
                     </div>
                     <div class="text-body-secondary mt-1">
-                      <small>10:02 AM</small>
+                      <small>10:02</small>
                     </div>
                   </div>
                 </div>
@@ -385,16 +384,16 @@
                 <div class="d-flex overflow-hidden">
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Sneat has all the components you'll ever need in a app.</p>
+                      <p class="mb-0">Sneat содержит все компоненты, которые вам когда-либо понадобятся в приложении.</p>
                     </div>
                     <div class="text-end text-body-secondary mt-1">
                       <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                      <small>10:03 AM</small>
+                      <small>10:03</small>
                     </div>
                   </div>
                   <div class="user-avatar flex-shrink-0 ms-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                 </div>
@@ -403,21 +402,21 @@
                 <div class="d-flex overflow-hidden">
                   <div class="user-avatar flex-shrink-0 me-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Looks clean and fresh UI. 😃</p>
+                      <p class="mb-0">Выглядит чистый и свежий интерфейс. 😃</p>
                     </div>
                     <div class="chat-message-text mt-2">
-                      <p class="mb-0">It's perfect for my next project.</p>
+                      <p class="mb-0">Он идеально подходит для моего следующего проекта.</p>
                     </div>
                     <div class="chat-message-text mt-2">
-                      <p class="mb-0">How can I purchase it?</p>
+                      <p class="mb-0">Как я могу его купить?</p>
                     </div>
                     <div class="text-body-secondary mt-1">
-                      <small>10:05 AM</small>
+                      <small>10:05</small>
                     </div>
                   </div>
                 </div>
@@ -426,16 +425,16 @@
                 <div class="d-flex overflow-hidden">
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Thanks, you can purchase it.</p>
+                      <p class="mb-0">Спасибо, вы можете его купить.</p>
                     </div>
                     <div class="text-end text-body-secondary mt-1">
                       <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                      <small>10:06 AM</small>
+                      <small>10:06</small>
                     </div>
                   </div>
                   <div class="user-avatar flex-shrink-0 ms-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                 </div>
@@ -444,18 +443,18 @@
                 <div class="d-flex overflow-hidden">
                   <div class="user-avatar flex-shrink-0 me-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">I will purchase it for sure. 👍</p>
+                      <p class="mb-0">Я точно его куплю. 👍</p>
                     </div>
                     <div class="chat-message-text mt-2">
-                      <p class="mb-0">Thanks.</p>
+                      <p class="mb-0">Спасибо.</p>
                     </div>
                     <div class="text-body-secondary mt-1">
-                      <small>10:08 AM</small>
+                      <small>10:08</small>
                     </div>
                   </div>
                 </div>
@@ -464,16 +463,16 @@
                 <div class="d-flex overflow-hidden">
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Great, Feel free to get in touch.</p>
+                      <p class="mb-0">Отлично, обращайтесь.</p>
                     </div>
                     <div class="text-end text-body-secondary mt-1">
                       <i class="icon-base bx bx-check-double icon-16px text-success me-1"></i>
-                      <small>10:10 AM</small>
+                      <small>10:10</small>
                     </div>
                   </div>
                   <div class="user-avatar flex-shrink-0 ms-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                 </div>
@@ -482,15 +481,15 @@
                 <div class="d-flex overflow-hidden">
                   <div class="user-avatar flex-shrink-0 me-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                   <div class="chat-message-wrapper flex-grow-1">
                     <div class="chat-message-text">
-                      <p class="mb-0">Do you have design files for Sneat?</p>
+                      <p class="mb-0">У вас есть файлы дизайна для Sneat?</p>
                     </div>
                     <div class="text-body-secondary mt-1">
-                      <small>10:15 AM</small>
+                      <small>10:15</small>
                     </div>
                   </div>
                 </div>
@@ -499,26 +498,26 @@
                 <div class="d-flex overflow-hidden">
                   <div class="chat-message-wrapper flex-grow-1 w-50">
                     <div class="chat-message-text">
-                      <p class="mb-0">Yes that's correct documentation file, Design files are included with the template.</p>
+                      <p class="mb-0">Да, файлы дизайна включены в шаблон.</p>
                     </div>
                     <div class="text-end text-body-secondary mt-1">
                       <i class="icon-base bx bx-check-double icon-16px me-1"></i>
-                      <small>10:15 AM</small>
+                      <small>10:15</small>
                     </div>
                   </div>
                   <div class="user-avatar flex-shrink-0 ms-4">
                     <div class="avatar avatar-sm">
-                      <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+                      <img src="../../assets/img/avatars/1.png" alt="Аватар" class="rounded-circle">
                     </div>
                   </div>
                 </div>
               </li>
             </ul>
             <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-          <!-- Chat message form -->
+          <!-- Форма отправки сообщения -->
           <div class="chat-history-footer shadow-xs">
             <form class="form-send-message d-flex justify-content-between align-items-center ">
-              <input class="form-control message-input border-0 me-4 shadow-none" placeholder="Type your message here...">
+              <input class="form-control message-input border-0 me-4 shadow-none" placeholder="Введите ваше сообщение...">
               <div class="message-actions d-flex align-items-center">
                 <span class="btn btn-text-secondary btn-icon rounded-pill cursor-pointer">
                   <i class="speech-to-text icon-base bx bx-microphone icon-md text-heading"></i>
@@ -530,7 +529,7 @@
                   <input type="file" id="attach-doc" hidden="">
                 </label>
                 <button class="btn btn-primary d-flex send-msg-btn">
-                  <span class="align-middle d-md-inline-block d-none">Send</span>
+                  <span class="align-middle d-md-inline-block d-none">Отправить</span>
                   <i class="icon-base bx bx-paper-plane icon-sm ms-md-2 ms-0"></i>
                 </button>
               </div>
@@ -538,25 +537,25 @@
           </div>
         </div>
       </div>
-      <!-- /Chat History -->
+      <!-- /История чата -->
 
-      <!-- Sidebar Right -->
+      <!-- Правая боковая панель -->
       <div class="col app-chat-sidebar-right app-sidebar overflow-hidden" id="app-chat-sidebar-right">
         <div class="sidebar-header d-flex flex-column justify-content-center align-items-center flex-wrap px-6 pt-12">
           <div class="avatar avatar-xl avatar-online chat-sidebar-avatar">
-            <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
+            <img src="../../assets/img/avatars/4.png" alt="Аватар" class="rounded-circle">
           </div>
           <h5 class="mt-4 mb-0">Felecia Rower</h5>
-          <span>NextJS Developer</span>
+          <span>NextJS разработчик</span>
           <i class="icon-base bx bx-x icon-lg cursor-pointer close-sidebar d-block" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right"></i>
         </div>
         <div class="sidebar-body p-6 pt-0 ps ps--active-y">
           <div class="my-6">
-            <p class="text-uppercase mb-1 text-body-secondary">About</p>
-            <p class="mb-0">It is a long established fact that a reader will be distracted by the readable content .</p>
+            <p class="text-uppercase mb-1 text-body-secondary">О себе</p>
+            <p class="mb-0">Давно выяснено, что читатель будет отвлекаться на удобочитаемое содержимое страницы.</p>
           </div>
           <div class="my-6">
-            <p class="text-uppercase mb-1 text-body-secondary">Personal Information</p>
+            <p class="text-uppercase mb-1 text-body-secondary">Личная информация</p>
             <ul class="list-unstyled d-grid gap-4 mb-0 ms-2 py-2 text-heading">
               <li class="d-flex align-items-center">
                 <i class="icon-base bx bx-envelope"></i>
@@ -568,41 +567,41 @@
               </li>
               <li class="d-flex align-items-center">
                 <i class="icon-base bx bx-time-five"></i>
-                <span class="align-middle ms-2">Mon - Fri 10AM - 8PM</span>
+                <span class="align-middle ms-2">Пн - Пт 10:00 - 20:00</span>
               </li>
             </ul>
           </div>
           <div class="my-6">
-            <p class="text-uppercase text-body-secondary mb-1">Options</p>
+            <p class="text-uppercase text-body-secondary mb-1">Действия</p>
             <ul class="list-unstyled d-grid gap-4 ms-2 py-2 text-heading">
               <li class="cursor-pointer d-flex align-items-center">
                 <i class="icon-base bx bx-bookmark"></i>
-                <span class="align-middle ms-2">Add Tag</span>
+                <span class="align-middle ms-2">Добавить метку</span>
               </li>
               <li class="cursor-pointer d-flex align-items-center">
                 <i class="icon-base bx bx-star"></i>
-                <span class="align-middle ms-2">Important Contact</span>
+                <span class="align-middle ms-2">Важный контакт</span>
               </li>
               <li class="cursor-pointer d-flex align-items-center">
                 <i class="icon-base bx bx-image-alt"></i>
-                <span class="align-middle ms-2">Shared Media</span>
+                <span class="align-middle ms-2">Общие медиафайлы</span>
               </li>
               <li class="cursor-pointer d-flex align-items-center">
                 <i class="icon-base bx bx-trash"></i>
-                <span class="align-middle ms-2">Delete Contact</span>
+                <span class="align-middle ms-2">Удалить контакт</span>
               </li>
               <li class="cursor-pointer d-flex align-items-center">
                 <i class="icon-base bx bx-block"></i>
-                <span class="align-middle ms-2">Block Contact</span>
+                <span class="align-middle ms-2">Заблокировать контакт</span>
               </li>
             </ul>
           </div>
           <div class="d-flex mt-6">
-            <button class="btn btn-danger w-100" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right">Delete Contact<i class="icon-base bx bx-trash icon-sm ms-2"></i></button>
+            <button class="btn btn-danger w-100" data-bs-toggle="sidebar" data-overlay="" data-target="#app-chat-sidebar-right">Удалить контакт<i class="icon-base bx bx-trash icon-sm ms-2"></i></button>
           </div>
           <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; height: 542px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 500px;"></div></div></div>
       </div>
-      <!-- /Sidebar Right -->
+      <!-- /Правая боковая панель -->
 
       <div class="app-overlay"></div>
     </div>

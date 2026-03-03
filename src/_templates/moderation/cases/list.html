@@ -8,6 +8,133 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
+<div class="content-wrapper">
+        <!-- Content -->
+        <div class="flex-grow-1 container-p-y container-fluid">
+
+  <!-- Product List Widget -->
+  <div class="card mb-6">
+    <div class="card-widget-separator-wrapper">
+      <div class="card-body card-widget-separator">
+        <div class="row gy-4 gy-sm-1">
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+              <div>
+                <p class="mb-1">Продажи в магазине</p>
+                <h4 class="mb-1">5 345.43 ₽</h4>
+                <p class="mb-0"><span class="me-2">5 тыс. заказов</span><span class="badge bg-label-success">+5.7%</span></p>
+              </div>
+              <span class="avatar me-sm-6">
+                <span class="avatar-initial rounded w-px-44 h-px-44">
+                  <i class="icon-base bx bx-store-alt icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none me-6">
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+              <div>
+                <p class="mb-1">Продажи на сайте</p>
+                <h4 class="mb-1">674 347.12 ₽</h4>
+                <p class="mb-0"><span class="me-2">21 тыс. заказов</span><span class="badge bg-label-success">+12.4%</span></p>
+              </div>
+              <span class="avatar p-2 me-lg-6">
+                <span class="avatar-initial rounded w-px-44 h-px-44">
+                  <i class="icon-base bx bx-laptop icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+            <hr class="d-none d-sm-block d-lg-none">
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+              <div>
+                <p class="mb-1">Скидки</p>
+                <h4 class="mb-1">14 235.12 ₽</h4>
+                <p class="mb-0">6 тыс. заказов</p>
+              </div>
+              <span class="avatar p-2 me-sm-6">
+                <span class="avatar-initial rounded w-px-44 h-px-44">
+                  <i class="icon-base bx bx-gift icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <p class="mb-1">Партнёрские</p>
+                <h4 class="mb-1">8 345.23 ₽</h4>
+                <p class="mb-0"><span class="me-2">150 заказов</span><span class="badge bg-label-danger">-3.5%</span></p>
+              </div>
+              <span class="avatar p-2">
+                <span class="avatar-initial rounded w-px-44 h-px-44">
+                  <i class="icon-base bx bx-wallet icon-lg text-heading"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product List Table -->
+  <div class="card">
+    <div class="card-header border-bottom">
+      <h5 class="card-title">Фильтр</h5>
+      <div class="d-flex justify-content-between align-items-center row pt-4 gap-6 gap-md-0 g-md-6">
+        <div class="col-md-4 product_status"></div>
+        <div class="col-md-4 product_category"></div>
+        <div class="col-md-4 product_stock"></div>
+      </div>
+    </div>
+    <div class="card-datatable">
+      <div id="DataTables_Table_0_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer"><div class="row m-3 my-0 justify-content-between"><div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0"><div class="dt-search mb-0 mb-md-6"><input type="search" class="form-control ms-0" id="dt-search-0" placeholder="Поиск товара" aria-controls="DataTables_Table_0"><label for="dt-search-0"></label></div></div><div class="d-md-flex align-items-center dt-layout-end col-md-auto ms-auto justify-content-md-between justify-content-center d-flex flex-wrap gap-2 mb-md-0 mb-4 mt-0"><div class="dt-length mb-md-6 mb-4"><select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="form-select" id="dt-length-0"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><label for="dt-length-0"></label></div><div class="dt-buttons btn-group flex-wrap"> <div class="btn-group"><button class="btn buttons-collection btn-label-secondary dropdown-toggle me-4" tabindex="0" aria-controls="DataTables_Table_0" type="button" aria-haspopup="dialog" aria-expanded="false"><span><span class="d-flex align-items-center gap-2"><i class="icon-base bx bx-export icon-xs"></i> <span class="d-none d-sm-inline-block">Экспорт</span></span></span></button></div> <button class="btn add-new btn-primary" tabindex="0" aria-controls="DataTables_Table_0" type="button"><span><i class="icon-base bx bx-plus me-0 me-sm-1 icon-xs"></i><span class="d-none d-sm-inline-block">Добавить товар</span></span></button> </div></div></div><div class="justify-content-between dt-layout-table"><div class="d-md-flex justify-content-between align-items-center dt-layout-full table-responsive"><table class="datatables-products table dataTable dtr-column" id="DataTables_Table_0" aria-describedby="DataTables_Table_0_info" style="width: 100%;"><colgroup><col data-dt-column="0" style="width: 48px;"><col data-dt-column="1" style="width: 40px;"><col data-dt-column="2" style="width: 89.5859px;"><col data-dt-column="3" style="width: 119.547px;"><col data-dt-column="4" style="width: 87.5859px;"><col data-dt-column="5" style="width: 105.312px;"><col data-dt-column="6" style="width: 82.8125px;"><col data-dt-column="7" style="width: 80.7266px;"><col data-dt-column="8" style="width: 93.0547px;"><col data-dt-column="9" style="width: 100.055px;"></colgroup>
+        <thead class="border-top">
+          <tr><th data-dt-column="0" class="control dt-orderable-none" rowspan="1" colspan="1" aria-label=""><span class="dt-column-title"></span><span class="dt-column-order"></span></th><th data-dt-column="1" rowspan="1" colspan="1" class="dt-select dt-orderable-none" aria-label=""><span class="dt-column-title"></span><span class="dt-column-order"></span></th><th data-dt-column="2" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc dt-ordering-asc" aria-sort="ascending" aria-label="Товар: Activate to invert sorting" tabindex="0"><span class="dt-column-title" role="button">Товар</span><span class="dt-column-order"></span></th><th data-dt-column="3" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="Категория: Activate to sort" tabindex="0"><span class="dt-column-title" role="button">Категория</span><span class="dt-column-order"></span></th><th data-dt-column="4" rowspan="1" colspan="1" class="dt-orderable-none" aria-label="На складе"><span class="dt-column-title">На складе</span><span class="dt-column-order"></span></th><th data-dt-column="5" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="Артикул: Activate to sort" tabindex="0"><span class="dt-column-title" role="button">Артикул</span><span class="dt-column-order"></span></th><th data-dt-column="6" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="Цена: Activate to sort" tabindex="0"><span class="dt-column-title" role="button">Цена</span><span class="dt-column-order"></span></th><th data-dt-column="7" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="Кол-во: Activate to sort" tabindex="0"><span class="dt-column-title" role="button">Кол-во</span><span class="dt-column-order"></span></th><th data-dt-column="8" rowspan="1" colspan="1" class="dt-orderable-asc dt-orderable-desc" aria-label="Статус: Activate to sort" tabindex="0"><span class="dt-column-title" role="button">Статус</span><span class="dt-column-order"></span></th><th data-dt-column="9" rowspan="1" colspan="1" class="dt-orderable-none" aria-label="Действия"><span class="dt-column-title">Действия</span><span class="dt-column-order"></span></th></tr>
+        </thead><tbody><tr><td colspan="1" class="dt-empty">Loading...</td></tr></tbody>
+      <tfoot></tfoot></table></div></div><div class="row mx-3 justify-content-between"><div class="d-md-flex justify-content-between align-items-center dt-layout-start col-md-auto me-auto mt-0"><div class="dt-info" aria-live="polite" id="DataTables_Table_0_info" role="status">Showing 0 to 0 of 0 entries</div></div><div class="d-md-flex align-items-center dt-layout-end col-md-auto ms-auto justify-content-md-between justify-content-center d-flex flex-wrap gap-2 mb-md-0 mb-4 mt-0"><div class="dt-paging"><nav aria-label="pagination"></nav></div></div></div></div>
+    </div>
+  </div>
+
+        </div>
+        <!-- / Content -->
+
+
+
+
+<!-- Footer -->
+<footer class="content-footer footer bg-footer-theme">
+  <div class="container-fluid">
+    <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+      <div class="mb-2 mb-md-0">
+        ©
+        <script>
+          document.write(new Date().getFullYear());
+        </script>2026
+        , сделано с ❤️ командой <a href="https://themeselection.com" target="_blank" class="footer-link">ThemeSelection</a>
+      </div>
+      <div class="d-none d-lg-inline-block">
+
+          <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">Лицензия</a>
+          <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">Другие темы</a>
+
+        <a href="https://demos.themeselection.com/sneat-bootstrap-html-admin-template/documentation/" target="_blank" class="footer-link me-6">Документация</a>
+
+
+          <a href="https://themeselection.com/support/" target="_blank" class="footer-link d-none d-sm-inline-block">Поддержка</a>
+
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- / Footer -->
+
+
+        <div class="content-backdrop fade"></div>
+      </div>
 {% endblock content %}
 {% block demo %}
 <!-- Кнопка -->
