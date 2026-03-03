@@ -1,3 +1,4 @@
+```django
 {% extends 'moderation/base.html' %}
 {% load static %}
 {% block title %}{% endblock title %}
@@ -8,12 +9,427 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
+<div class="flex-grow-1 container-p-y container-fluid">
+
+  <h4 class="mb-1">Список ролей</h4>
+
+  <p class="mb-6">Роль предоставляет доступ к предопределённым меню и функциям, так что в зависимости от назначенной роли администратор может иметь доступ к тому, что нужно пользователю.</p>
+  
+  <!-- Role cards -->
+  <div class="row g-6">
+    <!-- Card 1 -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-normal mb-0 text-body">Всего 4 пользователя</h6>
+            <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/5.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/12.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/6.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/3.png" alt="Avatar">
+              </li>
+            </ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+            <div class="role-heading">
+              <h5 class="mb-1">Администратор</h5>
+              <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Редактировать роль</span></a>
+            </div>
+            <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-normal mb-0 text-body">Всего 7 пользователей</h6>
+            <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/4.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/1.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/2.png" alt="Avatar">
+              </li>
+              <li class="avatar">
+                <span class="avatar-initial rounded-circle pull-up" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="ещё 4">+4</span>
+              </li>
+            </ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+            <div class="role-heading">
+              <h5 class="mb-1">Менеджер</h5>
+              <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Редактировать роль</span></a>
+            </div>
+            <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 3 -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-normal mb-0 text-body">Всего 5 пользователей</h6>
+            <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/6.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/9.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/12.png" alt="Avatar">
+              </li>
+              <li class="avatar">
+                <span class="avatar-initial rounded-circle pull-up" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="ещё 2">+2</span>
+              </li>
+            </ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+            <div class="role-heading">
+              <h5 class="mb-1">Пользователи</h5>
+              <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Редактировать роль</span></a>
+            </div>
+            <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 4 -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-normal mb-0 text-body">Всего 3 пользователя</h6>
+            <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/3.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/9.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/4.png" alt="Avatar">
+              </li>
+              <li class="avatar">
+                <span class="avatar-initial rounded-circle pull-up" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="ещё 3">+3</span>
+              </li>
+            </ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+            <div class="role-heading">
+              <h5 class="mb-1">Поддержка</h5>
+              <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Редактировать роль</span></a>
+            </div>
+            <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 5 -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h6 class="fw-normal mb-0 text-body">Всего 2 пользователя</h6>
+            <ul class="list-unstyled d-flex align-items-center avatar-group mb-0">
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/10.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/13.png" alt="Avatar">
+              </li>
+              <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top" class="avatar pull-up" aria-label="User" data-bs-original-title="User">
+                <img class="rounded-circle" src="avatars/5.png" alt="Avatar">
+              </li>
+              <li class="avatar">
+                <span class="avatar-initial rounded-circle pull-up" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-original-title="ещё 7">+7</span>
+              </li>
+            </ul>
+          </div>
+          <div class="d-flex justify-content-between align-items-end">
+            <div class="role-heading">
+              <h5 class="mb-1">Ограниченный пользователь</h5>
+              <a href="javascript:;" data-bs-toggle="modal" data-bs-target="#addRoleModal" class="role-edit-modal"><span>Редактировать роль</span></a>
+            </div>
+            <a href="javascript:void(0);"><i class="icon-base bx bx-copy icon-md text-body-secondary"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 6 (Add New) -->
+    <div class="col-xl-4 col-lg-6 col-md-6">
+      <div class="card h-100">
+        <div class="row h-100">
+          <div class="col-sm-5">
+            <div class="d-flex align-items-end h-100 justify-content-center mt-sm-0 mt-4 ps-6">
+              <img src="illustrations/lady-with-laptop-light.png" class="img-fluid" alt="Image" width="120" data-app-light-img="illustrations/lady-with-laptop-light.png" data-app-dark-img="illustrations/lady-with-laptop-dark.png" style="visibility: hidden;">
+            </div>
+          </div>
+          <div class="col-sm-7">
+            <div class="card-body text-sm-end text-center ps-sm-0">
+              <button data-bs-target="#addRoleModal" data-bs-toggle="modal" class="btn btn-sm btn-primary mb-4 text-nowrap add-new-role">Добавить новую роль</button>
+              <p class="mb-0">
+                Добавить новую роль,<br>
+                если её нет.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Role cards -->
+
+  <!-- Add Role Modal (FULL WIDTH) -->
+  <div class="modal fade" id="addRoleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Добавить новую роль</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="text-center mb-4">
+            <p class="text-muted">Установите разрешения роли для каждого раздела</p>
+          </div>
+          
+          <form id="addRoleForm" class="row g-4" onsubmit="return false" novalidate>
+            <div class="col-12">
+              <label class="form-label" for="modalRoleName">Название роли</label>
+              <input type="text" id="modalRoleName" name="modalRoleName" class="form-control" placeholder="Введите название роли">
+            </div>
+
+           <div class="col-12">
+    <!-- Контейнер с выравниванием по краям -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Разрешения роли</h5>
+        <!-- Чекбокс справа -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="selectAllPermissions">
+            <label class="form-check-label fw-bold" for="selectAllPermissions">Выбрать все</label>
+        </div>
+    </div>
+    <!-- Permission Table -->
+    <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+    </div>
+              <!-- Permission Table -->
+              <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
+                <table class="table table-borderless table-hover align-middle mb-0">
+                  <thead class="sticky-top bg-body border-bottom">
+                    <tr>
+                      <th style="width: 40%;" class="ps-4">Модуль / Раздел</th>
+                      <th class="text-center" style="width: 15%;">Просмотр</th>
+                      <th class="text-center" style="width: 15%;">Создание</th>
+                      <th class="text-center" style="width: 15%;">Редактирование</th>
+                      <th class="text-center" style="width: 15%;">Удаление</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                    <!-- ОБЩЕЕ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Общее</td></tr>
+                    <tr>
+                      <td class="ps-4">Дашбоард</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_dash_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_dash_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_dash_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_dash_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Сотрудники</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_emp_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_emp_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_emp_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_emp_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Клиенты</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_cli_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_cli_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_cli_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_cli_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Роли и права</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_role_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_role_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_role_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_role_d"></div></td>
+                    </tr>
+
+                    <!-- ПОЧТА -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Почта</td></tr>
+                    <tr>
+                      <td class="ps-4">Письма</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_let_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_let_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_let_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_let_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Почта Настройки</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_set_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_set_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_set_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_mail_set_d"></div></td>
+                    </tr>
+
+                    <!-- КОММУНИКАЦИЯ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Коммуникация</td></tr>
+                    <tr>
+                      <td class="ps-4">Чат</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_chat_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_chat_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_chat_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_chat_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Звонки</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_call_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_call_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_call_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_call_d"></div></td>
+                    </tr>
+                    <tr>
+                      <td class="ps-4">Kanban</td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_kan_v"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_kan_c"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_kan_e"></div></td>
+                      <td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_kan_d"></div></td>
+                    </tr>
+
+                    <!-- МАГАЗИН -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Магазин</td></tr>
+                    <tr><td class="ps-4">Сайты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_site_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_site_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_site_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_site_d"></div></td></tr>
+                    <tr><td class="ps-4">Товары</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_prod_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_prod_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_prod_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_prod_d"></div></td></tr>
+                    <tr><td class="ps-4">Категории</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cat_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cat_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cat_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cat_d"></div></td></tr>
+                    <tr><td class="ps-4">Теги</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_tag_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_tag_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_tag_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_tag_d"></div></td></tr>
+                    <tr><td class="ps-4">Бренды</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_brand_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_brand_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_brand_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_brand_d"></div></td></tr>
+                    <tr><td class="ps-4">Магазины</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_shop_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_shop_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_shop_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_shop_d"></div></td></tr>
+                    <tr><td class="ps-4">Покупки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_buy_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_buy_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_buy_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_buy_d"></div></td></tr>
+                    <tr><td class="ps-4">Вариации</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_var_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_var_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_var_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_var_d"></div></td></tr>
+                    <tr><td class="ps-4">Валюты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cur_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cur_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cur_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_cur_d"></div></td></tr>
+                    <tr><td class="ps-4">Отзывы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_rev_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"></td></tr>
+                    <tr><td class="ps-4">Вопросы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_q_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_q_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_q_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_q_d"></div></td></tr>
+                    <tr><td class="ps-4">Заявки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_app_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_app_d"></div></td></tr>
+                    <tr><td class="ps-4">Жалобы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_comp_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_shop_comp_d"></div></td></tr>
+
+                    <!-- ОБЪЯВЛЕНИЯ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Объявления</td></tr>
+                    <tr><td class="ps-4">Сайты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_site_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_site_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_site_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_site_d"></div></td></tr>
+                    <tr><td class="ps-4">Товары</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_prod_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_prod_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_prod_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_prod_d"></div></td></tr>
+                    <tr><td class="ps-4">Категории</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cat_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cat_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cat_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cat_d"></div></td></tr>
+                    <tr><td class="ps-4">Теги</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_tag_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_tag_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_tag_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_tag_d"></div></td></tr>
+                    <tr><td class="ps-4">Бренды</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_brand_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_brand_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_brand_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_brand_d"></div></td></tr>
+                    <tr><td class="ps-4">Магазины</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_shop_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_shop_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_shop_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_shop_d"></div></td></tr>
+                    <tr><td class="ps-4">Покупки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_buy_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_buy_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_buy_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_buy_d"></div></td></tr>
+                    <tr><td class="ps-4">Вариации</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_var_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_var_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_var_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_var_d"></div></td></tr>
+                    <tr><td class="ps-4">Валюты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cur_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cur_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cur_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_cur_d"></div></td></tr>
+                    <tr><td class="ps-4">Отзывы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_rev_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"></td></tr>
+                    <tr><td class="ps-4">Вопросы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_q_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_q_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_q_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_q_d"></div></td></tr>
+                    <tr><td class="ps-4">Заявки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_app_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_app_d"></div></td></tr>
+                    <tr><td class="ps-4">Жалобы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_comp_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_ads_comp_d"></div></td></tr>
+
+                    <!-- ОБУЧЕНИЕ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Обучение</td></tr>
+                    <tr><td class="ps-4">Дашбоард</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_dash_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"></td></tr>
+                    <tr><td class="ps-4">Мои курсы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_my_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_my_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_my_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_my_d"></div></td></tr>
+                    <tr><td class="ps-4">Пройденные</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_done_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_done_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_done_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_done_d"></div></td></tr>
+                    <tr><td class="ps-4">Сертификаты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cert_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cert_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cert_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cert_d"></div></td></tr>
+                    <tr><td class="ps-4">Созданные</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cr_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cr_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cr_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_edu_cr_d"></div></td></tr>
+
+                    <!-- ПОДДЕРЖКА И СЕРВИСЫ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Поддержка и Сервисы</td></tr>
+                    <tr><td class="ps-4">Обращение</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_sup_app_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"></td></tr>
+                    <tr><td class="ps-4">Тикеты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_sup_tick_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"></td></tr>
+                    <tr><td class="ps-4">Соцсети</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_soc_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_soc_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_soc_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_soc_d"></div></td></tr>
+                    <tr><td class="ps-4">Телефония</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_tel_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_tel_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_tel_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_tel_d"></div></td></tr>
+                    <tr><td class="ps-4">Платежная система</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_pay_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_pay_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_pay_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_pay_d"></div></td></tr>
+                    <tr><td class="ps-4">Доп сервисы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_add_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_add_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_add_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_add_d"></div></td></tr>
+                    <tr><td class="ps-4">Нейронки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_ai_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_ai_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_ai_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_srv_ai_d"></div></td></tr>
+
+                    <!-- РАСЧЕТ ЗАРПЛАТ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Расчет зарплат</td></tr>
+                    <tr><td class="ps-4">Взаиморасчеты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_mut_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_mut_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_mut_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_mut_d"></div></td></tr>
+                    <tr><td class="ps-4">Расчет за день</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_day_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_day_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_day_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_day_d"></div></td></tr>
+                    <tr><td class="ps-4">Расчет за период</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_per_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_per_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_per_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_per_d"></div></td></tr>
+                    <tr><td class="ps-4">Правила расчета</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_rule_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_rule_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_rule_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_rule_d"></div></td></tr>
+                    <tr><td class="ps-4">Критерии расчета</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_crit_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_crit_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_crit_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_crit_d"></div></td></tr>
+                    <tr><td class="ps-4">Схема расчета</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_sch_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_sch_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_sch_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_sch_d"></div></td></tr>
+                    <tr><td class="ps-4">Премии и штрафы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_bonus_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_bonus_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_bonus_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_pay_bonus_d"></div></td></tr>
+
+                    <!-- ФИНАНСЫ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Финансы</td></tr>
+                    <tr><td class="ps-4">Счета и кассы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_acc_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_acc_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_acc_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_acc_d"></div></td></tr>
+                    <tr><td class="ps-4">Онлайн-кассы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkm_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkm_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkm_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkm_d"></div></td></tr>
+                    <tr><td class="ps-4">Контрагенты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_cont_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_cont_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_cont_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_cont_d"></div></td></tr>
+                    <tr><td class="ps-4">Статьи платежей</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_art_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_art_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_art_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_art_d"></div></td></tr>
+                    <tr><td class="ps-4">Финансовые операции</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_op_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_op_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_op_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_op_d"></div></td></tr>
+                    <tr><td class="ps-4">Документы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_doc_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_doc_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_doc_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_doc_d"></div></td></tr>
+                    <tr><td class="ps-4">Операции с ККМ</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkmop_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkmop_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkmop_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_kkmop_d"></div></td></tr>
+                    <tr><td class="ps-4">Прием платежей</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_payin_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_payin_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_payin_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_payin_d"></div></td></tr>
+                    <tr><td class="ps-4">Отчеты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_rep_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_rep_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_rep_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_rep_d"></div></td></tr>
+                    <tr><td class="ps-4">Настройки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_set_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_set_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_set_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_fin_set_d"></div></td></tr>
+
+                    <!-- СКЛАД -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Склад</td></tr>
+                    <tr><td class="ps-4">Склады</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_wh_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_wh_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_wh_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_wh_d"></div></td></tr>
+                    <tr><td class="ps-4">Товары</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_prod_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_prod_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_prod_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_prod_d"></div></td></tr>
+                    <tr><td class="ps-4">Технологическая карта</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_tech_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_tech_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_tech_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_tech_d"></div></td></tr>
+                    <tr><td class="ps-4">Складские операции</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_op_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_op_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_op_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_op_d"></div></td></tr>
+                    <tr><td class="ps-4">Инвентаризация</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_inv_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_inv_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_inv_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_inv_d"></div></td></tr>
+                    <tr><td class="ps-4">Печать товарных ценников</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_print_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_print_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_print_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_print_d"></div></td></tr>
+                    <tr><td class="ps-4">Отчеты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_rep_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_rep_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_rep_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_rep_d"></div></td></tr>
+                    <tr><td class="ps-4">Настройки</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_set_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_set_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_set_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_set_d"></div></td></tr>
+                    <tr><td class="ps-4">Маркировка товаров</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_mark_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_mark_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_mark_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_wh_mark_d"></div></td></tr>
+
+                    <!-- САЙТЫ -->
+                    <tr class="table-group-divider"><td colspan="5" class="fw-bold text-primary ps-4">Сайты</td></tr>
+                    <tr><td class="ps-4">Настройки (SMTP, Шаблон)</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_set_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_set_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_set_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_set_d"></div></td></tr>
+                    <tr><td class="ps-4">Блог (Статьи, Категории, Теги)</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_main_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_main_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_main_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_main_d"></div></td></tr>
+                    <tr><td class="ps-4">Блог (Лайки, Комментарии, Жалобы)</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_sub_v"></div></td><td class="text-center"></td><td class="text-center"></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_blog_sub_d"></div></td></tr>
+                    <tr><td class="ps-4">Страницы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_page_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_page_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_page_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_page_d"></div></td></tr>
+                    <tr><td class="ps-4">Услуги</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_serv_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_serv_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_serv_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_serv_d"></div></td></tr>
+                    <tr><td class="ps-4">Проекты</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_proj_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_proj_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_proj_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_proj_d"></div></td></tr>
+                    <tr><td class="ps-4">Кейсы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_case_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_case_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_case_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_case_d"></div></td></tr>
+                    <tr><td class="ps-4">Галереи</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_gal_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_gal_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_gal_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_gal_d"></div></td></tr>
+                    <tr><td class="ps-4">Прайсы</td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_price_v"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_price_c"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_price_e"></div></td><td class="text-center"><div class="form-check d-inline-block"><input class="form-check-input" type="checkbox" id="p_site_price_d"></div></td></tr>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-sm-3 me-1">Отправить</button>
+              <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="modal" aria-label="Close">Отмена</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
 {% endblock content %}
 {% block demo %}
 <!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
-</div>
 <!-- Offcanvas справа на всю ширину -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
