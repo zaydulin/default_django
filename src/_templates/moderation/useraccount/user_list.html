@@ -432,18 +432,183 @@
         <!-- Содержимое вкладок -->
         <div class="tab-content" id="userTabsContent">
           <!-- Вкладка Информация -->
-          <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-            <div class="card shadow-sm border-0">
-              <div class="card-body p-4">
-                <div class="text-center py-5">
-                  <i class="icon-base bx bx-info-circle" style="font-size: 48px; color: #ccc;"></i>
-                  <h5 class="mt-3 text-muted">Информация</h5>
-                  <p class="text-muted mb-0">Здесь будет отображаться информация о пользователе</p>
-                </div>
-              </div>
-            </div>
+<div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-4">
+      <form id="editUserForm" novalidate>
+
+        <!-- 🔹 Секция: Основная информация -->
+        <h6 class="text-heading mb-3 pb-2 border-bottom">
+          <i class="bx bx-info-circle me-2 text-primary"></i>Основная информация
+        </h6>
+
+        <div class="row g-3 mb-4">
+          <!-- Полное имя -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-fullname">
+              Полное имя <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" id="edit-user-fullname"
+                   name="userFullname" placeholder="Иван Петров" required>
+            <div class="invalid-feedback">Пожалуйста, введите имя пользователя</div>
           </div>
 
+          <!-- Email -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-email">
+              Электронная почта <span class="text-danger">*</span>
+            </label>
+            <input type="email" class="form-control" id="edit-user-email"
+                   name="userEmail" placeholder="ivan.petrov@example.com" required>
+            <div class="invalid-feedback">Пожалуйста, введите корректный email</div>
+          </div>
+
+          <!-- Телефон -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-contact">
+              Контактный телефон
+            </label>
+            <input type="tel" class="form-control phone-mask" id="edit-user-contact"
+                   name="userContact" placeholder="+7 (999) 123-45-67">
+          </div>
+        </div>
+
+        <!-- 🔹 Секция: Профиль -->
+        <h6 class="text-heading mb-3 pb-2 border-bottom">
+          <i class="bx bx-briefcase me-2 text-primary"></i>Профиль
+        </h6>
+
+        <div class="row g-3 mb-4">
+          <!-- Компания / Должность -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-company">
+              Компания / Должность
+            </label>
+            <input type="text" class="form-control" id="edit-user-company"
+                   name="companyName" placeholder="Веб-разработчик">
+          </div>
+
+          <!-- Страна -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-country">
+              Страна
+            </label>
+            <input type="text" class="form-control" id="edit-user-country"
+                   name="userCountry" placeholder="Россия">
+          </div>
+        </div>
+
+        <!-- 🔹 Секция: Доступ и тариф -->
+        <h6 class="text-heading mb-3 pb-2 border-bottom">
+          <i class="bx bx-shield me-2 text-primary"></i>Доступ и тариф
+        </h6>
+
+        <div class="row g-3 mb-4">
+          <!-- Роль -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-role">
+              Роль пользователя <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" id="edit-user-role" name="userRole" required>
+              <option value="" selected disabled>Выберите роль</option>
+              <option value="subscriber">👤 Подписчик</option>
+              <option value="author">✍️ Автор</option>
+              <option value="editor">✏️ Редактор</option>
+              <option value="maintainer">🔧 Мейнтейнер</option>
+              <option value="admin">👑 Администратор</option>
+            </select>
+            <div class="invalid-feedback">Пожалуйста, выберите роль</div>
+          </div>
+
+          <!-- План -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-plan">
+              Тарифный план <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" id="edit-user-plan" name="userPlan" required>
+              <option value="" selected disabled>Выберите план</option>
+              <option value="basic">📦 Базовый</option>
+              <option value="team">👥 Команда</option>
+              <option value="company">🏢 Компания</option>
+              <option value="enterprise">🏆 Корпоративный</option>
+            </select>
+            <div class="invalid-feedback">Пожалуйста, выберите тариф</div>
+          </div>
+
+          <!-- Способ оплаты -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-payment-method">
+              Способ оплаты
+            </label>
+            <select class="form-select" id="edit-payment-method" name="paymentMethod">
+              <option value="" selected>Не указано</option>
+              <option value="auto">🔄 Автоплатёж</option>
+              <option value="card">💳 Банковская карта</option>
+              <option value="invoice">🧾 Счёт</option>
+              <option value="cash">💵 Наличные</option>
+            </select>
+          </div>
+
+          <!-- Статус -->
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-status">
+              Статус аккаунта
+            </label>
+            <select class="form-select" id="edit-user-status" name="userStatus">
+              <option value="Active" selected>✅ Активен</option>
+              <option value="Pending">⏳ Ожидание</option>
+              <option value="Inactive">❌ Неактивен</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 🔹 Секция: Пароль (опционально) -->
+        <div class="mb-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="edit-set-password" name="setPassword">
+            <label class="form-check-label small text-muted" for="edit-set-password">
+              Изменить пароль (оставьте пустым, чтобы не менять)
+            </label>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4 d-none" id="edit-password-fields">
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-password">
+              Новый пароль
+            </label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="edit-user-password"
+                     name="userPassword" placeholder="••••••••">
+              <button class="btn btn-outline-secondary toggle-password" type="button">
+                <i class="bx bx-show"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label small text-muted mb-1" for="edit-user-password-confirm">
+              Подтвердите новый пароль
+            </label>
+            <input type="password" class="form-control" id="edit-user-password-confirm"
+                   name="userPasswordConfirm" placeholder="••••••••">
+            <div class="invalid-feedback">Пароли не совпадают</div>
+          </div>
+        </div>
+
+        <!-- 🔹 Кнопки действий -->
+        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+          <button type="button" class="btn btn-label-secondary" data-bs-toggle="new-content">
+            <i class="bx bx-x me-1"></i>Отмена
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="bx bx-check me-1"></i>Сохранить изменения
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
           <!-- Вкладка Услуги -->
           <div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
             <div class="card shadow-sm border-0">

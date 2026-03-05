@@ -1,566 +1,1217 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
 
-{% block title %}Счета-фактуры{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
-
-{% block head %}
-<style>
-    /* Минимальные необходимые стили */
-    .text-truncate-custom {
-        max-width: 180px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        display: inline-block;
-    }
-    .btn-buy-now {
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .offcanvas-footer {
-        border-top: 1px solid #dee2e6;
-        padding: 1rem;
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-end;
-    }
-</style>
-{% endblock head %}
+{% block title %}Счета{% endblock title %}
+{% block description %}Управление счетами-фактурами{% endblock description %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="flex-grow-1 container-p-y container-fluid">
 
-    <!-- 🔹 Виджеты статистики -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row gy-3">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
-                        <div>
-                            <h4 class="mb-0">24</h4>
-                            <p class="mb-0 text-muted small">Клиенты</p>
+    <!-- Виджеты статистики -->
+    <div class="card mb-6">
+        <div class="card-widget-separator-wrapper">
+            <div class="card-body card-widget-separator">
+                <div class="row gy-4 gy-sm-1">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+                            <div>
+                                <h4 class="mb-0">24</h4>
+                                <p class="mb-0">Новые</p>
+                            </div>
+                            <span class="avatar w-px-40 h-px-40 me-sm-6">
+                                <span class="avatar-initial bg-label-secondary rounded">
+                                    <i class="icon-base bx bx-file icon-lg text-heading"></i>
+                                </span>
+                            </span>
                         </div>
-                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
-                            <i class="bx bx-user"></i>
-                        </span>
+                        <hr class="d-none d-sm-block d-lg-none me-6">
                     </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
-                        <div>
-                            <h4 class="mb-0">165</h4>
-                            <p class="mb-0 text-muted small">Счета-фактуры</p>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+                            <div>
+                                <h4 class="mb-0">156</h4>
+                                <p class="mb-0">Оплачено</p>
+                            </div>
+                            <span class="avatar w-px-40 h-px-40 p-2 me-lg-6">
+                                <span class="avatar-initial bg-label-success rounded">
+                                    <i class="icon-base bx bx-check-circle icon-lg text-heading"></i>
+                                </span>
+                            </span>
                         </div>
-                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
-                            <i class="bx bx-file"></i>
-                        </span>
+                        <hr class="d-none d-sm-block d-lg-none">
                     </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-center border-end pb-3 pb-sm-0">
-                        <div>
-                            <h4 class="mb-0">2 460 ₽</h4>
-                            <p class="mb-0 text-muted small">Оплачено</p>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+                            <div>
+                                <h4 class="mb-0">38</h4>
+                                <p class="mb-0">В обработке</p>
+                            </div>
+                            <span class="avatar w-px-40 h-px-40 p-2 me-sm-6">
+                                <span class="avatar-initial bg-label-warning rounded">
+                                    <i class="icon-base bx bx-loader-alt icon-lg text-heading"></i>
+                                </span>
+                            </span>
                         </div>
-                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
-                            <i class="bx bx-check-double"></i>
-                        </span>
                     </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h4 class="mb-0">876 ₽</h4>
-                            <p class="mb-0 text-muted small">Неоплачено</p>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h4 class="mb-0">12</h4>
+                                <p class="mb-0">Просрочено</p>
+                            </div>
+                            <span class="avatar w-px-40 h-px-40 p-2">
+                                <span class="avatar-initial bg-label-danger rounded">
+                                    <i class="icon-base bx bx-error-circle icon-lg text-heading"></i>
+                                </span>
+                            </span>
                         </div>
-                        <span class="avatar avatar-sm bg-secondary-subtle text-secondary-emphasis rounded">
-                            <i class="bx bx-error-circle"></i>
-                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 🔹 ТАБЛИЦА СЧЕТОВ-ФАКТУР -->
-    <div class="card">
-        <div class="card-header border-bottom py-3">
-            <div class="row g-3 align-items-center">
+    <!-- Таблица счетов -->
+    <style>
+        .card .table th, .card .table td { text-align: left !important; }
+        .actions-btn { min-width: 32px; }
+    </style>
 
-                <!-- ЛЕВАЯ часть: Показывать по + Новый счет -->
-                <div class="col-md-auto d-flex align-items-center gap-2">
-                    <label class="text-muted small mb-0 me-1">Показывать по:</label>
-                    <select id="invoicesPerPage" class="form-select form-select-sm" style="width:auto">
-                        <option value="10" selected>10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                    </select>
+    <div class="card mb-6">
+        <!-- Card Header -->
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <h5 class="mb-0">Счета-фактуры</h5>
 
-                    <button class="btn btn-primary btn-sm ms-2" id="btnNewInvoice" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight">
-                        <i class="bx bx-plus me-1"></i>
-                        <span>Новый счет-фактура</span>
+            <!-- Toolbar -->
+            <div class="d-flex gap-2 flex-wrap flex-md-nowrap align-items-center w-100 w-md-auto">
+
+                <!-- Кнопка: Новый счет-фактура -->
+                <button class="btn btn-primary btn-sm" type="button" onclick="openCreateInvoice()">
+                    <i class="icon-base bx bx-plus me-1"></i>
+                    <span class="d-none d-sm-inline">Новый счет-фактура</span>
+                </button>
+
+                <!-- Поиск счета -->
+                <div class="input-group input-group-sm" style="min-width: 200px;">
+                    <span class="input-group-text"><i class="icon-base bx bx-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Поиск счета..." id="invoiceSearch">
+                </div>
+
+                <!-- Фильтр по статусам -->
+                <div class="dropdown">
+                    <button class="btn btn-label-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="icon-base bx bx-filter me-1"></i>
+                        <span id="statusFilterText">Все статусы</span>
                     </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item active" href="#" data-status="all">Все статусы</a></li>
+                        <li><a class="dropdown-item" href="#" data-status="new">Новый</a></li>
+                        <li><a class="dropdown-item" href="#" data-status="processing">В обработке</a></li>
+                        <li><a class="dropdown-item" href="#" data-status="paid">Оплачено</a></li>
+                        <li><a class="dropdown-item" href="#" data-status="overdue">Просрочено</a></li>
+                        <li><a class="dropdown-item" href="#" data-status="cancelled">Отменено</a></li>
+                    </ul>
                 </div>
 
-                <!-- ПРАВАЯ часть: Поиск + Фильтр статуса -->
-                <div class="col-md-auto ms-auto d-flex align-items-center gap-2">
-                    <!-- Поиск -->
-                    <div class="input-group input-group-sm" style="min-width:220px">
-                        <span class="input-group-text bg-white border-end-0"><i class="bx bx-search text-muted"></i></span>
-                        <input type="search"
-                               id="invoiceSearch"
-                               class="form-control border-start-0 ps-0"
-                               placeholder="Поиск...">
-                    </div>
+                <!-- Индикатор "Загружено" -->
+                <span class="text-muted small d-none d-md-inline" id="loadedCount">Загружено: 230</span>
 
-                    <!-- Фильтр статуса -->
-                    <select id="invoiceStatusFilter" class="form-select form-select-sm text-capitalize" style="width:auto">
-                        <option value="">Все статусы</option>
-                        <option value="uploaded">Загружено</option>
-                        <option value="draft">Черновик</option>
-                        <option value="paid">Оплаченный</option>
-                        <option value="partial">Частичная оплата</option>
-                        <option value="overdue">Просрочено</option>
-                        <option value="refunded">Оплачен</option>
-                    </select>
-
-                    <!-- Экспорт -->
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="bx bx-export"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">CSV</a></li>
-                            <li><a class="dropdown-item" href="#">Excel</a></li>
-                            <li><a class="dropdown-item" href="#">PDF</a></li>
-                        </ul>
-                    </div>
+                <!-- Кнопка выгрузки -->
+                <div class="dropdown">
+                    <button class="btn btn-label-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="icon-base bx bx-download me-1"></i>
+                        Выгрузить
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="exportData('csv')"><i class="icon-base bx bx-file me-1"></i> CSV</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportData('excel')"><i class="icon-base bx bx-table me-1"></i> EXCEL</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportData('pdf')"><i class="icon-base bx bx-file-blank me-1"></i> PDF</a></li>
+                    </ul>
                 </div>
+
             </div>
         </div>
 
-        <!-- 🔹 Таблица -->
-        <div class="table-responsive px-3 pb-3">
-            <table class="table table-hover align-middle mb-0" style="width:100%; table-layout: fixed;">
-                <colgroup>
-                    <col style="width: 40px;">
-                    <col style="width: 100px;">
-                    <col style="width: 110px;">
-                    <col style="width: auto;">
-                    <col style="width: 110px;">
-                    <col style="width: 110px;">
-                    <col style="width: 110px;">
-                    <col style="width: 140px;">
-                </colgroup>
-
-                <thead class="table-light">
-                    <tr class="text-center">
-                        <th>
-                            <input class="form-check-input" type="checkbox" id="selectAll">
+        <!-- Таблица -->
+        <div class="table-responsive text-nowrap">
+            <table class="table text-start align-middle">
+                <thead class="text-start">
+                    <tr>
+                        <th style="width: 40px;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="selectAll">
+                            </div>
                         </th>
-                        <th class="text-start">Номер</th>
+                        <th>Номер</th>
                         <th>Статус</th>
-                        <th class="text-start">Клиент</th>
-                        <th class="text-end">Общий</th>
+                        <th>Клиент</th>
+                        <th>Общий</th>
                         <th>Дата выпуска</th>
-                        <th class="text-end">Баланс</th>
+                        <th>Баланс</th>
                         <th>Действия</th>
                     </tr>
                 </thead>
+                <tbody class="table-border-bottom-0 text-start">
 
-                <tbody id="invoicesTableBody">
                     <!-- Строка 1 -->
-                    <tr data-invoice-id="101">
-                        <td class="text-center">
-                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="101">
-                        </td>
+                    <tr data-invoice-id="1024" data-invoice-data='{"number":"#INV-1024","status":"new","client":"ООО \"Вектор\"","total":"45200","issueDate":"20.10.2023","balance":"45200"}'>
+                        <td><div class="form-check"><input class="form-check-input invoice-checkbox" type="checkbox" value="1024"></div></td>
+                        <td><strong>#INV-1024</strong></td>
+                        <td><span class="badge bg-label-primary">Новый</span></td>
+                        <td>ООО "Вектор"</td>
+                        <td>45 200 ₽</td>
+                        <td>20.10.2023</td>
+                        <td>45 200 ₽</td>
                         <td>
-                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-001</a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Оплаченный</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-xs bg-primary-subtle text-primary-emphasis rounded-circle me-2">
-                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
-                                </span>
-                                <span class="text-truncate-custom">ООО "Ромашка"</span>
-                            </div>
-                        </td>
-                        <td class="text-end fw-medium">15 000.00 ₽</td>
-                        <td class="text-center text-muted small">15.02.2026</td>
-                        <td class="text-end text-success fw-medium">0 ₽</td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-001">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
-                                    <i class="bx bx-show"></i>
-                                </a>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button class="btn btn-icon btn-sm btn-label-secondary actions-btn" title="Просмотр" onclick="viewInvoice(1024)"><i class="icon-base bx bx-show"></i></button>
+                                <button class="btn btn-icon btn-sm btn-label-danger actions-btn" title="Удалить" onclick="deleteInvoice(1024)"><i class="icon-base bx bx-trash"></i></button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
-                                    </ul>
+                                    <button type="button" class="btn btn-icon btn-sm p-0 dropdown-toggle hide-arrow actions-btn" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" onclick="printInvoice(1024)"><i class="icon-base bx bx-printer me-1"></i> Распечатать</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editInvoice(1024)"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteInvoice(1024)"><i class="icon-base bx bx-trash me-1"></i> Удалить</a></li>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
 
                     <!-- Строка 2 -->
-                    <tr data-invoice-id="102">
-                        <td class="text-center">
-                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="102">
-                        </td>
+                    <tr data-invoice-id="1025" data-invoice-data='{"number":"#INV-1025","status":"processing","client":"ИП Петров А.С.","total":"12850","issueDate":"21.10.2023","balance":"12850"}'>
+                        <td><div class="form-check"><input class="form-check-input invoice-checkbox" type="checkbox" value="1025"></div></td>
+                        <td><strong>#INV-1025</strong></td>
+                        <td><span class="badge bg-label-warning">В обработке</span></td>
+                        <td>ИП Петров А.С.</td>
+                        <td>12 850 ₽</td>
+                        <td>21.10.2023</td>
+                        <td>12 850 ₽</td>
                         <td>
-                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-002</a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">Частичная оплата</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-xs bg-info-subtle text-info-emphasis rounded-circle me-2">
-                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
-                                </span>
-                                <span class="text-truncate-custom">ИП Петров</span>
-                            </div>
-                        </td>
-                        <td class="text-end fw-medium">8 500.00 ₽</td>
-                        <td class="text-center text-muted small">14.02.2026</td>
-                        <td class="text-end text-warning fw-medium">3 500.00 ₽</td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-002">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
-                                    <i class="bx bx-show"></i>
-                                </a>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button class="btn btn-icon btn-sm btn-label-secondary actions-btn" title="Просмотр" onclick="viewInvoice(1025)"><i class="icon-base bx bx-show"></i></button>
+                                <button class="btn btn-icon btn-sm btn-label-danger actions-btn" title="Удалить" onclick="deleteInvoice(1025)"><i class="icon-base bx bx-trash"></i></button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
-                                    </ul>
+                                    <button type="button" class="btn btn-icon btn-sm p-0 dropdown-toggle hide-arrow actions-btn" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" onclick="printInvoice(1025)"><i class="icon-base bx bx-printer me-1"></i> Распечатать</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editInvoice(1025)"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteInvoice(1025)"><i class="icon-base bx bx-trash me-1"></i> Удалить</a></li>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
 
                     <!-- Строка 3 -->
-                    <tr data-invoice-id="103">
-                        <td class="text-center">
-                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="103">
-                        </td>
+                    <tr data-invoice-id="1026" data-invoice-data='{"number":"#INV-1026","status":"paid","client":"ООО \"Технострой\"","total":"89400","issueDate":"18.10.2023","balance":"0"}'>
+                        <td><div class="form-check"><input class="form-check-input invoice-checkbox" type="checkbox" value="1026"></div></td>
+                        <td><strong>#INV-1026</strong></td>
+                        <td><span class="badge bg-label-success">Оплачено</span></td>
+                        <td>ООО "Технострой"</td>
+                        <td>89 400 ₽</td>
+                        <td>18.10.2023</td>
+                        <td>0 ₽</td>
                         <td>
-                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-003</a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Черновик</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-xs bg-primary-subtle text-primary-emphasis rounded-circle me-2">
-                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
-                                </span>
-                                <span class="text-truncate-custom">ООО "Вектор"</span>
-                            </div>
-                        </td>
-                        <td class="text-end fw-medium">22 300.00 ₽</td>
-                        <td class="text-center text-muted small">12.02.2026</td>
-                        <td class="text-end fw-medium">22 300.00 ₽</td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-003">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
-                                    <i class="bx bx-show"></i>
-                                </a>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button class="btn btn-icon btn-sm btn-label-secondary actions-btn" title="Просмотр" onclick="viewInvoice(1026)"><i class="icon-base bx bx-show"></i></button>
+                                <button class="btn btn-icon btn-sm btn-label-danger actions-btn" title="Удалить" onclick="deleteInvoice(1026)"><i class="icon-base bx bx-trash"></i></button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
-                                    </ul>
+                                    <button type="button" class="btn btn-icon btn-sm p-0 dropdown-toggle hide-arrow actions-btn" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" onclick="printInvoice(1026)"><i class="icon-base bx bx-printer me-1"></i> Распечатать</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editInvoice(1026)"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteInvoice(1026)"><i class="icon-base bx bx-trash me-1"></i> Удалить</a></li>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
 
                     <!-- Строка 4 -->
-                    <tr data-invoice-id="104">
-                        <td class="text-center">
-                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="104">
-                        </td>
+                    <tr data-invoice-id="1027" data-invoice-data='{"number":"#INV-1027","status":"overdue","client":"ЗАО \"Альфа-Групп\"","total":"23100","issueDate":"15.10.2023","balance":"23100"}'>
+                        <td><div class="form-check"><input class="form-check-input invoice-checkbox" type="checkbox" value="1027"></div></td>
+                        <td><strong>#INV-1027</strong></td>
+                        <td><span class="badge bg-label-danger">Просрочено</span></td>
+                        <td>ЗАО "Альфа-Групп"</td>
+                        <td>23 100 ₽</td>
+                        <td>15.10.2023</td>
+                        <td>23 100 ₽</td>
                         <td>
-                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-004</a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-danger-subtle text-danger-emphasis rounded-pill">Просрочено</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-xs bg-danger-subtle text-danger-emphasis rounded-circle me-2">
-                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
-                                </span>
-                                <span class="text-truncate-custom">ЗАО "Стар"</span>
-                            </div>
-                        </td>
-                        <td class="text-end fw-medium">5 200.00 ₽</td>
-                        <td class="text-center text-muted small">01.02.2026</td>
-                        <td class="text-end fw-medium">5 200.00 ₽</td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-004">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
-                                    <i class="bx bx-show"></i>
-                                </a>
+                            <div class="d-flex gap-1 align-items-center">
+                                <button class="btn btn-icon btn-sm btn-label-secondary actions-btn" title="Просмотр" onclick="viewInvoice(1027)"><i class="icon-base bx bx-show"></i></button>
+                                <button class="btn btn-icon btn-sm btn-label-danger actions-btn" title="Удалить" onclick="deleteInvoice(1027)"><i class="icon-base bx bx-trash"></i></button>
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
-                                    </ul>
+                                    <button type="button" class="btn btn-icon btn-sm p-0 dropdown-toggle hide-arrow actions-btn" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" onclick="printInvoice(1027)"><i class="icon-base bx bx-printer me-1"></i> Распечатать</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editInvoice(1027)"><i class="icon-base bx bx-edit me-1"></i> Редактировать</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteInvoice(1027)"><i class="icon-base bx bx-trash me-1"></i> Удалить</a></li>
+                                    </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
 
-                    <!-- Строка 5 -->
-                    <tr data-invoice-id="105">
-                        <td class="text-center">
-                            <input class="form-check-input row-checkbox" type="checkbox" name="selected_invoices" value="105">
-                        </td>
-                        <td>
-                            <a href="#" class="fw-medium text-decoration-none text-dark">#INV-005</a>
-                        </td>
-                        <td class="text-center">
-                            <span class="badge bg-info-subtle text-info-emphasis rounded-pill">Загружено</span>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <span class="avatar avatar-xs bg-success-subtle text-success-emphasis rounded-circle me-2">
-                                    <i class="bx bx-user" style="font-size: 0.7rem;"></i>
-                                </span>
-                                <span class="text-truncate-custom">ИП Сидорова</span>
-                            </div>
-                        </td>
-                        <td class="text-end fw-medium">12 750.00 ₽</td>
-                        <td class="text-center text-muted small">28.01.2026</td>
-                        <td class="text-end fw-medium">12 750.00 ₽</td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center gap-1">
-                                <button type="button" class="btn btn-outline-danger btn-sm delete-invoice" title="Удалить" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal" data-invoice-number="#INV-005">
-                                    <i class="bx bx-trash"></i>
-                                </button>
-                                <a href="#" class="btn btn-outline-secondary btn-sm" title="Предпросмотр" target="_blank">
-                                    <i class="bx bx-show"></i>
-                                </a>
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-download text-primary me-2"></i>Скачать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-edit-alt text-success me-2"></i>Редактировать</a></li>
-                                        <li><a href="#" class="dropdown-item"><i class="bx bx-copy text-info me-2"></i>Дубликат</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
                 </tbody>
+                <tfoot class="table-border-bottom-0 text-start">
+                    <tr>
+                        <th class="rounded-start-bottom"><div class="form-check"><input class="form-check-input" type="checkbox" id="selectAllFooter"></div></th>
+                        <th>Номер</th>
+                        <th>Статус</th>
+                        <th>Клиент</th>
+                        <th>Общий</th>
+                        <th>Дата выпуска</th>
+                        <th>Баланс</th>
+                        <th class="rounded-end-bottom">Действия</th>
+                    </tr>
+                </tfoot>
             </table>
-         </div>
+        </div>
 
-        <!-- 🔹 Пагинация -->
-        <div class="card-footer px-3 pb-3">
+        <!-- Пагинация -->
+        <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <small class="text-muted">Показано 1-4 из 230</small>
             <nav>
-                <ul class="pagination justify-content-end mb-0">
-                    <li class="page-item disabled"><span class="page-link">«</span></li>
-                    <li class="page-item disabled"><span class="page-link">‹</span></li>
-                    <li class="page-item active"><span class="page-link">1</span></li>
+                <ul class="pagination mb-0">
+                    <li class="page-item disabled"><a class="page-link" href="#"><i class="icon-base bx bx-chevron-left"></i></a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
                     <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">›</a></li>
-                    <li class="page-item"><a class="page-link" href="#">»</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i class="icon-base bx bx-chevron-right"></i></a></li>
                 </ul>
             </nav>
         </div>
     </div>
+</div>
+{% endblock content %}
 
+{% block demo %}
+<!-- ============================================ -->
+<!-- 👁️ МОДАЛЬНОЕ ОКНО: ПРЕДВАРИТЕЛЬНЫЙ ПРОСМОТР  -->
+<!-- ============================================ -->
+<div class="modal fade" id="invoicePreviewModal" tabindex="-1" aria-labelledby="invoicePreviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+    <div class="modal-content border-0">
+      <div class="modal-body p-0">
+        <div class="container-fluid">
+          <div class="row g-4">
+
+            <!-- Основная область просмотра -->
+            <div class="col-xl-9 col-md-8 col-12 mb-md-0 mb-4">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                  <!-- Шапка счета -->
+                  <div class="card-body invoice-preview-header rounded bg-lighter mb-4">
+                    <div class="d-flex justify-content-between flex-xl-row flex-md-column flex-sm-row flex-column align-items-xl-center align-items-md-start align-items-sm-center align-items-start">
+                      <div class="mb-xl-0 mb-4 text-heading">
+                        <div class="d-flex svg-illustration mb-4 gap-2 align-items-center">
+                          <span class="app-brand-logo demo">
+                            <span class="text-primary">
+                              <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                  <path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path>
+                                </defs>
+                                <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                  <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
+                                    <g id="Icon" transform="translate(27.000000, 15.000000)">
+                                      <use fill="currentColor" xlink:href="#path-1"></use>
+                                    </g>
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="app-brand-text demo fw-bold ms-2 lh-1">Сник</span>
+                        </div>
+                        <p class="mb-2 small">Офис 149, 450 South Brand, Бруклин</p>
+                        <p class="mb-2 small">Округ Сан-Диего, Калифорния 91905, США</p>
+                        <p class="mb-0 small">+1 (123) 456 7891, +44 (876) 543 2198</p>
+                      </div>
+                      <div>
+                        <h5 class="mb-4" id="previewInvoiceNumber">Invoice #86423</h5>
+                        <div class="mb-1 text-heading">
+                          <span class="small">Дата выпуска:</span>
+                          <span class="fw-medium" id="previewIssueDate">April 25, 2021</span>
+                        </div>
+                        <div class="text-heading">
+                          <span class="small">Срок оплаты:</span>
+                          <span class="fw-medium" id="previewDueDate">May 25, 2021</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Информация о клиенте и реквизиты -->
+                  <div class="row mb-4">
+                    <div class="col-xl-6 col-md-12 col-sm-5 col-12 mb-xl-0 mb-md-4 mb-sm-0 mb-4">
+                      <h6 class="mb-3">Счет-фактура на имя:</h6>
+                      <p class="mb-1 small" id="previewClientName">Thomas shelby</p>
+                      <p class="mb-1 small" id="previewClientCompany">Shelby Company Limited</p>
+                      <p class="mb-1 small" id="previewClientAddress">Small Heath, B10 0HF, UK</p>
+                      <p class="mb-1 small" id="previewClientPhone">718-986-6062</p>
+                      <p class="mb-0 small" id="previewClientEmail">peakyFBlinders@gmail.com</p>
+                    </div>
+                    <div class="col-xl-6 col-md-12 col-sm-7 col-12">
+                      <h6 class="mb-3">Реквизиты для оплаты:</h6>
+                      <table class="table table-borderless table-sm small">
+                        <tbody>
+                          <tr>
+                            <td class="text-muted pe-4">Итого к оплате:</td>
+                            <td class="fw-medium" id="previewTotalDue">$12,110.55</td>
+                          </tr>
+                          <tr>
+                            <td class="text-muted pe-4">Название банка:</td>
+                            <td id="previewBankName">Американский банк</td>
+                          </tr>
+                          <tr>
+                            <td class="text-muted pe-4">Страна:</td>
+                            <td id="previewCountry">Соединенные Штаты</td>
+                          </tr>
+                          <tr>
+                            <td class="text-muted pe-4">IBAN:</td>
+                            <td id="previewIBAN">ETD95476213874685</td>
+                          </tr>
+                          <tr>
+                            <td class="text-muted pe-4">SWIFT code:</td>
+                            <td id="previewSWIFT">BR91905</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Таблица товаров -->
+                  <div class="table-responsive border rounded mb-4">
+                    <table class="table table-borderless mb-0">
+                      <thead class="border-bottom">
+                        <tr>
+                          <th class="pb-3 small text-muted">Элемент</th>
+                          <th class="pb-3 small text-muted">Описание</th>
+                          <th class="pb-3 small text-muted">Цена</th>
+                          <th class="pb-3 small text-muted">Кол-во</th>
+                          <th class="pb-3 small text-muted">Стоимость</th>
+                        </tr>
+                      </thead>
+                      <tbody id="previewItemsTable">
+                        <tr>
+                          <td class="text-nowrap text-heading small">Vuexy Admin Template</td>
+                          <td class="text-nowrap small">HTML Admin Template</td>
+                          <td class="small">$32</td>
+                          <td class="small">1</td>
+                          <td class="small">$32.00</td>
+                        </tr>
+                        <tr>
+                          <td class="text-nowrap text-heading small">Frest Admin Template</td>
+                          <td class="text-nowrap small">Angular Admin Template</td>
+                          <td class="small">$22</td>
+                          <td class="small">1</td>
+                          <td class="small">$22.00</td>
+                        </tr>
+                        <tr>
+                          <td class="text-nowrap text-heading small">Apex Admin Template</td>
+                          <td class="text-nowrap small">HTML Admin Template</td>
+                          <td class="small">$17</td>
+                          <td class="small">2</td>
+                          <td class="small">$34.00</td>
+                        </tr>
+                        <tr>
+                          <td class="text-nowrap text-heading small">Robust Admin Template</td>
+                          <td class="text-nowrap small">React Admin Template</td>
+                          <td class="small">$66</td>
+                          <td class="small">1</td>
+                          <td class="small">$66.00</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Итого и продавец -->
+                  <div class="table-responsive">
+                    <table class="table table-borderless mb-0">
+                      <tbody>
+                        <tr>
+                          <td class="align-top pe-6 ps-0 py-4 text-body">
+                            <p class="mb-1">
+                              <span class="me-2 h6 small">Продавец:</span>
+                              <span class="small" id="previewSalesperson">Alfie Solomons</span>
+                            </p>
+                            <span class="small" id="previewMessage">Thanks for your business</span>
+                          </td>
+                          <td class="px-0 py-4 w-px-100">
+                            <p class="mb-2 small">Подытог:</p>
+                            <p class="mb-2 small">Скидка:</p>
+                            <p class="mb-2 border-bottom pb-2 small">Налог:</p>
+                            <p class="mb-0 small fw-medium">Итого:</p>
+                          </td>
+                          <td class="text-end px-0 py-4 w-px-100 fw-medium text-heading">
+                            <p class="fw-medium mb-2 small" id="previewSubtotal">$1800</p>
+                            <p class="fw-medium mb-2 small" id="previewDiscount">$28</p>
+                            <p class="fw-medium mb-2 border-bottom pb-2 small" id="previewTax">21%</p>
+                            <p class="fw-medium mb-0 small text-primary" id="previewGrandTotal">$1690</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <!-- Примечание -->
+                  <div>
+                    <span class="fw-medium text-heading small">Примечание:</span>
+                    <p class="mb-0 small text-muted" id="previewNote">It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance projects. Thank You!</p>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Боковая панель действий -->
+            <div class="col-xl-3 col-md-4 col-12">
+              <div class="sticky-top" style="top: 20px;">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#sendInvoiceModal" data-bs-dismiss="modal">
+                      <i class="icon-base bx bx-paper-plane me-2"></i>Отправить счет-фактуру
+                    </button>
+                    <button class="btn btn-label-secondary w-100 mb-3" onclick="downloadInvoice()">
+                      <i class="icon-base bx bx-download me-2"></i>Скачать
+                    </button>
+                    <div class="row g-2 mb-3">
+                      <div class="col-6">
+                        <button type="button" class="btn btn-label-secondary w-100 btn-sm" onclick="printInvoice(currentInvoiceId)">
+                          <i class="icon-base bx bx-printer me-1"></i>Печать
+                        </button>
+                      </div>
+                      <div class="col-6">
+                        <button type="button" class="btn btn-label-secondary w-100 btn-sm" onclick="editInvoiceFromPreview()">
+                          <i class="icon-base bx bx-edit me-1"></i>Редактировать
+                        </button>
+                      </div>
+                    </div>
+                    <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#addPaymentModal" data-bs-dismiss="modal">
+                      <i class="icon-base bx bx-dollar me-1"></i>Добавить платеж
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- 🔹 Модальное окно: Подтверждение удаления -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+<!-- ============================================ -->
+<!-- 🔧 МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ СЧЕТА      -->
+<!-- ============================================ -->
+<div class="modal fade" id="invoiceEditModal" tabindex="-1" aria-labelledby="invoiceEditModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+    <div class="modal-content border-0">
+      <div class="modal-body p-0">
+        <div class="container-fluid">
+          <div class="row g-4">
+            <div class="col-lg-9">
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="row">
+                    <div class="col-md-7">
+                      <div class="d-flex align-items-center mb-4">
+                        <div class="me-3">
+                          <span class="text-primary">
+                            <svg width="40" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                              <defs><path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path></defs>
+                              <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
+                                  <g id="Icon" transform="translate(27.000000, 15.000000)">
+                                    <use fill="currentColor" xlink:href="#path-1"></use>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </div>
+                        <h4 class="mb-0 fw-bold">Сник</h4>
+                      </div>
+                      <p class="mb-2 text-muted">Офис 149, 450 South Brand, Бруклин</p>
+                      <p class="mb-2 text-muted">Округ Сан-Диего, Калифорния 91905, США</p>
+                      <p class="mb-0 text-muted">+1 (123) 456 7891, +44 (876) 543 2198</p>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="row g-3">
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Счет</label><input type="text" class="form-control form-control-sm bg-light border-0" value="#74909" readonly></div>
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Дата выпуска</label><input type="date" class="form-control form-control-sm bg-light border-0" id="modalIssueDate"></div>
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Срок оплаты</label><input type="date" class="form-control form-control-sm bg-light border-0" id="modalDueDate"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6 mb-4 mb-md-0">
+                  <h6 class="mb-3">Счет-фактура на имя:</h6>
+                  <select class="form-select mb-3" id="modalClientSelect">
+                    <option value="1">Джордан Стивенсон</option>
+                    <option value="2">Уэсли Берланд</option>
+                    <option value="3">Владимир Кошек</option>
+                    <option value="4">Тайн Видмор</option>
+                  </select>
+                  <div class="text-muted small">
+                    <p class="mb-1">Компания Улыбка</p>
+                    <p class="mb-1">Россия, город Москва, улица Полевая 3</p>
+                    <p class="mb-1">718-986-6062</p>
+                    <p class="mb-0">peakyFBlinders@gmail.com</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="mb-3">Законопроект о:</h6>
+                  <table class="table table-borderless table-sm small">
+                    <tbody>
+                      <tr><td class="text-muted pe-4">Итого к оплате:</td><td><strong>12 110,55 ₽</strong></td></tr>
+                      <tr><td class="text-muted pe-4">Название банка:</td><td>Сбербанк</td></tr>
+                      <tr><td class="text-muted pe-4">Страна:</td><td>Россия</td></tr>
+                      <tr><td class="text-muted pe-4">ИБАН:</td><td>ETD95476213874685</td></tr>
+                      <tr><td class="text-muted pe-4">WWIFT-код:</td><td>BR91905</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead><tr class="border-bottom"><th class="pb-3">Элемент</th><th class="pb-3" style="width: 150px;">Расходы</th><th class="pb-3" style="width: 120px;">Кол-во</th><th class="pb-3" style="width: 120px;">Цена</th><th class="pb-3" style="width: 50px;"></th></tr></thead>
+                      <tbody>
+                        <tr class="item-row">
+                          <td>
+                            <select class="form-select form-select-sm mb-2 item-details"><option value="App Design">Дизайн приложений</option><option value="App Customization" selected>Настройка приложения</option><option value="ABC Template">Шаблон ABC</option><option value="App Development">Разработка приложений</option></select>
+                            <textarea class="form-control form-control-sm" rows="2" placeholder="Настройка и исправление ошибок"></textarea>
+                          </td>
+                          <td>
+                            <input type="number" class="form-control form-control-sm invoice-item-price mb-2" value="24" min="0">
+                            <small class="text-muted">Скидка: <span class="discount">0%</span> <span class="tax-1">0%</span> <span class="tax-2">0%</span></small>
+                          </td>
+                          <td><input type="number" class="form-control form-control-sm invoice-item-qty" value="1" min="1" max="50"></td>
+                          <td><p class="mb-0 fw-medium item-total">24,00 ₽</p></td>
+                          <td>
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-sm btn-link text-muted p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-cog"></i></button>
+                              <div class="dropdown-menu p-3" style="min-width: 250px;">
+                                <div class="mb-2"><label class="form-label small">Скидка (%)</label><input type="number" class="form-control form-control-sm discount-input" min="0" max="100" value="0"></div>
+                                <div class="row g-2">
+                                  <div class="col-6"><label class="form-label small">Налог 1</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div>
+                                  <div class="col-6"><label class="form-label small">Налог 2</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-primary w-100 mt-3 btn-apply-changes">Выбрать</button>
+                              </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 d-block mt-2 remove-item"><i class="icon-base bx bx-x"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" data-repeater-create=""><i class="icon-base bx bx-plus me-1"></i>Добавить товар</button>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="row">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                      <div class="mb-3"><label for="salesperson" class="form-label small">Продавец:</label><input type="text" class="form-control" id="salesperson" value="Иван Иванов"></div>
+                      <div><input type="text" class="form-control" id="invoiceMsg" placeholder="Спасибо за сотрудничество!" value="Thanks for your business"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="invoice-calculations">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Итого:</span><span class="fw-medium">1800 ₽</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Скидка:</span><span class="fw-medium">28 ₽</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Налог:</span><span class="fw-medium">21%</span></div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between"><span class="fw-medium">Общий:</span><span class="fw-bold text-primary">1690 ₽</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                  <label for="note" class="form-label small">Примечание:</label>
+                  <textarea class="form-control" rows="2" id="note">It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance projects. Thank You!</textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="sticky-top" style="top: 20px;">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-body p-3">
+                    <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#sendInvoiceModal"><i class="icon-base bx bx-paper-plane me-2"></i>Отправить счет-фактуру</button>
+                    <div class="row g-2 mb-3"><div class="col-6"><button type="button" class="btn btn-light w-100 btn-sm">Предварительный просмотр</button></div><div class="col-6"><button type="button" class="btn btn-light w-100 btn-sm">Сохранить</button></div></div>
+                    <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#addPaymentModal"><i class="icon-base bx bx-dollar me-1"></i>Добавить платеж</button>
+                  </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <div class="mb-3"><label class="form-label small text-muted">Принимайте платежи через</label><select class="form-select form-select-sm" id="acceptPaymentsVia"><option value="Bank Account">Банковский счет</option><option value="Paypal">PayPal</option><option value="Card">Кредитная/дебетовая карта</option><option value="UPI Transfer">Перевод через UPI</option></select></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3"><label class="form-check-label small mb-0" for="payment-terms">Условия оплаты</label><input type="checkbox" class="form-check-input" id="payment-terms" checked></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3"><label class="form-check-label small mb-0" for="client-notes">Примечания клиента</label><input type="checkbox" class="form-check-input" id="client-notes" checked></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center"><label class="form-check-label small mb-0" for="payment-stub">Платежный чек</label><input type="checkbox" class="form-check-input" id="payment-stub" checked></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- ➕ МОДАЛЬНОЕ ОКНО: СОЗДАНИЕ НОВОГО СЧЕТА     -->
+<!-- ============================================ -->
+<div class="modal fade" id="invoiceCreateModal" tabindex="-1" aria-labelledby="invoiceCreateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+    <div class="modal-content border-0">
+      <div class="modal-body p-0">
+        <div class="container-fluid">
+          <div class="row g-4">
+            <div class="col-lg-9">
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="row">
+                    <div class="col-md-7">
+                      <div class="d-flex align-items-center mb-4">
+                        <div class="me-3">
+                          <span class="text-primary">
+                            <svg width="40" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                              <defs><path d="M13.7918663,0.358365126 L3.39788168,7.44174259 C0.566865006,9.69408886 -0.379795268,12.4788597 0.557900856,15.7960551 C0.68998853,16.2305145 1.09562888,17.7872135 3.12357076,19.2293357 C3.8146334,19.7207684 5.32369333,20.3834223 7.65075054,21.2172976 L7.59773219,21.2525164 L2.63468769,24.5493413 C0.445452254,26.3002124 0.0884951797,28.5083815 1.56381646,31.1738486 C2.83770406,32.8170431 5.20850219,33.2640127 7.09180128,32.5391577 C8.347334,32.0559211 11.4559176,30.0011079 16.4175519,26.3747182 C18.0338572,24.4997857 18.6973423,22.4544883 18.4080071,20.2388261 C17.963753,17.5346866 16.1776345,15.5799961 13.0496516,14.3747546 L10.9194936,13.4715819 L18.6192054,7.984237 L13.7918663,0.358365126 Z" id="path-1"></path></defs>
+                              <g id="g-app-brand" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="Brand-Logo" transform="translate(-27.000000, -15.000000)">
+                                  <g id="Icon" transform="translate(27.000000, 15.000000)">
+                                    <use fill="currentColor" xlink:href="#path-1"></use>
+                                  </g>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </div>
+                        <h4 class="mb-0 fw-bold">Сник</h4>
+                      </div>
+                      <p class="mb-2 text-muted">Офис 149, 450 South Brand, Бруклин</p>
+                      <p class="mb-2 text-muted">Округ Сан-Диего, Калифорния 91905, США</p>
+                      <p class="mb-0 text-muted">+1 (123) 456 7891, +44 (876) 543 2198</p>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="row g-3">
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Счет</label><input type="text" class="form-control form-control-sm bg-light border-0" id="createInvoiceNumber" placeholder="Автогенерация" readonly></div>
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Дата выпуска</label><input type="date" class="form-control form-control-sm" id="createIssueDate"></div>
+                        <div class="col-12"><label class="form-label text-muted small mb-1">Срок оплаты</label><input type="date" class="form-control form-control-sm" id="createDueDate"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-4">
+                <div class="col-md-6 mb-4 mb-md-0">
+                  <h6 class="mb-3">Счет-фактура на имя:</h6>
+                  <select class="form-select mb-3" id="createClientSelect">
+                    <option value="" selected>Выберите клиента...</option>
+                    <option value="1">ООО "Вектор"</option>
+                    <option value="2">ИП Петров А.С.</option>
+                    <option value="3">ООО "Технострой"</option>
+                    <option value="4">ЗАО "Альфа-Групп"</option>
+                  </select>
+                  <div class="text-muted small" id="createClientInfo" style="display: none;">
+                    <p class="mb-1" id="createClientCompany"></p>
+                    <p class="mb-1" id="createClientAddress"></p>
+                    <p class="mb-1" id="createClientPhone"></p>
+                    <p class="mb-0" id="createClientEmail"></p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="mb-3">Реквизиты для оплаты:</h6>
+                  <table class="table table-borderless table-sm small">
+                    <tbody>
+                      <tr><td class="text-muted pe-4">Итого к оплате:</td><td><strong id="createTotalAmount">0,00 ₽</strong></td></tr>
+                      <tr><td class="text-muted pe-4">Название банка:</td><td>Сбербанк</td></tr>
+                      <tr><td class="text-muted pe-4">Страна:</td><td>Россия</td></tr>
+                      <tr><td class="text-muted pe-4">ИБАН:</td><td>ETD95476213874685</td></tr>
+                      <tr><td class="text-muted pe-4">WWIFT-код:</td><td>BR91905</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead><tr class="border-bottom"><th class="pb-3">Элемент</th><th class="pb-3" style="width: 150px;">Расходы</th><th class="pb-3" style="width: 120px;">Кол-во</th><th class="pb-3" style="width: 120px;">Цена</th><th class="pb-3" style="width: 50px;"></th></tr></thead>
+                      <tbody id="createItemsTable">
+                        <tr class="item-row">
+                          <td>
+                            <select class="form-select form-select-sm mb-2 item-details"><option value="" selected>Выберите услугу...</option><option value="App Design">Дизайн приложений</option><option value="App Customization">Настройка приложения</option><option value="ABC Template">Шаблон ABC</option><option value="App Development">Разработка приложений</option></select>
+                            <textarea class="form-control form-control-sm" rows="2" placeholder="Описание услуги..."></textarea>
+                          </td>
+                          <td><input type="number" class="form-control form-control-sm invoice-item-price mb-2" placeholder="0" min="0"><small class="text-muted">Скидка: <span class="discount">0%</span> <span class="tax-1">0%</span> <span class="tax-2">0%</span></small></td>
+                          <td><input type="number" class="form-control form-control-sm invoice-item-qty" value="1" min="1" max="50"></td>
+                          <td><p class="mb-0 fw-medium item-total">0,00 ₽</p></td>
+                          <td>
+                            <div class="dropdown">
+                              <button type="button" class="btn btn-sm btn-link text-muted p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-cog"></i></button>
+                              <div class="dropdown-menu p-3" style="min-width: 250px;">
+                                <div class="mb-2"><label class="form-label small">Скидка (%)</label><input type="number" class="form-control form-control-sm discount-input" min="0" max="100" value="0"></div>
+                                <div class="row g-2"><div class="col-6"><label class="form-label small">Налог 1</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div><div class="col-6"><label class="form-label small">Налог 2</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div></div>
+                                <button type="button" class="btn btn-sm btn-primary w-100 mt-3 btn-apply-changes">Выбрать</button>
+                              </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 d-block mt-2 remove-item"><i class="icon-base bx bx-x"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="addCreateItemRow()"><i class="icon-base bx bx-plus me-1"></i>Добавить товар</button>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  <div class="row">
+                    <div class="col-md-6 mb-4 mb-md-0">
+                      <div class="mb-3"><label for="createSalesperson" class="form-label small">Продавец:</label><input type="text" class="form-control" id="createSalesperson" value="Иван Иванов"></div>
+                      <div><input type="text" class="form-control" id="createMessage" placeholder="Сообщение клиенту..." value="Спасибо за сотрудничество!"></div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="invoice-calculations">
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Подытог:</span><span class="fw-medium" id="createSubtotal">0,00 ₽</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Скидка:</span><span class="fw-medium text-danger" id="createDiscount">0,00 ₽</span></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="text-muted">Налог (20%):</span><span class="fw-medium" id="createTax">0,00 ₽</span></div>
+                        <hr class="my-2">
+                        <div class="d-flex justify-content-between"><span class="fw-medium">Итого:</span><span class="fw-bold text-primary" id="createGrandTotal">0,00 ₽</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                  <label for="createNote" class="form-label small">Внутреннее примечание:</label>
+                  <textarea class="form-control" rows="2" id="createNote" placeholder="Примечание для внутреннего использования..."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="sticky-top" style="top: 20px;">
+                <div class="card border-0 shadow-sm mb-4">
+                  <div class="card-body p-3">
+                    <button class="btn btn-success w-100 mb-3" onclick="createInvoice()"><i class="icon-base bx bx-check me-2"></i>Создать счет</button>
+                    <button class="btn btn-label-secondary w-100 mb-3" onclick="saveAsDraft()"><i class="icon-base bx bx-save me-2"></i>Сохранить как черновик</button>
+                    <button class="btn btn-outline-danger w-100" data-bs-dismiss="modal"><i class="icon-base bx bx-x me-1"></i>Отмена</button>
+                  </div>
+                </div>
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <div class="mb-3"><label class="form-label small text-muted">Принимайте платежи через</label><select class="form-select form-select-sm" id="createPaymentMethod"><option value="Bank Account">Банковский счет</option><option value="Paypal">PayPal</option><option value="Card">Кредитная/дебетовая карта</option><option value="UPI Transfer">Перевод через UPI</option></select></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3"><label class="form-check-label small mb-0" for="createPaymentTerms">Условия оплаты</label><input type="checkbox" class="form-check-input" id="createPaymentTerms" checked></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center mb-3"><label class="form-check-label small mb-0" for="createClientNotes">Примечания клиента</label><input type="checkbox" class="form-check-input" id="createClientNotes" checked></div>
+                    <div class="form-check form-switch d-flex justify-content-between align-items-center"><label class="form-check-label small mb-0" for="createPaymentStub">Платежный чек</label><input type="checkbox" class="form-check-input" id="createPaymentStub" checked></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Отправить счет -->
+<div class="modal fade" id="sendInvoiceModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0"><h5 class="modal-title">Отправить счет-фактуру</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3"><label class="form-label small">От</label><input type="email" class="form-control" value="shelbyComapny@email.com"></div>
+          <div class="mb-3"><label class="form-label small">К</label><input type="email" class="form-control" value="qConsolidated@email.com"></div>
+          <div class="mb-3"><label class="form-label small">Предмет</label><input type="text" class="form-control" value="Invoice of purchased Admin Templates"></div>
+          <div class="mb-3"><label class="form-label small">Сообщение</label><textarea class="form-control" rows="4">Dear Queen Consolidated,
+Thank you for your business, always a pleasure to work with you!
+We have generated a new invoice in the amount of $95.59
+We would appreciate payment of this invoice by 05/11/2021</textarea></div>
+          <span class="badge bg-label-primary"><i class="icon-base bx bx-link icon-xs me-1"></i>Счёт-фактура прилагается.</span>
+        </form>
+      </div>
+      <div class="modal-footer border-0"><button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отправлять</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно: Добавить платеж -->
+<div class="modal fade" id="addPaymentModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0"><h5 class="modal-title">Добавить платеж</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between bg-lighter p-3 mb-4 rounded"><p class="mb-0">Остаток по счету-фактуре:</p><p class="fw-medium mb-0">5000,00 ₽</p></div>
+        <form>
+          <div class="mb-3"><label class="form-label small">Сумма платежа</label><div class="input-group"><span class="input-group-text">₽</span><input type="text" class="form-control invoice-amount" placeholder="100"></div></div>
+          <div class="mb-3"><label class="form-label small">Дата платежа</label><input type="date" class="form-control invoice-date"></div>
+          <div class="mb-3"><label class="form-label small">Способ оплаты</label><select class="form-select"><option value="" selected disabled>Выберите способ...</option><option value="Cash">Наличные</option><option value="Bank Transfer">Банковский перевод</option><option value="Debit Card">Дебетовая карта</option><option value="Credit Card">Кредитная карта</option><option value="Paypal">PayPal</option></select></div>
+          <div class="mb-0"><label class="form-label small">Внутренняя платежная накладная</label><textarea class="form-control" rows="2"></textarea></div>
+        </form>
+      </div>
+      <div class="modal-footer border-0"><button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Отправлять</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Модальное окно подтверждения удаления -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Удаление счета-фактуры</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-            </div>
-            <div class="modal-body">
-                <p>Вы действительно хотите удалить счет-фактуру <strong id="deleteInvoiceNumber"></strong>?</p>
-                <p class="text-muted small mb-0">Это действие нельзя отменить.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Удалить</button>
-            </div>
+            <div class="modal-header"><h5 class="modal-title">Подтверждение удаления</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button></div>
+            <div class="modal-body"><p>Вы действительно хотите удалить счет <strong id="deleteInvoiceId"></strong>?</p><p class="text-danger small mb-0">Это действие нельзя отменить.</p></div>
+            <div class="modal-footer"><button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Отмена</button><button type="button" class="btn btn-danger" onclick="confirmDelete()">Удалить</button></div>
         </div>
     </div>
 </div>
 
-<!-- 🔹 Offcanvas: Создание счета-фактуры -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="max-width: 450px;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Новый счет-фактура</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-    </div>
-    <div class="offcanvas-body">
-        <form id="createInvoiceForm">
-            <div class="mb-3">
-                <label class="form-label">Номер счета</label>
-                <input type="text" name="number" class="form-control" placeholder="INV-001" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Клиент</label>
-                <select name="client" class="form-select" required>
-                    <option value="">Выберите клиента</option>
-                    <option value="1">ООО "Ромашка"</option>
-                    <option value="2">ИП Петров</option>
-                    <option value="3">ООО "Вектор"</option>
-                    <option value="4">ЗАО "Стар"</option>
-                    <option value="5">ИП Сидорова</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Сумма (₽)</label>
-                <input type="number" name="total" class="form-control" step="0.01" placeholder="0.00" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Статус</label>
-                <select name="status" class="form-select">
-                    <option value="draft">Черновик</option>
-                    <option value="uploaded">Загружено</option>
-                    <option value="paid">Оплаченный</option>
-                    <option value="partial">Частичная оплата</option>
-                    <option value="overdue">Просрочено</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Дата выпуска</label>
-                <input type="date" name="issue_date" class="form-control">
-            </div>
-        </form>
-    </div>
-    <div class="offcanvas-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="submit" form="createInvoiceForm" class="btn btn-primary">Сохранить</button>
-    </div>
-</div>
+<style>
+#invoiceEditModal .modal-body, #invoicePreviewModal .modal-body, #invoiceCreateModal .modal-body { background-color: #f8f9fa; min-height: 100vh; }
+#invoiceEditModal .card, #invoicePreviewModal .card, #invoiceCreateModal .card { transition: all 0.2s ease; }
+#invoiceEditModal .item-row, #invoiceCreateModal .item-row { transition: all 0.2s ease; }
+#invoiceEditModal .btn-light, #invoiceCreateModal .btn-light { background-color: #f8f9fa !important; border: 1px solid #e9ecef; }
+#invoiceEditModal .btn-light:hover, #invoiceCreateModal .btn-light:hover { background-color: #e9ecef !important; }
+#invoiceEditModal .form-control:focus, #invoiceEditModal .form-select:focus,
+#invoicePreviewModal .form-control:focus, #invoicePreviewModal .form-select:focus,
+#invoiceCreateModal .form-control:focus, #invoiceCreateModal .form-select:focus { border-color: #696cff; box-shadow: 0 0 0 0.2rem rgba(105, 108, 255, 0.25); }
+#invoiceEditModal .table th, #invoicePreviewModal .table th, #invoiceCreateModal .table th { font-weight: 600; color: #566a7f; }
+@media (max-width: 991px) {
+  #invoiceEditModal .col-lg-3 .sticky-top, #invoicePreviewModal .col-xl-3 .sticky-top, #invoiceCreateModal .col-lg-3 .sticky-top { position: relative !important; top: 0 !important; }
+}
+</style>
 
-<!-- 🔹 Плавающая кнопка "Создать" -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1020">
-    <button class="btn btn-danger btn-buy-now shadow" id="btnFloatingCreate" title="Новый счет-фактура">
-        <i class="bx bx-plus"></i>
-    </button>
-</div>
-
-<!-- 🔹 Скрипты -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Чекбокс "Выбрать все"
-    const selectAll = document.getElementById('selectAll');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-    if (selectAll) {
-        selectAll.addEventListener('change', () => {
-            rowCheckboxes.forEach(cb => cb.checked = selectAll.checked);
-        });
-    }
-
-    // Поиск по таблице
-    const searchInput = document.getElementById('invoiceSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            const term = this.value.toLowerCase().trim();
-            document.querySelectorAll('#invoicesTableBody tr').forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
-            });
-        });
-    }
-
-    // Удаление: модальное окно
-    const deleteModal = document.getElementById('deleteConfirmModal');
-    const deleteInvoiceNumber = document.getElementById('deleteInvoiceNumber');
-    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    let currentInvoiceId = null;
     let invoiceToDelete = null;
 
-    if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            deleteInvoiceNumber.textContent = button.dataset.invoiceNumber;
-            invoiceToDelete = button.closest('tr');
+    // === Данные клиентов для автозаполнения ===
+    const clientsData = {
+        '1': { company: 'ООО "Вектор"', address: 'г. Москва, ул. Ленина 10', phone: '+7 (495) 123-45-67', email: 'info@vector.ru' },
+        '2': { company: 'ИП Петров А.С.', address: 'г. Санкт-Петербург, Невский проспект 25', phone: '+7 (812) 987-65-43', email: 'petrov@mail.ru' },
+        '3': { company: 'ООО "Технострой"', address: 'г. Екатеринбург, ул. Малышева 50', phone: '+7 (343) 555-44-33', email: 'info@technostroy.ru' },
+        '4': { company: 'ЗАО "Альфа-Групп"', address: 'г. Казань, ул. Баумана 15', phone: '+7 (843) 222-11-00', email: 'contact@alfagroup.ru' }
+    };
+
+    // === Предварительный просмотр ===
+    function viewInvoice(id) {
+        currentInvoiceId = id;
+        const row = document.querySelector(`tr[data-invoice-id="${id}"]`);
+        if (!row) return;
+        const data = JSON.parse(row.dataset.invoiceData || '{}');
+
+        document.getElementById('previewInvoiceNumber').textContent = data.number || `#INV-${id}`;
+        document.getElementById('previewIssueDate').textContent = data.issueDate || '25.03.2026';
+        document.getElementById('previewDueDate').textContent = data.dueDate || '25.04.2026';
+        document.getElementById('previewClientName').textContent = data.client || 'Клиент';
+        document.getElementById('previewClientCompany').textContent = 'Компания Улыбка';
+        document.getElementById('previewClientAddress').textContent = 'Россия, город Москва, улица Полевая 3';
+        document.getElementById('previewClientPhone').textContent = '718-986-6062';
+        document.getElementById('previewClientEmail').textContent = 'peakyFBlinders@gmail.com';
+        document.getElementById('previewTotalDue').textContent = formatCurrency(data.total || 12110.55);
+        document.getElementById('previewSalesperson').textContent = 'Иван Иванов';
+        document.getElementById('previewMessage').textContent = 'Thanks for your business';
+        document.getElementById('previewSubtotal').textContent = '1 800 ₽';
+        document.getElementById('previewDiscount').textContent = '28 ₽';
+        document.getElementById('previewTax').textContent = '21%';
+        document.getElementById('previewGrandTotal').textContent = formatCurrency(data.total || 1690);
+        document.getElementById('previewNote').textContent = 'It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance projects. Thank You!';
+
+        const modalEl = document.getElementById('invoicePreviewModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+
+    function editInvoiceFromPreview() {
+        const previewModal = bootstrap.Modal.getInstance(document.getElementById('invoicePreviewModal'));
+        previewModal?.hide();
+        setTimeout(() => { editInvoice(currentInvoiceId); }, 300);
+    }
+
+    function downloadInvoice() {
+        alert(`Скачивание счета #${currentInvoiceId}... (демо)`);
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', minimumFractionDigits: 2 }).format(amount);
+    }
+
+    // === Редактирование ===
+    function editInvoice(id) {
+        currentInvoiceId = id;
+        const row = document.querySelector(`tr[data-invoice-id="${id}"]`);
+        if (!row) return;
+        const data = JSON.parse(row.dataset.invoiceData || '{}');
+        document.getElementById('modalIssueDate').value = data.issueDate ? formatDateForInput(data.issueDate) : '';
+        document.getElementById('modalClientSelect').value = data.clientId || '';
+        const modalEl = document.getElementById('invoiceEditModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+
+    function formatDateForInput(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('.');
+        if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        return dateStr;
+    }
+
+    // === Создание нового счета ===
+    function openCreateInvoice() {
+        document.getElementById('createInvoiceNumber').value = 'INV-' + (1000 + Math.floor(Math.random() * 9000));
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('createIssueDate').value = today;
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + 30);
+        document.getElementById('createDueDate').value = dueDate.toISOString().split('T')[0];
+        document.getElementById('createClientSelect').value = '';
+        document.getElementById('createClientInfo').style.display = 'none';
+        document.getElementById('createSalesperson').value = 'Иван Иванов';
+        document.getElementById('createMessage').value = 'Спасибо за сотрудничество!';
+        document.getElementById('createNote').value = '';
+        const tbody = document.getElementById('createItemsTable');
+        tbody.innerHTML = '';
+        addCreateItemRow();
+        updateCreateTotals();
+        const modalEl = document.getElementById('invoiceCreateModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+
+    function addCreateItemRow() {
+        const tbody = document.getElementById('createItemsTable');
+        const newRow = document.createElement('tr');
+        newRow.className = 'item-row';
+        newRow.innerHTML = `
+            <td>
+                <select class="form-select form-select-sm mb-2 item-details">
+                    <option value="" selected>Выберите услугу...</option>
+                    <option value="App Design">Дизайн приложений</option>
+                    <option value="App Customization">Настройка приложения</option>
+                    <option value="ABC Template">Шаблон ABC</option>
+                    <option value="App Development">Разработка приложений</option>
+                </select>
+                <textarea class="form-control form-control-sm" rows="2" placeholder="Описание услуги..."></textarea>
+            </td>
+            <td><input type="number" class="form-control form-control-sm invoice-item-price mb-2" placeholder="0" min="0"><small class="text-muted">Скидка: <span class="discount">0%</span> <span class="tax-1">0%</span> <span class="tax-2">0%</span></small></td>
+            <td><input type="number" class="form-control form-control-sm invoice-item-qty" value="1" min="1" max="50"></td>
+            <td><p class="mb-0 fw-medium item-total">0,00 ₽</p></td>
+            <td>
+                <div class="dropdown">
+                    <button type="button" class="btn btn-sm btn-link text-muted p-0" data-bs-toggle="dropdown"><i class="icon-base bx bx-cog"></i></button>
+                    <div class="dropdown-menu p-3" style="min-width: 250px;">
+                        <div class="mb-2"><label class="form-label small">Скидка (%)</label><input type="number" class="form-control form-control-sm discount-input" min="0" max="100" value="0"></div>
+                        <div class="row g-2"><div class="col-6"><label class="form-label small">Налог 1</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div><div class="col-6"><label class="form-label small">Налог 2</label><select class="form-select form-select-sm tax-select"><option value="0" selected>0%</option><option value="1">1%</option><option value="10">10%</option><option value="18">18%</option></select></div></div>
+                        <button type="button" class="btn btn-sm btn-primary w-100 mt-3 btn-apply-changes">Выбрать</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-link text-danger p-0 d-block mt-2 remove-item"><i class="icon-base bx bx-x"></i></button>
+            </td>
+        `;
+        tbody.appendChild(newRow);
+    }
+
+    function updateCreateTotals() {
+        let subtotal = 0;
+        document.querySelectorAll('#createItemsTable .item-row').forEach(row => {
+            const price = parseFloat(row.querySelector('.invoice-item-price')?.value) || 0;
+            const qty = parseFloat(row.querySelector('.invoice-item-qty')?.value) || 1;
+            const total = price * qty;
+            row.querySelector('.item-total').textContent = total.toFixed(2) + ' ₽';
+            subtotal += total;
         });
-        if (confirmDeleteBtn) {
-            confirmDeleteBtn.addEventListener('click', function() {
-                if (invoiceToDelete) {
-                    invoiceToDelete.style.transition = 'opacity 0.3s';
-                    invoiceToDelete.style.opacity = '0';
-                    setTimeout(() => {
-                        invoiceToDelete.remove();
-                        bootstrap.Modal.getInstance(deleteModal).hide();
-                    }, 300);
-                }
+        const discount = 0;
+        const tax = subtotal * 0.20;
+        const grandTotal = subtotal - discount + tax;
+        document.getElementById('createSubtotal').textContent = subtotal.toFixed(2) + ' ₽';
+        document.getElementById('createDiscount').textContent = discount.toFixed(2) + ' ₽';
+        document.getElementById('createTax').textContent = tax.toFixed(2) + ' ₽';
+        document.getElementById('createGrandTotal').textContent = grandTotal.toFixed(2) + ' ₽';
+        document.getElementById('createTotalAmount').textContent = grandTotal.toFixed(2) + ' ₽';
+    }
+
+    function createInvoice() {
+        const formData = {
+            number: document.getElementById('createInvoiceNumber').value,
+            issueDate: document.getElementById('createIssueDate').value,
+            dueDate: document.getElementById('createDueDate').value,
+            clientId: document.getElementById('createClientSelect').value,
+            salesperson: document.getElementById('createSalesperson').value,
+            message: document.getElementById('createMessage').value,
+            note: document.getElementById('createNote').value,
+            paymentMethod: document.getElementById('createPaymentMethod').value,
+            items: []
+        };
+        document.querySelectorAll('#createItemsTable .item-row').forEach(row => {
+            formData.items.push({
+                name: row.querySelector('.item-details')?.value,
+                description: row.querySelector('textarea')?.value,
+                price: parseFloat(row.querySelector('.invoice-item-price')?.value) || 0,
+                qty: parseFloat(row.querySelector('.invoice-item-qty')?.value) || 1
             });
+        });
+        console.log('Создание нового счета:', formData);
+        const modal = bootstrap.Modal.getInstance(document.getElementById('invoiceCreateModal'));
+        modal?.hide();
+        alert('Счет успешно создан! (демо)');
+    }
+
+    function saveAsDraft() {
+        console.log('Сохранение черновика...');
+        alert('Черновик сохранен! (демо)');
+    }
+
+    // === Автозаполнение информации о клиенте ===
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'createClientSelect') {
+            const clientId = e.target.value;
+            if (clientId && clientsData[clientId]) {
+                const client = clientsData[clientId];
+                document.getElementById('createClientCompany').textContent = client.company;
+                document.getElementById('createClientAddress').textContent = client.address;
+                document.getElementById('createClientPhone').textContent = client.phone;
+                document.getElementById('createClientEmail').textContent = client.email;
+                document.getElementById('createClientInfo').style.display = 'block';
+            } else {
+                document.getElementById('createClientInfo').style.display = 'none';
+            }
+        }
+    });
+
+    // === Пересчет при изменении полей товаров ===
+    document.addEventListener('input', function(e) {
+        if (e.target.closest('#createItemsTable') && (e.target.classList.contains('invoice-item-price') || e.target.classList.contains('invoice-item-qty'))) {
+            updateCreateTotals();
+        }
+        if (e.target.closest('#invoiceEditModal .item-row') && (e.target.classList.contains('invoice-item-price') || e.target.classList.contains('invoice-item-qty'))) {
+            calculateTotals();
+        }
+    });
+
+    // === Удаление строки товара ===
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-item')) {
+            const row = e.target.closest('.item-row');
+            if (row) {
+                const parent = row.parentElement;
+                if (parent.id === 'createItemsTable' && document.querySelectorAll('#createItemsTable .item-row').length > 1) {
+                    row.remove();
+                    updateCreateTotals();
+                } else if (parent.id !== 'createItemsTable' && document.querySelectorAll('#invoiceEditModal .item-row').length > 1) {
+                    row.remove();
+                    calculateTotals();
+                }
+            }
+        }
+        if (e.target.closest('.btn-apply-changes')) {
+            const parent = e.target.closest('.dropdown-menu')?.parentElement?.parentElement;
+            if (parent && parent.id === 'createItemsTable') {
+                updateCreateTotals();
+            } else {
+                calculateTotals();
+            }
+            bootstrap.Dropdown.getInstance(e.target.closest('.dropdown'))?.hide();
+        }
+        if (e.target.closest('[data-repeater-create]')) {
+            e.preventDefault();
+            const tbody = document.querySelector('#invoiceEditModal tbody');
+            const newRow = document.querySelector('#invoiceEditModal .item-row').cloneNode(true);
+            newRow.querySelectorAll('input, textarea, select').forEach(el => { if (el.tagName === 'INPUT' && el.type !== 'hidden') el.value = ''; if (el.tagName === 'TEXTAREA') el.value = ''; });
+            newRow.querySelector('.item-total').textContent = '0,00 ₽';
+            tbody.appendChild(newRow);
+        }
+    });
+
+    function calculateTotals() {
+        let subtotal = 0;
+        document.querySelectorAll('#invoiceEditModal .item-row').forEach(row => {
+            const price = parseFloat(row.querySelector('.invoice-item-price')?.value) || 0;
+            const qty = parseFloat(row.querySelector('.invoice-item-qty')?.value) || 1;
+            const total = price * qty;
+            row.querySelector('.item-total').textContent = total.toFixed(2) + ' ₽';
+            subtotal += total;
+        });
+    }
+
+    // === Печать ===
+    function printInvoice(id) {
+        window.open(`/invoices/${id}/print/`, '_blank');
+    }
+
+    // === Удаление ===
+    function deleteInvoice(id) {
+        invoiceToDelete = id;
+        const modalEl = document.getElementById('deleteModal');
+        if (modalEl) {
+            document.getElementById('deleteInvoiceId').textContent = `#${id}`;
+            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+            modal.show();
         }
     }
 
-    // Открытие Offcanvas
-    const openOffcanvas = () => {
-        const offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasRight'));
-        offcanvas.show();
-    };
-    document.getElementById('btnNewInvoice')?.addEventListener('click', openOffcanvas);
-    document.getElementById('btnFloatingCreate')?.addEventListener('click', openOffcanvas);
+    function confirmDelete() {
+        if (invoiceToDelete) {
+            console.log('Удаление:', invoiceToDelete);
+            alert(`Счет #${invoiceToDelete} удален (демо)`);
+            invoiceToDelete = null;
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            modal?.hide();
+        }
+    }
 
-    // Обработка формы создания
-    document.getElementById('createInvoiceForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Счет-фактура создан! (демо)');
-        bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasRight'))?.hide();
-        this.reset();
+    // === Чекбоксы ===
+    document.getElementById('selectAll')?.addEventListener('change', function() { document.querySelectorAll('.invoice-checkbox').forEach(cb => cb.checked = this.checked); });
+    document.getElementById('selectAllFooter')?.addEventListener('change', function() { document.querySelectorAll('.invoice-checkbox').forEach(cb => cb.checked = this.checked); document.getElementById('selectAll').checked = this.checked; });
+
+    // === Фильтр ===
+    document.querySelectorAll('.dropdown-item[data-status]').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const status = this.dataset.status;
+            document.getElementById('statusFilterText').textContent = this.textContent;
+            document.querySelectorAll('.dropdown-item[data-status]').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+            filterInvoices(status);
+        });
     });
-});
-</script>
-{% endblock content %}
+    function filterInvoices(status) { console.log('Фильтр:', status); }
 
-{% block demo %}{% endblock demo %}
+    // === Поиск ===
+    const searchInput = document.getElementById('invoiceSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('tbody tr').forEach(row => {
+                const number = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                row.style.display = number.includes(query) ? '' : 'none';
+            });
+        });
+    }
+
+    // === Экспорт ===
+    function exportData(format) {
+        const selected = Array.from(document.querySelectorAll('.invoice-checkbox:checked')).map(cb => cb.value);
+        console.log(`Экспорт в ${format.toUpperCase()}:`, selected.length ? selected : 'все');
+        alert(`Загрузка ${format.toUpperCase()}... (демо)`);
+    }
+</script>
+{% endblock demo %}
