@@ -8,432 +8,473 @@
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
 {% block content %}
-   <!-- Статистические карточки (без изменений, структура верная) -->
-<div class="row g-4 mb-4">
+<div id="content">
+  <!-- Статистические карточки (без изменений, структура верная) -->
+  <div class="row g-4" data-info="filter" style=" margin-left: 10px; ">
 
-  <!-- 🔹 Всего сотрудников -->
-  <div class="col-sm-6 col-xl-3">
-    <div class="card h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="content-left">
-            <span class="text-heading">Команда</span>
-            <div class="d-flex align-items-center my-1">
-              <h4 class="mb-0 me-2">247</h4>
-              <p class="text-success mb-0">+12%</p>
+    <!-- 🔹 Всего сотрудников -->
+    <div class="col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Команда</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">247</h4>
+                <p class="text-success mb-0">+12%</p>
+              </div>
+              <small class="text-muted">Всего сотрудников</small>
             </div>
-            <small class="text-muted">Всего сотрудников</small>
-          </div>
-          <div class="avatar">
+            <div class="avatar">
             <span class="avatar-initial rounded bg-label-primary">
               <i class="icon-base bx bx-buildings icon-lg"></i>
             </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 🔹 На испытательном сроке -->
-  <div class="col-sm-6 col-xl-3">
-    <div class="card h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="content-left">
-            <span class="text-heading">Испытательный</span>
-            <div class="d-flex align-items-center my-1">
-              <h4 class="mb-0 me-2">31</h4>
-              <p class="text-info mb-0">+8</p>
+    <!-- 🔹 На испытательном сроке -->
+    <div class="col-sm-6 col-xl-3 p-0">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Испытательный</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">31</h4>
+                <p class="text-info mb-0">+8</p>
+              </div>
+              <small class="text-muted">Новые кандидаты</small>
             </div>
-            <small class="text-muted">Новые кандидаты</small>
-          </div>
-          <div class="avatar">
+            <div class="avatar">
             <span class="avatar-initial rounded bg-label-info">
               <i class="icon-base bx bx-hourglass icon-lg"></i>
             </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 🔹 Выполняют задачи -->
-  <div class="col-sm-6 col-xl-3">
-    <div class="card h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="content-left">
-            <span class="text-heading">В работе</span>
-            <div class="d-flex align-items-center my-1">
-              <h4 class="mb-0 me-2">156</h4>
-              <p class="text-success mb-0">+94%</p>
+    <!-- 🔹 Выполняют задачи -->
+    <div class="col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">В работе</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">156</h4>
+                <p class="text-success mb-0">+94%</p>
+              </div>
+              <small class="text-muted">С активными задачами</small>
             </div>
-            <small class="text-muted">С активными задачами</small>
-          </div>
-          <div class="avatar">
+            <div class="avatar">
             <span class="avatar-initial rounded bg-label-success">
               <i class="icon-base bx bx-task icon-lg"></i>
             </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 🔹 Требуют внимания -->
-  <div class="col-sm-6 col-xl-3">
-    <div class="card h-100">
-      <div class="card-body">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="content-left">
-            <span class="text-heading">Внимание</span>
-            <div class="d-flex align-items-center my-1">
-              <h4 class="mb-0 me-2">12</h4>
-              <p class="text-danger mb-0">+3</p>
+    <!-- 🔹 Требуют внимания -->
+    <div class="col-sm-6 col-xl-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-start justify-content-between">
+            <div class="content-left">
+              <span class="text-heading">Внимание</span>
+              <div class="d-flex align-items-center my-1">
+                <h4 class="mb-0 me-2">12</h4>
+                <p class="text-danger mb-0">+3</p>
+              </div>
+              <small class="text-muted">Низкая активность</small>
             </div>
-            <small class="text-muted">Низкая активность</small>
-          </div>
-          <div class="avatar">
+            <div class="avatar">
             <span class="avatar-initial rounded bg-label-danger">
               <i class="icon-base bx bx-error-circle icon-lg"></i>
             </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
-
-</div>
-
-
-   <!-- Фильтры поиска с вертикальными отступами -->
-<div class="card">
-
-  <!-- 🔹 Card Header: Фильтры поиска -->
-  <div class="card-header border-bottom">
-    <h5 class="card-title mb-0">Фильтры поиска</h5>
-    <div class="row g-3 pt-4">
-      <div class="col-md-4 mb-3 mb-md-0">
-        <label class="form-label small text-muted mb-1">Роль</label>
-        <select id="UserRole" class="form-select text-capitalize">
-          <option value="">Выберите роль</option>
-          <option value="Admin">Администратор</option>
-          <option value="Author">Автор</option>
-          <option value="Editor">Редактор</option>
-          <option value="Maintainer">Мейнтейнер</option>
-          <option value="Subscriber">Подписчик</option>
-        </select>
-      </div>
-      <div class="col-md-4 mb-3 mb-md-0">
-        <label class="form-label small text-muted mb-1">План</label>
-        <select id="UserPlan" class="form-select text-capitalize">
-          <option value="">Выберите план</option>
-          <option value="Basic">Базовый</option>
-          <option value="Company">Компания</option>
-          <option value="Enterprise">Корпоративный</option>
-          <option value="Team">Команда</option>
-        </select>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label small text-muted mb-1">Статус</label>
-        <select id="FilterTransaction" class="form-select text-capitalize">
-          <option value="">Выберите статус</option>
-          <option value="Pending">Ожидание</option>
-          <option value="Active">Активен</option>
-          <option value="Inactive">Неактивен</option>
-        </select>
+  <!-- Фильтры поиска с вертикальными отступами -->
+  <div class="card my-4" data-info="content" style=" margin-left: 20px; ">
+    <!-- 🔹 Card Header: Фильтры поиска -->
+    <div class="card-header ">
+      <h5 class="card-title mb-0">Фильтры поиска</h5>
+      <div class="row g-3 ">
+        <div class="col-md-4 mb-3 mb-md-0">
+          <label class="form-label small text-muted mb-1">Роль</label>
+          <select id="UserRole" class="form-select text-capitalize">
+            <option value="">Выберите роль</option>
+            <option value="Admin">Администратор</option>
+            <option value="Author">Автор</option>
+            <option value="Editor">Редактор</option>
+            <option value="Maintainer">Мейнтейнер</option>
+            <option value="Subscriber">Подписчик</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3 mb-md-0">
+          <label class="form-label small text-muted mb-1">План</label>
+          <select id="UserPlan" class="form-select text-capitalize">
+            <option value="">Выберите план</option>
+            <option value="Basic">Базовый</option>
+            <option value="Company">Компания</option>
+            <option value="Enterprise">Корпоративный</option>
+            <option value="Team">Команда</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Статус</label>
+          <select id="FilterTransaction" class="form-select text-capitalize">
+            <option value="">Выберите статус</option>
+            <option value="Pending">Ожидание</option>
+            <option value="Active">Активен</option>
+            <option value="Inactive">Неактивен</option>
+          </select>
+        </div>
       </div>
     </div>
-  </div>
-
-  <!-- 🔹 ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ТАБЛИЦЕЙ — ПОД ФИЛЬТРАМИ (как вы указали) -->
-  <div class="row mx-3 my-3 justify-content-between align-items-center">
-    <div class="col-md-auto mb-2 mb-md-0">
-      <div class="dt-length">
-        <select name="DataTables_Table_0_length" class="form-select form-select-sm" style="width:auto">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
+    <!-- 🔹 ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ТАБЛИЦЕЙ — ПОД ФИЛЬТРАМИ (как вы указали) -->
+    <div class="row mx-3 my-3 justify-content-between align-items-center">
+      <div class="col-md-auto mb-2 mb-md-0">
+        <div class="dt-length">
+          <select name="DataTables_Table_0_length" class="form-select form-select-sm" style="width:auto">
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
       </div>
-    </div>
-
-    <div class="col-md-auto d-flex align-items-center gap-3">
-      <!-- Поиск -->
-      <div class="dt-search">
-        <input type="search" class="form-control form-control-sm" placeholder="Поиск..." style="min-width:180px">
-      </div>
-
-      <!-- Экспорт -->
-      <div class="btn-group">
-        <button class="btn btn-label-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-          <i class="icon-base bx bx-export icon-sm me-1"></i>
-          <span class="d-none d-sm-inline">Экспорт</span>
+      <div class="col-md-auto d-flex align-items-center gap-3">
+        <!-- Поиск -->
+        <div class="dt-search">
+          <input type="search" class="form-control form-control-sm" placeholder="Поиск..." style="min-width:180px">
+        </div>
+        <!-- Экспорт -->
+        <div class="btn-group">
+          <button class="btn btn-label-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="icon-base bx bx-export icon-sm me-1"></i>
+            <span class="d-none d-sm-inline">Экспорт</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">CSV</a></li>
+            <li><a class="dropdown-item" href="#">Excel</a></li>
+            <li><a class="dropdown-item" href="#">PDF</a></li>
+          </ul>
+        </div>
+        <!-- Кнопка "Добавить" — справа -->
+        <button class="btn btn-primary btn-sm add-new" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+          <i class="icon-base bx bx-plus icon-sm me-1"></i>
+          <span class="d-none d-sm-inline">Добавить пользователя</span>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="#">CSV</a></li>
-          <li><a class="dropdown-item" href="#">Excel</a></li>
-          <li><a class="dropdown-item" href="#">PDF</a></li>
-        </ul>
       </div>
-
-      <!-- Кнопка "Добавить" — справа -->
-      <button class="btn btn-primary btn-sm add-new" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
-        <i class="icon-base bx bx-plus icon-sm me-1"></i>
-        <span class="d-none d-sm-inline">Добавить пользователя</span>
-      </button>
     </div>
-  </div>
 
-  <div class="card-datatable table-responsive px-3 pb-3">
-  <table class="datatables-users table table-hover dataTable" id="DataTables_Table_0" style="width:100%; table-layout: fixed;">
+    <div class="card-datatable table-responsive px-5 pb-3">
+      <table class="datatables-users table table-hover dataTable" id="DataTables_Table_0" style="width:100%; table-layout: fixed;">
 
-    <!-- Фиксированная ширина колонок -->
-    <colgroup>
-      <col style="width: 50px;">      <!-- Чекбокс -->
-      <col style="width: 280px;">     <!-- Пользователь -->
-      <col style="width: 150px;">     <!-- Роль -->
-      <col style="width: 120px;">     <!-- План -->
-      <col style="width: 100px;">     <!-- Оплата -->
-      <col style="width: 100px;">     <!-- Статус -->
-      <col style="width: 140px;">     <!-- Действия -->
-    </colgroup>
+        <!-- Фиксированная ширина колонок -->
+        <colgroup>
+          <col style="width: 50px;">      <!-- Чекбокс -->
+          <col style="width: 280px;">     <!-- Пользователь -->
+          <col style="width: 150px;">     <!-- Роль -->
+          <col style="width: 120px;">     <!-- План -->
+          <col style="width: 100px;">     <!-- Оплата -->
+          <col style="width: 100px;">     <!-- Статус -->
+          <col style="width: 140px;">     <!-- Действия -->
+        </colgroup>
 
-    <thead>
-      <tr>
-        <th class="text-center align-middle">
-          <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
-        </th>
-        <th class="text-start align-middle">Пользователь</th>
-        <th class="text-center align-middle">Роль</th>
-        <th class="text-center align-middle">План</th>
-        <th class="text-center align-middle">Оплата</th>
-        <th class="text-center align-middle">Статус</th>
-        <th class="text-center align-middle">Действия</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="text-center align-middle">
-          <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
-        </td>
-        <td class="align-middle">
-          <div class="d-flex align-items-center">
-            <div class="avatar avatar-sm me-3">
-              <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+        <thead>
+        <tr>
+          <th class="text-center align-middle">
+            <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
+          </th>
+          <th class="text-start align-middle">Пользователь</th>
+          <th class="text-center align-middle">Роль</th>
+          <th class="text-center align-middle">План</th>
+          <th class="text-center align-middle">Оплата</th>
+          <th class="text-center align-middle">Статус</th>
+          <th class="text-center align-middle">Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td class="text-center align-middle">
+            <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
+          </td>
+          <td class="align-middle">
+            <div class="d-flex align-items-center">
+              <div class="avatar avatar-sm me-3">
+                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
+              </div>
+              <div class="d-flex flex-column">
+                <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
+                  Администратор Системы
+                </a>
+                <small class="text-muted">admin@system.ru</small>
+              </div>
             </div>
-            <div class="d-flex flex-column">
-              <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
-                Администратор Системы
-              </a>
-              <small class="text-muted">admin@system.ru</small>
-            </div>
-          </div>
-        </td>
-        <td class="text-center align-middle">
+          </td>
+          <td class="text-center align-middle">
           <span class="d-flex align-items-center justify-content-center text-heading">
             <i class="icon-base bx bx-crown text-primary me-1"></i>
             <span class="text-truncate">Администратор</span>
           </span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="text-heading text-truncate">Корпоративный</span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="text-muted text-truncate">Автоплатёж</span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="badge bg-label-success rounded-pill">Активен</span>
-        </td>
-        <td class="text-center align-middle">
-          <div class="d-flex align-items-center justify-content-center gap-1">
-            <a href="javascript:;" class="btn btn-icon btn-sm btn-label-danger delete-record" title="Удалить">
-              <i class="icon-base bx bx-trash"></i>
-            </a>
-            <a href="app-user-view-account.html" class="btn btn-icon btn-sm btn-label-secondary" title="Просмотр">
-              <i class="icon-base bx bx-show"></i>
-            </a>
-            <div class="dropdown">
-              <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                      title="Ещё">
-                <i class="icon-base bx bx-dots-vertical-rounded"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li>
-                  <button class="dropdown-item d-flex align-items-center gap-2"
-                          type="button"
-                          data-bs-toggle="offcanvas"
-                          data-bs-target="#offcanvasEditUser">
-                    <i class="bx bx-edit-alt text-primary"></i>
-                    <span>Редактировать</span>
-                  </button>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a href="javascript:;" class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                    <i class="bx bx-block"></i>
-                    <span>Заблокировать</span>
-                  </a>
-                </li>
-              </ul>
+          </td>
+          <td class="text-center align-middle">
+            <span class="text-heading text-truncate">Корпоративный</span>
+          </td>
+          <td class="text-center align-middle">
+            <span class="text-muted text-truncate">Автоплатёж</span>
+          </td>
+          <td class="text-center align-middle">
+            <span class="badge bg-label-success rounded-pill">Активен</span>
+          </td>
+          <td class="text-center align-middle">
+            <div class="d-flex align-items-center justify-content-center gap-1">
+              <a href="javascript:;" class="btn btn-icon btn-sm btn-label-danger delete-record" title="Удалить">
+                <i class="icon-base bx bx-trash"></i>
+              </a>
+              <a href="app-user-view-account.html" class="btn btn-icon btn-sm btn-label-secondary" title="Просмотр">
+                <i class="icon-base bx bx-show"></i>
+              </a>
+              <div class="dropdown">
+                <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        title="Ещё">
+                  <i class="icon-base bx bx-dots-vertical-rounded"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                  <li>
+                    <button class="dropdown-item d-flex align-items-center gap-2"
+                            type="button"
+                            data-bs-toggle="new-content">
+                      <i class="bx bx-edit-alt text-primary"></i>
+                      <span>Редактировать</span>
+                    </button>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a href="javascript:;" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                      <i class="bx bx-block"></i>
+                      <span>Заблокировать</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-        </td>
-      </tr>
+          </td>
+        </tr>
 
-      <!-- Вторая строка -->
-      <tr>
-        <td class="text-center align-middle">
-          <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
-        </td>
-        <td class="align-middle">
-          <div class="d-flex align-items-center">
-            <div class="avatar avatar-sm me-3">
+        <!-- Вторая строка -->
+        <tr>
+          <td class="text-center align-middle">
+            <input class="form-check-input" type="checkbox" aria-label="Выбрать строку">
+          </td>
+          <td class="align-middle">
+            <div class="d-flex align-items-center">
+              <div class="avatar avatar-sm me-3">
               <span class="avatar-initial rounded-circle bg-label-info">
                 <i class="bx bx-user"></i>
               </span>
+              </div>
+              <div class="d-flex flex-column">
+                <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
+                  Иван Петров
+                </a>
+                <small class="text-muted">ivan@example.com</small>
+              </div>
             </div>
-            <div class="d-flex flex-column">
-              <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
-                Иван Петров
-              </a>
-              <small class="text-muted">ivan@example.com</small>
-            </div>
-          </div>
-        </td>
-        <td class="text-center align-middle">
+          </td>
+          <td class="text-center align-middle">
           <span class="d-flex align-items-center justify-content-center text-heading">
             <i class="icon-base bx bx-edit text-info me-1"></i>
             <span class="text-truncate">Редактор</span>
           </span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="text-heading text-truncate">Базовый</span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="text-muted text-truncate">Карта</span>
-        </td>
-        <td class="text-center align-middle">
-          <span class="badge bg-label-warning rounded-pill">Ожидание</span>
-        </td>
-        <td class="text-center align-middle">
-          <div class="d-flex align-items-center justify-content-center gap-1">
-            <a href="javascript:;" class="btn btn-icon btn-sm btn-label-danger delete-record" title="Удалить">
-              <i class="icon-base bx bx-trash"></i>
-            </a>
-            <a href="app-user-view-account.html" class="btn btn-icon btn-sm btn-label-secondary" title="Просмотр">
-              <i class="icon-base bx bx-show"></i>
-            </a>
-            <div class="dropdown">
-              <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                      title="Ещё">
-                <i class="icon-base bx bx-dots-vertical-rounded"></i>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li>
-                  <button class="dropdown-item d-flex align-items-center gap-2"
-                          type="button"
-                          data-bs-toggle="offcanvas"
-                          data-bs-target="#offcanvasEditUser">
-                    <i class="bx bx-edit-alt text-primary"></i>
-                    <span>Редактировать</span>
-                  </button>
-                </li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                  <a href="javascript:;" class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                    <i class="bx bx-block"></i>
-                    <span>Заблокировать</span>
-                  </a>
-                </li>
-              </ul>
+          </td>
+          <td class="text-center align-middle">
+            <span class="text-heading text-truncate">Базовый</span>
+          </td>
+          <td class="text-center align-middle">
+            <span class="text-muted text-truncate">Карта</span>
+          </td>
+          <td class="text-center align-middle">
+            <span class="badge bg-label-warning rounded-pill">Ожидание</span>
+          </td>
+          <td class="text-center align-middle">
+            <div class="d-flex align-items-center justify-content-center gap-1">
+              <a href="javascript:;" class="btn btn-icon btn-sm btn-label-danger delete-record" title="Удалить">
+                <i class="icon-base bx bx-trash"></i>
+              </a>
+              <a href="app-user-view-account.html" class="btn btn-icon btn-sm btn-label-secondary" title="Просмотр">
+                <i class="icon-base bx bx-show"></i>
+              </a>
+              <div class="dropdown">
+                <button class="btn btn-icon btn-sm btn-label-secondary dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        title="Ещё">
+                  <i class="icon-base bx bx-dots-vertical-rounded"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                  <li>
+                    <button class="dropdown-item d-flex align-items-center gap-2"
+                            type="button"
+                            data-bs-toggle="new-content">
+                      <i class="bx bx-edit-alt text-primary"></i>
+                      <span>Редактировать</span>
+                    </button>
+                  </li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li>
+                    <a href="javascript:;" class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                      <i class="bx bx-block"></i>
+                      <span>Заблокировать</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-body px-3 pb-3">
+
+    </div>
+
+  </div>
+  <!-- Исправленный Offcanvas -->
+  <div class="card my-4 d-none" data-info="new-content" style=" margin-left: 20px; ">
+    <div class="row">
+      <div class="col-3">
+        <div class="card h-100">
+          <div class="card-header">
+            <button class="btn btn-secondary"
+                    type="button"
+                    data-bs-toggle="new-content">
+              назад
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="dt-search mt-1 mb-1">
+              <input type="search" class="form-control form-control-sm" placeholder="Поиск..." style="min-width:180px">
+            </div>
+            <div class="d-flex align-items-center">
+              <div class="avatar avatar-sm me-3">
+              <span class="avatar-initial rounded-circle bg-label-info">
+                <i class="bx bx-user"></i>
+              </span>
+              </div>
+              <div class="d-flex flex-column">
+                <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
+                  Иван Петров
+                </a>
+                <small class="text-muted">ivan@example.com</small>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center mt-1">
+              <div class="avatar avatar-sm me-3">
+              <span class="avatar-initial rounded-circle bg-label-info">
+                <i class="bx bx-user"></i>
+              </span>
+              </div>
+              <div class="d-flex flex-column">
+                <a href="app-user-view-account.html" class="text-heading text-truncate fw-medium">
+                  Иван Петров
+                </a>
+                <small class="text-muted">ivan@example.com</small>
+              </div>
             </div>
           </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-</div>
-    <!-- Исправленный Offcanvas -->
-    <div class="offcanvas offcanvas-end w-100" tabindex="-1" id="offcanvasEditUser" aria-labelledby="offcanvasEditUserLabel" style="width: calc(100% - 290px)!important;margin: 0;">
-      <div class="offcanvas-header border-bottom">
-        <h5 id="offcanvasEditUserLabel" class="offcanvas-title">Редактировать пользователя</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-      </div>
-      <div class="offcanvas-body mx-0 flex-grow-0 p-6 h-100 w-100">
-        <!-- Содержимое offcanvas -->
-    <!-- Навигационные вкладки -->
-    <ul class="nav nav-tabs nav-fill mb-4" id="userTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">
-          <i class="icon-base bx bx-info-circle me-1"></i>Информация
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false">
-          <i class="icon-base bx bx-briefcase me-1"></i>Услуги
-        </button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="booking-tab" data-bs-toggle="tab" data-bs-target="#booking" type="button" role="tab" aria-controls="booking" aria-selected="false">
-          <i class="icon-base bx bx-calendar me-1"></i>Онлайн запись
-        </button>
-      </li>
-    </ul>
-
-    <!-- Содержимое вкладок -->
-    <div class="tab-content" id="userTabsContent">
-      <!-- Вкладка Информация -->
-      <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-4">
-            <div class="text-center py-5">
-              <i class="icon-base bx bx-info-circle" style="font-size: 48px; color: #ccc;"></i>
-              <h5 class="mt-3 text-muted">Информация</h5>
-              <p class="text-muted mb-0">Здесь будет отображаться информация о пользователе</p>
-            </div>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-sm add-new" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAddUser">
+              <i class="icon-base bx bx-plus icon-sm me-1"></i>
+              <span class="d-none d-sm-inline">Добавить пользователя</span>
+            </button>
           </div>
         </div>
       </div>
-
-      <!-- Вкладка Услуги -->
-      <div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-4">
-            <div class="text-center py-5">
-              <i class="icon-base bx bx-briefcase" style="font-size: 48px; color: #ccc;"></i>
-              <h5 class="mt-3 text-muted">Услуги</h5>
-              <p class="text-muted mb-0">Здесь будет отображаться список услуг</p>
+      <div class="col-9">
+        <!-- Навигационные вкладки -->
+        <ul class="nav nav-tabs nav-fill mb-4" id="userTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">
+              <i class="icon-base bx bx-info-circle me-1"></i>Информация
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="false">
+              <i class="icon-base bx bx-briefcase me-1"></i>Услуги
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="booking-tab" data-bs-toggle="tab" data-bs-target="#booking" type="button" role="tab" aria-controls="booking" aria-selected="false">
+              <i class="icon-base bx bx-calendar me-1"></i>Онлайн запись
+            </button>
+          </li>
+        </ul>
+        <!-- Содержимое вкладок -->
+        <div class="tab-content" id="userTabsContent">
+          <!-- Вкладка Информация -->
+          <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-center py-5">
+                  <i class="icon-base bx bx-info-circle" style="font-size: 48px; color: #ccc;"></i>
+                  <h5 class="mt-3 text-muted">Информация</h5>
+                  <p class="text-muted mb-0">Здесь будет отображаться информация о пользователе</p>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Вкладка Онлайн запись -->
-      <div class="tab-pane fade" id="booking" role="tabpanel" aria-labelledby="booking-tab">
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-4">
-            <div class="text-center py-5">
-              <i class="icon-base bx bx-calendar" style="font-size: 48px; color: #ccc;"></i>
-              <h5 class="mt-3 text-muted">Онлайн запись</h5>
-              <p class="text-muted mb-0">Здесь будет отображаться расписание и записи</p>
+          <!-- Вкладка Услуги -->
+          <div class="tab-pane fade" id="services" role="tabpanel" aria-labelledby="services-tab">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-center py-5">
+                  <i class="icon-base bx bx-briefcase" style="font-size: 48px; color: #ccc;"></i>
+                  <h5 class="mt-3 text-muted">Услуги</h5>
+                  <p class="text-muted mb-0">Здесь будет отображаться список услуг</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Вкладка Онлайн запись -->
+          <div class="tab-pane fade" id="booking" role="tabpanel" aria-labelledby="booking-tab">
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <div class="text-center py-5">
+                  <i class="icon-base bx bx-calendar" style="font-size: 48px; color: #ccc;"></i>
+                  <h5 class="mt-3 text-muted">Онлайн запись</h5>
+                  <p class="text-muted mb-0">Здесь будет отображаться расписание и записи</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-      </div>
-    </div>
-    <!-- Offcanvas to add new user -->
-  <!-- Offcanvas: Добавить пользователя -->
+  </div>
+  <!-- Offcanvas to add new user -->
+</div>
 <!-- Offcanvas: Добавить пользователя -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAddUser" aria-labelledby="offcanvasAddUserLabel">
   <div class="offcanvas-header border-bottom">
@@ -612,4 +653,47 @@
   </div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Находим все элементы с атрибутом data-bs-toggle="new-content"
+    const toggleButtons = document.querySelectorAll('[data-bs-toggle="new-content"]');
+
+    // Находим элементы для скрытия/показа
+    const filterElement = document.querySelector('[data-info="filter"]');
+    const contentElement = document.querySelector('[data-info="content"]');
+    const newContentElement = document.querySelector('[data-info="new-content"]');
+
+    console.log('Найдены элементы:', {
+      filter: filterElement,
+      content: contentElement,
+      newContent: newContentElement,
+      buttons: toggleButtons.length
+    });
+
+    // Добавляем обработчик на все кнопки
+    toggleButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Клик по кнопке');
+
+        // Проверяем, скрыт ли новый контент (содержит ли класс d-none)
+        const isNewContentHidden = newContentElement.classList.contains('d-none');
+
+        if (isNewContentHidden) {
+          // Если новый контент скрыт - показываем его, скрываем остальное
+          console.log('Показываем новый контент');
+          filterElement.classList.add('d-none');
+          contentElement.classList.add('d-none');
+          newContentElement.classList.remove('d-none');
+        } else {
+          // Если новый контент видим - скрываем его, показываем остальное
+          console.log('Скрываем новый контент');
+          filterElement.classList.remove('d-none');
+          contentElement.classList.remove('d-none');
+          newContentElement.classList.add('d-none');
+        }
+      });
+    });
+  });
+</script>
 {% endblock content %}
