@@ -687,6 +687,27 @@
             <i class="icon-base bx bx-menu icon-md"></i>
           </a>
         </div>
+<!-- Блок даты и времени по центру с выпадающим календарем -->
+  <div class="position-absolute start-50 translate-middle-x">
+    <div class="navbar-nav align-items-center">
+      <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="calendarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer; font-weight: 500; padding: 0.5rem 1rem; background: rgba(0,0,0,0.03); border-radius: 20px;">
+          <i class="icon-base bx bx-calendar me-2"></i>
+          <span id="current-datetime">{{ current_date|date:"l, d F Y" }} | {{ current_time|time:"H:i" }}</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="calendarDropdown" style="min-width: 300px; padding: 1rem;">
+          <!-- Встроенный календарь -->
+          <div id="inline-calendar" class="mb-3"></div>
+
+          <!-- Кнопка-ссылка на страницу календаря внизу -->
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'hr:moderation_calendar' %}" class="dropdown-item text-center" style="border-radius: 5px;">
+            <i class="icon-base bx bx-calendar me-2"></i>Перейти к полному календарю
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
         <div class="navbar-nav-right d-flex align-items-center justify-content-end" id="navbar-collapse">
           <!-- Search -->
           <div class="navbar-nav align-items-center">
@@ -934,6 +955,96 @@
 <script src="{% static 'moderation/app-ecommerce-settings.js' %}"></script>
 <script src="{% static 'site/htmx.min.js' %}"></script>
 {% block extra_js_bottom %}{% endblock extra_js_bottom %}
+
+<!-- JavaScript для обновления времени и календаря -->
+<script>
+  // Функция для обновления времени
+  function updateDateTime() {
+    const now = new Date();
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    // Форматируем дату на русском
+    const dateStr = now.toLocaleDateString('ru-RU', options);
+    const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+    // Обновляем текст (заглавная буква для дня недели)
+    const formattedDate = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    document.getElementById('current-datetime').textContent = `${formattedDate} | ${timeStr}`;
+  }
+
+  // Обновляем время каждую минуту
+  updateDateTime();
+  setInterval(updateDateTime, 60000);
+
+  // Функция для создания простого календаря
+  function createSimpleCalendar() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    // Названия месяцев на русском
+    const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+    const dayNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+
+    // Получаем первый день месяца
+    const firstDay = new Date(year, month, 1);
+    const startingDay = firstDay.getDay() || 7; // Преобразуем воскресенье (0) в 7
+
+    // Получаем последний день месяца
+    const lastDay = new Date(year, month + 1, 0);
+    const totalDays = lastDay.getDate();
+
+    // Создаем HTML календаря
+    let calendarHtml = `
+      <div style="text-align: center; margin-bottom: 10px;">
+        <strong>${monthNames[month]} ${year}</strong>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; margin-bottom: 5px;">
+        ${dayNames.map(day => `<div style="font-weight: bold; font-size: 12px; padding: 4px;">${day}</div>`).join('')}
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center;">
+    `;
+
+    // Пустые ячейки до первого дня месяца
+    for (let i = 1; i < startingDay; i++) {
+      calendarHtml += '<div style="padding: 4px;"></div>';
+    }
+
+    // Ячейки с днями месяца
+    const today = now.getDate();
+    for (let day = 1; day <= totalDays; day++) {
+      const isToday = day === today;
+      calendarHtml += `
+        <div style="padding: 4px; ${isToday ? 'background-color: #e7e7ff; border-radius: 50%; font-weight: bold; color: #696cff;' : ''}">
+          ${day}
+        </div>
+      `;
+    }
+
+    calendarHtml += '</div>';
+
+    return calendarHtml;
+  }
+
+  // Инициализация календаря при открытии дропдауна
+  document.getElementById('calendarDropdown').addEventListener('show.bs.dropdown', function () {
+    const calendarContainer = document.getElementById('inline-calendar');
+    calendarContainer.innerHTML = createSimpleCalendar();
+  });
+
+
+</script>
+
+<!-- Подключение CSS для flatpickr (опционально) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Подключение flatpickr (опционально) -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/ru.js"></script>
 </body>
 </html>
 
