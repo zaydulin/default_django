@@ -54,3 +54,12 @@ class CreatedCoursesView(CustomHtmxMixin, View):
             # ваш контекст
         }
         return render(request, self.template_name, context)
+
+class CoursesView(CustomHtmxMixin, View):
+    template_name = 'moderation/courses/courses.html'
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            # ваш контекст
+        }
+        return render(request, self.template_name, context)

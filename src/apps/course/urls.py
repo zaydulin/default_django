@@ -8,4 +8,5 @@ urlpatterns = [
     path("moderation/courses/completed-courses/", views.CompletedCoursesView.as_view(), name="completed_courses_list"),
     path("moderation/courses/certificates/", views.CertificatesView.as_view(), name="certificates_list"),
     path("moderation/courses/created-courses/", views.CreatedCoursesView.as_view(), name="created_courses_list"),
+    path("moderation/courses/view-courses/", views.CoursesView.as_view(), name="view_courses"),
 ]
