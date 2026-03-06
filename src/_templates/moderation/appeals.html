@@ -1,5 +1,6 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
+
 {% block title %}{% endblock title %}
 {% block description %}{% endblock description %}
 {% block propertytitle %}{% endblock propertytitle %}
@@ -7,10 +8,11 @@
 {% block propertyimage %}{% endblock propertyimage %}
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
+
 {% block content %}
 <div class="flex-grow-1 container-p-y container-fluid">
 
-    <!-- 1. Виджеты статистики (Обновлены под обращения) -->
+    <!-- 1. Виджеты статистики -->
     <div class="card mb-6">
         <div class="card-widget-separator-wrapper">
           <div class="card-body card-widget-separator">
@@ -110,14 +112,13 @@
               <i class="icon-base bx bx-trash icon-sm"></i>
             </button>
 
-            <!-- Выпадающий список: Поиск (открывает модалку) -->
+            <!-- Выпадающий список: Поиск -->
             <div class="dropdown">
               <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="icon-base bx bx-search me-1"></i>
                 <span class="d-none d-sm-inline">Поиск по...</span>
               </button>
               <ul class="dropdown-menu">
-                <!-- data-field передает значение в модалку -->
                 <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Имя')">Имя</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Электронная почта')">Электронная почта</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Номер телефона')">Номер телефона</a></li>
@@ -160,10 +161,20 @@
                 <td class="text-truncate" style="max-width: 200px;">Интересует цена за 2-к квартиру...</td>
                 <td>
                   <div class="dropdown">
-                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="icon-base bx bx-dots-vertical-rounded"></i>
+                    </button>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Чат</a>
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                      <!-- 🔹 Кнопка: Обработан -->
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="markAsProcessed(this, '#1001')">
+                         <i class="icon-base bx bx-check me-1"></i> Обработан
+                      </a>
+                      <!-- 🔹 Кнопка: Удалить -->
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="deleteTicket(this, '#1001')">
+                         <i class="icon-base bx bx-trash me-1"></i> Удалить
+                      </a>
                     </div>
                   </div>
                 </td>
@@ -182,10 +193,18 @@
                 <td class="text-truncate" style="max-width: 200px;">Нужна консультация по аренде...</td>
                 <td>
                   <div class="dropdown">
-                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="icon-base bx bx-dots-vertical-rounded"></i>
+                    </button>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Чат</a>
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="markAsProcessed(this, '#1002')">
+                         <i class="icon-base bx bx-check me-1"></i> Обработан
+                      </a>
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="deleteTicket(this, '#1002')">
+                         <i class="icon-base bx bx-trash me-1"></i> Удалить
+                      </a>
                     </div>
                   </div>
                 </td>
@@ -204,10 +223,18 @@
                 <td class="text-truncate" style="max-width: 200px;">Предложение о сотрудничестве...</td>
                 <td>
                   <div class="dropdown">
-                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
+                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                        <i class="icon-base bx bx-dots-vertical-rounded"></i>
+                    </button>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Чат</a>
-                      <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="markAsProcessed(this, '#1003')">
+                         <i class="icon-base bx bx-check me-1"></i> Обработан
+                      </a>
+                      <a class="dropdown-item" href="javascript:void(0);"
+                         onclick="deleteTicket(this, '#1003')">
+                         <i class="icon-base bx bx-trash me-1"></i> Удалить
+                      </a>
                     </div>
                   </div>
                 </td>
@@ -245,10 +272,7 @@
 {% endblock content %}
 
 {% block demo %}
-<!-- Кнопка создания (из старого кода) -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
-</div>
+
 <!-- Offcanvas справа -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
@@ -264,22 +288,123 @@
     </div>
 </div>
 
-<!-- Скрипт для передачи параметра в модальное окно -->
+<!-- Скрипты -->
 <script>
+    // Открытие модального окна поиска
     function openSearchModal(fieldType) {
-        // Находим элементы модального окна
         var modalLabel = document.getElementById('searchLabel');
         var modalTitle = document.getElementById('searchModalLabel');
         var searchInput = document.getElementById('searchInput');
 
-        // Устанавливаем текст
         modalTitle.innerText = 'Поиск';
         modalLabel.innerText = 'Поиск по: ' + fieldType;
         searchInput.placeholder = 'Введите ' + fieldType.toLowerCase();
 
-        // Открываем модалку через Bootstrap API
         var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
         searchModal.show();
+    }
+
+    // 🔹 Пометить обращение как "Обработан"
+    function markAsProcessed(element, ticketId) {
+        // Находим строку таблицы
+        var row = element.closest('tr');
+
+        // Визуально помечаем строку (опционально)
+        row.style.opacity = '0.6';
+        row.querySelector('td:last-child').innerHTML = '<span class="badge bg-label-success"><i class="icon-base bx bx-check me-1"></i>Обработан</span>';
+
+        // 🔹 Здесь можно добавить отправку на сервер (Django AJAX):
+        /*
+        fetch('/api/tickets/' + ticketId.replace('#', '') + '/process/', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ processed: true })
+        })
+        .then(response => response.json())
+        .then(data => {
+            showNotification('Обращение отмечено как обработанное', 'success');
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при обновлении статуса', 'danger');
+        });
+        */
+
+        showNotification('Обращение отмечено как обработанное', 'success');
+    }
+
+    // 🔹 Удалить обращение
+    function deleteTicket(element, ticketId) {
+        // Подтверждение удаления
+        if (!confirm('Вы уверены, что хотите удалить обращение ' + ticketId + '?')) {
+            return;
+        }
+
+        // Находим строку таблицы и удаляем её (визуально)
+        var row = element.closest('tr');
+        row.style.transition = 'opacity 0.3s ease';
+        row.style.opacity = '0';
+        setTimeout(function() {
+            row.remove();
+        }, 300);
+
+        // 🔹 Здесь можно добавить отправку на сервер (Django AJAX):
+        /*
+        fetch('/api/tickets/' + ticketId.replace('#', '') + '/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showNotification('Обращение удалено', 'success');
+            } else {
+                showNotification('Ошибка при удалении', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при удалении', 'danger');
+        });
+        */
+
+        showNotification('Обращение удалено', 'success');
+    }
+
+    // 🔹 Уведомление об успехе/ошибке
+    function showNotification(message, type) {
+        var notification = document.createElement('div');
+        notification.className = 'alert alert-' + (type === 'success' ? 'success' : 'danger') + ' alert-dismissible fade show position-fixed';
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(function() {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Хелпер для CSRF-токена (для Django AJAX)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
     }
 </script>
 {% endblock demo %}

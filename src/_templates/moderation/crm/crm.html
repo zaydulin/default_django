@@ -1,639 +1,1599 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
+
+{% block title %}Kanban - Управление задачами{% endblock title %}
+{% block description %}Система управления задачами и целями сотрудников{% endblock description %}
+
 {% block head %}
+<!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'moderation/libs/select2/select2.css' %}" />
- <link rel="stylesheet" href="{% static 'moderation/libs/jkanban/jkanban.css' %}" />
-
+<!-- jKanban CSS -->
+<link rel="stylesheet" href="{% static 'moderation/libs/jkanban/jkanban.css' %}" />
+<!-- Flatpickr CSS -->
 <link rel="stylesheet" href="{% static 'moderation/libs/flatpickr/flatpickr.css' %}" />
+<!-- Quill Editor CSS -->
 <link rel="stylesheet" href="{% static 'moderation/libs/quill/typography.css' %}" />
 <link rel="stylesheet" href="{% static 'moderation/libs/quill/katex.css' %}" />
 <link rel="stylesheet" href="{% static 'moderation/libs/quill/quill/editor.css' %}" />
-<link rel="stylesheet" href="{% static 'css/pages/app-kanban.css' %}" />
+
+<!-- Custom Kanban Styles -->
+<style>
+    .kanban-wrapper {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 20px 0;
+        min-height: 500px;
+    }
+
+    .kanban-container {
+        display: flex;
+        gap: 20px;
+        min-height: 500px;
+    }
+
+    .kanban-board {
+        background: #f4f5f7;
+        border-radius: 8px;
+        min-width: 300px;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .kanban-board-header {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .kanban-title-board {
+        font-weight: 600;
+        font-size: 14px;
+        color: #2d3748;
+        cursor: pointer;
+    }
+
+    .kanban-title-board[contenteditable="true"]:focus {
+        outline: 2px solid #696cff;
+        border-radius: 4px;
+        padding: 2px 5px;
+    }
+
+    .kanban-drag {
+        padding: 10px;
+        flex-grow: 1;
+        min-height: 400px;
+    }
+
+    .kanban-item {
+        background: #fff;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        cursor: grab;
+        transition: all 0.2s ease;
+        border: 1px solid #e0e0e0;
+    }
+
+    .kanban-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+
+    .kanban-item:active {
+        cursor: grabbing;
+    }
+
+    .kanban-item.is-moving {
+        opacity: 0.5;
+        transform: rotate(3deg);
+    }
+
+    .kanban-text {
+        font-size: 14px;
+        color: #4a5568;
+        line-height: 1.5;
+        display: block;
+        margin: 10px 0;
+    }
+
+    .item-badges {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    .bg-label-success { background: #d1fae5; color: #059669; }
+    .bg-label-danger { background: #fee2e2; color: #dc2626; }
+    .bg-label-info { background: #dbeafe; color: #2563eb; }
+    .bg-label-warning { background: #fef3c7; color: #d97706; }
+    .bg-label-primary { background: #e0e7ff; color: #4f46e5; }
+    .bg-label-secondary { background: #f3f4f6; color: #6b7280; }
+
+    .avatar-group {
+        display: flex;
+    }
+
+    .avatar-group .avatar {
+        margin-left: -8px;
+        border: 2px solid #fff;
+    }
+
+    .avatar-group .avatar:first-child {
+        margin-left: 0;
+    }
+
+    .avatar-xs {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    .avatar-xs img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .kanban-add-board-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: #fff;
+        border: 2px dashed #cbd5e0;
+        border-radius: 8px;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.2s ease;
+    }
+
+    .kanban-add-board-btn:hover {
+        border-color: #696cff;
+        color: #696cff;
+        background: #f0f0ff;
+    }
+
+    .task-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .task-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: #718096;
+    }
+
+    .due-date-badge {
+        background: #fff3cd;
+        color: #856404;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .form-control:focus {
+        border-color: #696cff;
+        box-shadow: 0 0 0 3px rgba(105, 108, 255, 0.15);
+    }
+
+    .quill-editor {
+        min-height: 150px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+    }
+
+    .activity-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .activity-content {
+        flex-grow: 1;
+    }
+
+    .activity-text {
+        font-size: 13px;
+        color: #4a5568;
+        margin-bottom: 4px;
+    }
+
+    .activity-time {
+        font-size: 11px;
+        color: #a0aec0;
+    }
+
+    .select2-container {
+        width: 100% !important;
+    }
+
+    .member-select {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        min-height: 50px;
+    }
+
+    .member-chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: #f0f0ff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+
+    .member-chip img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+
+    .member-chip .remove-member {
+        cursor: pointer;
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    .offcanvas-body {
+        overflow-y: auto;
+    }
+
+    .tab-content {
+        padding: 0;
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: #64748b;
+        padding: 12px 20px;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #696cff;
+        border-bottom: 2px solid #696cff;
+        background: transparent;
+    }
+
+    .offcanvas-footer {
+        border-top: 1px solid #e2e8f0;
+        padding: 15px 20px;
+        background: #fff;
+    }
+</style>
 {% endblock head %}
+
 {% block content %}
 <div class="container-xxl flex-grow-1 container-p-y">
-
-  <div class="app-kanban">
-    <!-- Add new board -->
-    <div class="row">
-      <div class="col-12">
-
-      </div>
-    </div>
-
-    <!-- Kanban Wrapper -->
-    <div class="kanban-wrapper ps ps--active-x"><div class="kanban-container" style="width: 1096px;"><div data-id="board-in-progress" data-order="1" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board" contenteditable="true">In Progress</div>
-  <div class="dropdown">
-      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      </i>
-      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
-          <a class="dropdown-item delete-board" href="javascript:void(0)">
-              <i class="icon-base bx bx-trash icon-xs me-1"></i>
-              <span class="align-middle">Delete</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-rename icon-xs me-1"></i>
-              <span class="align-middle">Rename</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-archive icon-xs me-1"></i>
-              <span class="align-middle">Archive</span>
-          </a>
-      </div>
-  </div>
-<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="in-progress-1" data-comments="12" data-badge-text="UX" data-badge="success" data-due-date="5 April" data-attachments="4" data-assigned="12.png,5.png" data-members="Bruce,Clark">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-success">UX</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-<span class="kanban-text">Research FAQ page UX</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">4</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>12</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Bruce" data-bs-original-title="Bruce">
-                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Clark" data-bs-original-title="Clark">
-                <img src="../../assets/img/avatars/5.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div><div class="kanban-item" data-eid="in-progress-2" data-comments="8" data-badge-text="Code Review" data-badge="danger" data-attachments="2" data-due-date="10 April" data-assigned="3.png,8.png" data-members="Helena,Iris">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-danger">Code Review</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-<span class="kanban-text">Review Javascript code</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">2</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>8</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Helena" data-bs-original-title="Helena">
-                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Iris" data-bs-original-title="Iris">
-                <img src="../../assets/img/avatars/8.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div></main><footer></footer></div><div data-id="board-in-review" data-order="2" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">In Review</div>
-  <div class="dropdown">
-      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      </i>
-      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
-          <a class="dropdown-item delete-board" href="javascript:void(0)">
-              <i class="icon-base bx bx-trash icon-xs me-1"></i>
-              <span class="align-middle">Delete</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-rename icon-xs me-1"></i>
-              <span class="align-middle">Rename</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-archive icon-xs me-1"></i>
-              <span class="align-middle">Archive</span>
-          </a>
-      </div>
-  </div>
-<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="in-review-1" data-comments="17" data-badge-text="Dashboard" data-badge="info" data-due-date="8 April" data-attachments="8" data-assigned="11.png,6.png" data-members="Laurel,Harley">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-info">Dashboard</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-<span class="kanban-text">Review completed Apps</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">8</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>17</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Laurel" data-bs-original-title="Laurel">
-                <img src="../../assets/img/avatars/11.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Harley" data-bs-original-title="Harley">
-                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div><div class="kanban-item" data-eid="in-review-2" data-comments="18" data-badge-text="Images" data-image="3.png" data-badge="warning" data-due-date="2 April" data-attachments="10" data-assigned="9.png,2.png,3.png,12.png" data-members="Jordan,Dianna,Vinnie,Lasa">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-warning">Images</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-
-              <img class="img-fluid rounded mb-2" src="../../assets/img/elements/3.png">
-          <span class="kanban-text">Find new images for pages</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">10</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>18</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Jordan" data-bs-original-title="Jordan">
-                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Dianna" data-bs-original-title="Dianna">
-                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Vinnie" data-bs-original-title="Vinnie">
-                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Lasa" data-bs-original-title="Lasa">
-                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div></main><footer></footer></div><div data-id="board-done" data-order="3" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">Done</div>
-  <div class="dropdown">
-      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      </i>
-      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
-          <a class="dropdown-item delete-board" href="javascript:void(0)">
-              <i class="icon-base bx bx-trash icon-xs me-1"></i>
-              <span class="align-middle">Delete</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-rename icon-xs me-1"></i>
-              <span class="align-middle">Rename</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-archive icon-xs me-1"></i>
-              <span class="align-middle">Archive</span>
-          </a>
-      </div>
-  </div>
-<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="done-1" data-comments="4" data-badge-text="App" data-badge="secondary" data-due-date="7 April" data-attachments="1" data-assigned="2.png,9.png,10.png" data-members="Kara,Nyssa,Darcey">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-secondary">App</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-<span class="kanban-text">Forms &amp; Tables section</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">1</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>4</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Kara" data-bs-original-title="Kara">
-                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Nyssa" data-bs-original-title="Nyssa">
-                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Darcey" data-bs-original-title="Darcey">
-                <img src="../../assets/img/avatars/10.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div><div class="kanban-item" data-eid="done-2" data-comments="21" data-badge-text="Charts &amp; Maps" data-badge="primary" data-due-date="7 April" data-attachments="6" data-assigned="1.png" data-members="Sarah">
-<div class="d-flex justify-content-between flex-wrap align-items-center mb-2">
-    <div class="item-badges">
-        <div class="badge bg-label-primary">Charts &amp; Maps</div>
-    </div>
-
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-
-</div>
-<span class="kanban-text">Completed Charts &amp; Maps</span>
-<div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
-    <div class="d-flex">
-        <span class="d-flex align-items-center me-2">
-            <i class="icon-base bx bx-paperclip me-1"></i>
-            <span class="attachments">6</span>
-        </span>
-        <span class="d-flex align-items-center ms-2">
-            <i class="icon-base bx bx-chat me-1"></i>
-            <span>21</span>
-        </span>
-    </div>
-    <div class="avatar-group d-flex align-items-center assigned-avatar">
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Sarah" data-bs-original-title="Sarah">
-                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle pull-up">
-            </div>
-
-    </div>
-</div>
-</div></main><footer></footer></div><div data-id="123" data-order="5" class="kanban-board" style="width: 250px; margin-left: 12px; margin-right: 12px;"><header class="kanban-board-header"><div class="kanban-title-board">123</div>
-  <div class="dropdown">
-      <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded cursor-pointer" id="board-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      </i>
-      <div class="dropdown-menu dropdown-menu-end" aria-labelledby="board-dropdown">
-          <a class="dropdown-item delete-board" href="javascript:void(0)">
-              <i class="icon-base bx bx-trash icon-xs me-1"></i>
-              <span class="align-middle">Delete</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-rename icon-xs me-1"></i>
-              <span class="align-middle">Rename</span>
-          </a>
-          <a class="dropdown-item" href="javascript:void(0)">
-              <i class="icon-base bx bx-archive icon-xs me-1"></i>
-              <span class="align-middle">Archive</span>
-          </a>
-      </div>
-  </div>
-<button class="kanban-title-button btn btn-default">+ Add New Item</button></header><main class="kanban-drag"><div class="kanban-item" data-eid="123-1">
-<div class="dropdown kanban-tasks-item-dropdown">
-    <i class="dropdown-toggle icon-base bx bx-dots-vertical-rounded" id="kanban-tasks-item-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    </i>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="kanban-tasks-item-dropdown">
-        <a class="dropdown-item" href="javascript:void(0)">Copy task link</a>
-        <a class="dropdown-item" href="javascript:void(0)">Duplicate task</a>
-        <a class="dropdown-item delete-task" href="javascript:void(0)">Delete</a>
-    </div>
-</div>
-<span class="kanban-text">1231313</span></div></main><footer></footer></div><form class="kanban-add-new-board">
-          <label class="kanban-add-board-btn" for="kanban-add-board-input">
-            <i class="icon-base bx bx-plus"></i>
-            <span class="align-middle">Add new</span>
-          </label>
-          <input type="text" class="form-control w-px-250 kanban-add-board-input mb-4 d-none" placeholder="Add Board Title" id="kanban-add-board-input" required="">
-          <div class="mb-4 kanban-add-board-input d-none">
-            <button class="btn btn-primary btn-sm me-3">Add</button>
-            <button type="button" class="btn btn-label-secondary btn-sm kanban-add-board-cancel-btn">Cancel</button>
-          </div>
-        </form></div><div class="ps__rail-x" style="left: 0px; bottom: 0px; width: 736px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 430px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
-
-    <!-- Edit Task/Task & Activities -->
-    <div class="offcanvas offcanvas-end kanban-update-item-sidebar">
-      <div class="offcanvas-header border-bottom">
-        <h5 class="offcanvas-title">Edit Task</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body pt-0">
-        <div class="nav-align-top">
-          <ul class="nav nav-tabs mb-6 rounded-0" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-update" aria-selected="true" role="tab">
-                <i class="icon-base bx bx-edit icon-sm me-1_5"></i>
-                <span class="align-middle">Edit</span>
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-activity" aria-selected="false" tabindex="-1" role="tab">
-                <i class="icon-base bx bx-bar-chart icon-sm me-1_5"></i>
-                <span class="align-middle">Activity</span>
-              </button>
-            </li>
-          </ul>
-        </div>
-        <div class="tab-content p-0">
-          <!-- Update item/tasks -->
-          <div class="tab-pane fade show active" id="tab-update" role="tabpanel">
-            <form>
-              <div class="mb-8 mt-2">
-                <label class="form-label" for="title">Title</label>
-                <input type="text" id="title" class="form-control" placeholder="Enter Title">
-              </div>
-              <div class="mb-8">
-                <label class="form-label" for="due-date">Due Date</label>
-                <div class="flatpickr-wrapper"><input type="hidden" id="due-date" class="form-control flatpickr-input" placeholder="Enter Due Date"><input class="form-control form-control input" placeholder="Enter Due Date" tabindex="0" type="text" readonly="readonly"><div class="flatpickr-calendar animate static" tabindex="-1"><div class="flatpickr-months"><span class="flatpickr-prev-month"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17 17"><g></g><path d="M5.207 8.471l7.146 7.147-0.707 0.707-7.853-7.854 7.854-7.853 0.707 0.707-7.147 7.146z"></path></svg></span><div class="flatpickr-month"><div class="flatpickr-current-month"><span class="cur-month">March </span><div class="numInputWrapper"><input class="numInput cur-year" type="number" tabindex="-1" aria-label="Year"><span class="arrowUp"></span><span class="arrowDown"></span></div></div></div><span class="flatpickr-next-month"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 17 17"><g></g><path d="M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z"></path></svg></span></div><div class="flatpickr-innerContainer"><div class="flatpickr-rContainer"><div class="flatpickr-weekdays"><div class="flatpickr-weekdaycontainer">
-      <span class="flatpickr-weekday">
-        Sun</span><span class="flatpickr-weekday">Mon</span><span class="flatpickr-weekday">Tue</span><span class="flatpickr-weekday">Wed</span><span class="flatpickr-weekday">Thu</span><span class="flatpickr-weekday">Fri</span><span class="flatpickr-weekday">Sat
-      </span>
-      </div></div><div class="flatpickr-days" tabindex="-1"><div class="dayContainer"><span class="flatpickr-day" aria-label="March 1, 2026" tabindex="-1">1</span><span class="flatpickr-day" aria-label="March 2, 2026" tabindex="-1">2</span><span class="flatpickr-day today" aria-label="March 3, 2026" aria-current="date" tabindex="-1">3</span><span class="flatpickr-day" aria-label="March 4, 2026" tabindex="-1">4</span><span class="flatpickr-day" aria-label="March 5, 2026" tabindex="-1">5</span><span class="flatpickr-day" aria-label="March 6, 2026" tabindex="-1">6</span><span class="flatpickr-day" aria-label="March 7, 2026" tabindex="-1">7</span><span class="flatpickr-day" aria-label="March 8, 2026" tabindex="-1">8</span><span class="flatpickr-day" aria-label="March 9, 2026" tabindex="-1">9</span><span class="flatpickr-day" aria-label="March 10, 2026" tabindex="-1">10</span><span class="flatpickr-day" aria-label="March 11, 2026" tabindex="-1">11</span><span class="flatpickr-day" aria-label="March 12, 2026" tabindex="-1">12</span><span class="flatpickr-day" aria-label="March 13, 2026" tabindex="-1">13</span><span class="flatpickr-day" aria-label="March 14, 2026" tabindex="-1">14</span><span class="flatpickr-day" aria-label="March 15, 2026" tabindex="-1">15</span><span class="flatpickr-day" aria-label="March 16, 2026" tabindex="-1">16</span><span class="flatpickr-day" aria-label="March 17, 2026" tabindex="-1">17</span><span class="flatpickr-day" aria-label="March 18, 2026" tabindex="-1">18</span><span class="flatpickr-day" aria-label="March 19, 2026" tabindex="-1">19</span><span class="flatpickr-day" aria-label="March 20, 2026" tabindex="-1">20</span><span class="flatpickr-day" aria-label="March 21, 2026" tabindex="-1">21</span><span class="flatpickr-day" aria-label="March 22, 2026" tabindex="-1">22</span><span class="flatpickr-day" aria-label="March 23, 2026" tabindex="-1">23</span><span class="flatpickr-day" aria-label="March 24, 2026" tabindex="-1">24</span><span class="flatpickr-day" aria-label="March 25, 2026" tabindex="-1">25</span><span class="flatpickr-day" aria-label="March 26, 2026" tabindex="-1">26</span><span class="flatpickr-day" aria-label="March 27, 2026" tabindex="-1">27</span><span class="flatpickr-day" aria-label="March 28, 2026" tabindex="-1">28</span><span class="flatpickr-day" aria-label="March 29, 2026" tabindex="-1">29</span><span class="flatpickr-day" aria-label="March 30, 2026" tabindex="-1">30</span><span class="flatpickr-day" aria-label="March 31, 2026" tabindex="-1">31</span><span class="flatpickr-day nextMonthDay" aria-label="April 1, 2026" tabindex="-1">1</span><span class="flatpickr-day nextMonthDay" aria-label="April 2, 2026" tabindex="-1">2</span><span class="flatpickr-day nextMonthDay" aria-label="April 3, 2026" tabindex="-1">3</span><span class="flatpickr-day nextMonthDay" aria-label="April 4, 2026" tabindex="-1">4</span><span class="flatpickr-day nextMonthDay" aria-label="April 5, 2026" tabindex="-1">5</span><span class="flatpickr-day nextMonthDay" aria-label="April 6, 2026" tabindex="-1">6</span><span class="flatpickr-day nextMonthDay" aria-label="April 7, 2026" tabindex="-1">7</span><span class="flatpickr-day nextMonthDay" aria-label="April 8, 2026" tabindex="-1">8</span><span class="flatpickr-day nextMonthDay" aria-label="April 9, 2026" tabindex="-1">9</span><span class="flatpickr-day nextMonthDay" aria-label="April 10, 2026" tabindex="-1">10</span><span class="flatpickr-day nextMonthDay" aria-label="April 11, 2026" tabindex="-1">11</span></div></div></div></div></div></div>
-              </div>
-              <div class="mb-8">
-                <label class="form-label" for="label"> Label</label>
-                <div class="position-relative"><select class="select2 select2-label form-select select2-hidden-accessible" id="label" data-select2-id="label" tabindex="-1" aria-hidden="true">
-                  <option data-color="bg-label-success" value="UX" data-select2-id="2">UX</option>
-                  <option data-color="bg-label-warning" value="Images" data-select2-id="3">Images</option>
-                  <option data-color="bg-label-info" value="Info">Info</option>
-                  <option data-color="bg-label-danger" value="Code Review">Code Review</option>
-                  <option data-color="bg-label-secondary" value="App">App</option>
-                  <option data-color="bg-label-primary" value="Charts &amp; Maps">Charts &amp; Maps</option>
-                </select><span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="1" style="width: 352px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-disabled="false" aria-labelledby="select2-label-container"><span class="select2-selection__rendered" id="select2-label-container" role="textbox" aria-readonly="true" title="Images"><div class="badge bg-label-warning"> Images</div></span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span></div>
-              </div>
-              <div class="mb-6">
-                <label class="form-label">Assigned</label>
-                <div class="assigned d-flex flex-wrap">
-            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Jordan" data-bs-original-title="Jordan">
-                <img src="../../assets/img/avatars/9.png" alt="Avatar" class="rounded-circle">
-            </div>
-
-            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Dianna" data-bs-original-title="Dianna">
-                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle">
-            </div>
-
-            <div class="avatar avatar-xs me-1 w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Vinnie" data-bs-original-title="Vinnie">
-                <img src="../../assets/img/avatars/3.png" alt="Avatar" class="rounded-circle">
-            </div>
-
-            <div class="avatar avatar-xs w-px-26 h-px-26" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Lasa" data-bs-original-title="Lasa">
-                <img src="../../assets/img/avatars/12.png" alt="Avatar" class="rounded-circle">
-            </div>
-
-        <div class="avatar avatar-xs ms-1">
-            <span class="avatar-initial rounded-circle bg-label-secondary">
-                <i class="icon-base bx bx-plus icon-xs text-heading"></i>
-            </span>
-        </div></div>
-              </div>
-              <div class="mb-6">
-                <label class="form-label" for="attachments">Attachments</label>
-                <div>
-                  <input type="file" class="form-control" id="attachments">
+    <div class="app-kanban">
+        <!-- Page Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">📋 Канбан-доска задач</h4>
+                        <p class="text-muted mb-0">Управление задачами и целями сотрудников</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#createBoardOffcanvas">
+                            <i class="bx bx-plus me-1"></i> Новая доска
+                        </button>
+                        <button class="btn btn-outline-secondary ms-2" data-bs-toggle="offcanvas" data-bs-target="#createTaskOffcanvas">
+                            <i class="bx bx-task me-1"></i> Новая задача
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <div class="mb-6">
-                <label class="form-label">Comment</label>
-                <div class="comment-editor border-bottom-0 ql-container ql-snow"><div class="ql-editor ql-blank" contenteditable="true" data-placeholder="Write a Comment..."><p><br></p></div><div class="ql-tooltip ql-hidden"><a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a><input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a class="ql-remove"></a></div></div>
-                <div class="d-flex justify-content-end">
-                  <div class="comment-toolbar ql-toolbar ql-snow">
-                    <span class="ql-formats me-0">
-                      <button class="ql-bold" type="button"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M5,4H9.5A2.5,2.5,0,0,1,12,6.5v0A2.5,2.5,0,0,1,9.5,9H5A0,0,0,0,1,5,9V4A0,0,0,0,1,5,4Z"></path><path class="ql-stroke" d="M5,9h5.5A2.5,2.5,0,0,1,13,11.5v0A2.5,2.5,0,0,1,10.5,14H5a0,0,0,0,1,0,0V9A0,0,0,0,1,5,9Z"></path></svg></button>
-                      <button class="ql-italic" type="button"><svg viewBox="0 0 18 18"><line class="ql-stroke" x1="7" x2="13" y1="4" y2="4"></line><line class="ql-stroke" x1="5" x2="11" y1="14" y2="14"></line><line class="ql-stroke" x1="8" x2="10" y1="14" y2="4"></line></svg></button>
-                      <button class="ql-underline" type="button"><svg viewBox="0 0 18 18"><path class="ql-stroke" d="M5,3V9a4.012,4.012,0,0,0,4,4H9a4.012,4.012,0,0,0,4-4V3"></path><rect class="ql-fill" height="1" rx="0.5" ry="0.5" width="12" x="3" y="15"></rect></svg></button>
-                      <button class="ql-link" type="button"><svg viewBox="0 0 18 18"><line class="ql-stroke" x1="7" x2="11" y1="7" y2="11"></line><path class="ql-even ql-stroke" d="M8.9,4.577a3.476,3.476,0,0,1,.36,4.679A3.476,3.476,0,0,1,4.577,8.9C3.185,7.5,2.035,6.4,4.217,4.217S7.5,3.185,8.9,4.577Z"></path><path class="ql-even ql-stroke" d="M13.423,9.1a3.476,3.476,0,0,0-4.679-.36,3.476,3.476,0,0,0,.36,4.679c1.392,1.392,2.5,2.542,4.679.36S14.815,10.5,13.423,9.1Z"></path></svg></button>
-                      <button class="ql-image" type="button"><svg viewBox="0 0 18 18"><rect class="ql-stroke" height="10" width="12" x="3" y="4"></rect><circle class="ql-fill" cx="6" cy="7" r="1"></circle><polyline class="ql-even ql-fill" points="5 12 5 11 7 9 8 10 11 7 13 9 13 12 5 12"></polyline></svg></button>
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <div class="d-flex flex-wrap">
-                  <button type="button" class="btn btn-primary me-4" data-bs-dismiss="offcanvas">Update</button>
-                  <button type="button" class="btn btn-label-danger" data-bs-dismiss="offcanvas">Delete</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <!-- Activities -->
-          <div class="tab-pane fade text-heading" id="tab-activity" role="tabpanel">
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-success rounded-circle">HJ</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Jordan</span> Left the board.</p>
-                <small class="text-body-secondary">Today 11:00 AM</small>
-              </div>
             </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Dianna</span> mentioned <span class="text-primary">@bruce</span> in a comment.</p>
-                <small class="text-body-secondary">Today 10:20 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/2.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Martian</span> added moved Charts &amp; Maps task to the done board.</p>
-                <small class="text-body-secondary">Today 10:00 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Barry</span> Commented on App review task.</p>
-                <small class="text-body-secondary">Today 8:32 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-dark rounded-circle">BW</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Bruce</span> was assigned task of code review.</p>
-                <small class="text-body-secondary">Today 8:30 PM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-danger rounded-circle">CK</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Clark</span> assigned task UX Research to <span class="text-primary">@martian</span></p>
-                <small class="text-body-secondary">Today 8:00 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/4.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Ray</span> Added moved <span>Forms &amp; Tables</span> task from in progress to done.</p>
-                <small class="text-body-secondary">Today 7:45 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/1.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Barry</span> Complete all the tasks assigned to him.</p>
-                <small class="text-body-secondary">Today 7:17 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-success rounded-circle">HJ</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Jordan</span> added task to update new images.</p>
-                <small class="text-body-secondary">Today 7:00 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <img src="../../assets/img/avatars/6.png" alt="Avatar" class="rounded-circle">
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Dianna</span> moved task <span>FAQ UX</span> from in progress to done board.</p>
-                <small class="text-body-secondary">Today 7:00 AM</small>
-              </div>
-            </div>
-            <div class="media mb-4 d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-danger rounded-circle">CK</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Clark</span> added new board with name <span>Done</span>.</p>
-                <small class="text-body-secondary">Yesterday 3:00 PM</small>
-              </div>
-            </div>
-            <div class="media d-flex align-items-center">
-              <div class="avatar me-3 flex-shrink-0">
-                <span class="avatar-initial bg-label-dark rounded-circle">BW</span>
-              </div>
-              <div class="media-body">
-                <p class="mb-0"><span>Bruce</span> added new task in progress board.</p>
-                <small class="text-body-secondary">Yesterday 12:00 PM</small>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+
+        <!-- Kanban Wrapper -->
+        <div class="kanban-wrapper">
+            <div class="kanban-container" id="kanban-board">
+                <!-- Board 1: Нужно сделать -->
+                <div class="kanban-board" data-board-id="board-todo">
+                    <div class="kanban-board-header">
+                        <div class="kanban-title-board" contenteditable="true" data-board-id="board-todo">
+                            📝 Нужно сделать
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="editBoard('board-todo')">
+                                    <i class="bx bx-edit me-1"></i>Переименовать
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="confirmDeleteBoard('board-todo')">
+                                    <i class="bx bx-trash me-1"></i>Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kanban-drag" data-board-id="board-todo">
+                        <!-- Task 1 -->
+                        <div class="kanban-item" data-task-id="task-1" data-board-id="board-todo">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="item-badges">
+                                    <span class="badge bg-label-success">UX</span>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('board-todo', 'task-1')">
+                                            <i class="bx bx-edit me-1"></i>Редактировать
+                                        </a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('task-1')">
+                                            <i class="bx bx-detail me-1"></i>Детали
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('task-1')">
+                                            <i class="bx bx-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="kanban-text">Разработать дизайн главной страницы</span>
+                            <div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>15 Апреля</div>
+                            <div class="task-meta">
+                                <div class="d-flex gap-3">
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-paperclip"></i>
+                                        <span>3</span>
+                                    </span>
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-chat"></i>
+                                        <span>5</span>
+                                    </span>
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/1.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/2.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task 2 -->
+                        <div class="kanban-item" data-task-id="task-2" data-board-id="board-todo">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="item-badges">
+                                    <span class="badge bg-label-danger">Code Review</span>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('board-todo', 'task-2')">
+                                            <i class="bx bx-edit me-1"></i>Редактировать
+                                        </a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('task-2')">
+                                            <i class="bx bx-detail me-1"></i>Детали
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('task-2')">
+                                            <i class="bx bx-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="kanban-text">Настроить базу данных</span>
+                            <div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>20 Апреля</div>
+                            <div class="task-meta">
+                                <div class="d-flex gap-3">
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-paperclip"></i>
+                                        <span>1</span>
+                                    </span>
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-chat"></i>
+                                        <span>2</span>
+                                    </span>
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/3.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <button class="btn btn-sm btn-outline-primary w-100" onclick="openTaskOffcanvas('board-todo')">
+                            <i class="bx bx-plus me-1"></i>Добавить задачу
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Board 2: В работе -->
+                <div class="kanban-board" data-board-id="board-progress">
+                    <div class="kanban-board-header">
+                        <div class="kanban-title-board" contenteditable="true" data-board-id="board-progress">
+                            🔄 В работе
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="editBoard('board-progress')">
+                                    <i class="bx bx-edit me-1"></i>Переименовать
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="confirmDeleteBoard('board-progress')">
+                                    <i class="bx bx-trash me-1"></i>Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kanban-drag" data-board-id="board-progress">
+                        <!-- Task 3 -->
+                        <div class="kanban-item" data-task-id="task-3" data-board-id="board-progress">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="item-badges">
+                                    <span class="badge bg-label-secondary">App</span>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('board-progress', 'task-3')">
+                                            <i class="bx bx-edit me-1"></i>Редактировать
+                                        </a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('task-3')">
+                                            <i class="bx bx-detail me-1"></i>Детали
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('task-3')">
+                                            <i class="bx bx-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="kanban-text">Интеграция API платежной системы</span>
+                            <div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>10 Апреля</div>
+                            <div class="task-meta">
+                                <div class="d-flex gap-3">
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-paperclip"></i>
+                                        <span>5</span>
+                                    </span>
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-chat"></i>
+                                        <span>12</span>
+                                    </span>
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/1.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/4.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/5.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <button class="btn btn-sm btn-outline-primary w-100" onclick="openTaskOffcanvas('board-progress')">
+                            <i class="bx bx-plus me-1"></i>Добавить задачу
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Board 3: На проверке -->
+                <div class="kanban-board" data-board-id="board-review">
+                    <div class="kanban-board-header">
+                        <div class="kanban-title-board" contenteditable="true" data-board-id="board-review">
+                            👀 На проверке
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="editBoard('board-review')">
+                                    <i class="bx bx-edit me-1"></i>Переименовать
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="confirmDeleteBoard('board-review')">
+                                    <i class="bx bx-trash me-1"></i>Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kanban-drag" data-board-id="board-review">
+                        <!-- Task 4 -->
+                        <div class="kanban-item" data-task-id="task-4" data-board-id="board-review">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="item-badges">
+                                    <span class="badge bg-label-info">Dashboard</span>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('board-review', 'task-4')">
+                                            <i class="bx bx-edit me-1"></i>Редактировать
+                                        </a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('task-4')">
+                                            <i class="bx bx-detail me-1"></i>Детали
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('task-4')">
+                                            <i class="bx bx-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="kanban-text">Тестирование модуля отчетности</span>
+                            <div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>5 Апреля</div>
+                            <div class="task-meta">
+                                <div class="d-flex gap-3">
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-paperclip"></i>
+                                        <span>2</span>
+                                    </span>
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-chat"></i>
+                                        <span>8</span>
+                                    </span>
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/2.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/3.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <button class="btn btn-sm btn-outline-primary w-100" onclick="openTaskOffcanvas('board-review')">
+                            <i class="bx bx-plus me-1"></i>Добавить задачу
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Board 4: Готово -->
+                <div class="kanban-board" data-board-id="board-done">
+                    <div class="kanban-board-header">
+                        <div class="kanban-title-board" contenteditable="true" data-board-id="board-done">
+                            ✅ Готово
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+                                <i class="bx bx-dots-vertical-rounded"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="editBoard('board-done')">
+                                    <i class="bx bx-edit me-1"></i>Переименовать
+                                </a>
+                                <a class="dropdown-item" href="javascript:void(0)" onclick="confirmDeleteBoard('board-done')">
+                                    <i class="bx bx-trash me-1"></i>Удалить
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kanban-drag" data-board-id="board-done">
+                        <!-- Task 5 -->
+                        <div class="kanban-item" data-task-id="task-5" data-board-id="board-done">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="item-badges">
+                                    <span class="badge bg-label-primary">Charts & Maps</span>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('board-done', 'task-5')">
+                                            <i class="bx bx-edit me-1"></i>Редактировать
+                                        </a>
+                                        <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('task-5')">
+                                            <i class="bx bx-detail me-1"></i>Детали
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('task-5')">
+                                            <i class="bx bx-trash me-1"></i>Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="kanban-text">Обновление документации</span>
+                            <div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>1 Апреля</div>
+                            <div class="task-meta">
+                                <div class="d-flex gap-3">
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-paperclip"></i>
+                                        <span>0</span>
+                                    </span>
+                                    <span class="task-meta-item">
+                                        <i class="bx bx-chat"></i>
+                                        <span>3</span>
+                                    </span>
+                                </div>
+                                <div class="avatar-group">
+                                    <div class="avatar avatar-xs">
+                                        <img src="../../assets/img/avatars/5.png" class="rounded-circle" alt="Member">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <button class="btn btn-sm btn-outline-primary w-100" onclick="openTaskOffcanvas('board-done')">
+                            <i class="bx bx-plus me-1"></i>Добавить задачу
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Board Button -->
+            <div class="mt-3">
+                <label class="kanban-add-board-btn" data-bs-toggle="offcanvas" data-bs-target="#createBoardOffcanvas">
+                    <i class="bx bx-plus"></i>
+                    <span>Добавить доску</span>
+                </label>
+            </div>
+        </div>
     </div>
-  </div>
-        </div>
-{% endblock content %}
-{% block demo %}
-<!-- Кнопка -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
 </div>
-<!-- Offcanvas справа на всю ширину -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+
+<!-- Offcanvas: Create New Board -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createBoardOffcanvas" aria-labelledby="createBoardOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-primary">
+                    <i class="bx bx-columns"></i>
+                </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="createBoardOffcanvasLabel">Создать новую доску</h5>
+                <small class="text-muted">Добавьте новую колонку для задач</small>
+            </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
-    <div class="offcanvas-body">
-        <!-- Ваш контент -->
-        <p>Контент попапа на всю ширину справа...</p>
-    </div>
-    <div class="offcanvas-footer p-3 border-top">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить</button>
+
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div class="p-4 flex-grow-1" style="overflow-y: auto;">
+            <form id="createBoardForm">
+                <div class="mb-4">
+                    <label class="form-label" for="boardTitle">Название доски *</label>
+                    <input type="text" class="form-control" id="boardTitle" placeholder="Например: В работе, На проверке, Готово" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label" for="boardColor">Цвет доски</label>
+                    <select class="form-select" id="boardColor">
+                        <option value="default">По умолчанию</option>
+                        <option value="success">Зеленый</option>
+                        <option value="danger">Красный</option>
+                        <option value="info">Синий</option>
+                        <option value="warning">Желтый</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="offcanvas-footer d-flex gap-2">
+            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Отмена</button>
+            <button type="button" class="btn btn-primary" id="saveBoardBtn">
+                <i class="bx bx-check me-1"></i>Создать
+            </button>
+        </div>
     </div>
 </div>
-{% endblock demo %}
+
+<!-- Offcanvas: Create/Edit Task -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="createTaskOffcanvas" aria-labelledby="createTaskOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-success">
+                    <i class="bx bx-task"></i>
+                </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="createTaskOffcanvasLabel">Создать задачу</h5>
+                <small class="text-muted" id="taskOffcanvasSubtitle">Добавление новой задачи</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div class="p-4 flex-grow-1" style="overflow-y: auto;">
+            <form id="createTaskForm">
+                <input type="hidden" id="taskId">
+                <input type="hidden" id="taskBoardId">
+
+                <div class="mb-4">
+                    <label class="form-label" for="taskTitle">Название задачи *</label>
+                    <input type="text" class="form-control" id="taskTitle" placeholder="Введите название задачи" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" for="taskLabel">Метка</label>
+                    <select class="form-select select2-label" id="taskLabel">
+                        <option value="UX" data-color="bg-label-success">UX</option>
+                        <option value="Code Review" data-color="bg-label-danger">Code Review</option>
+                        <option value="Dashboard" data-color="bg-label-info">Dashboard</option>
+                        <option value="Images" data-color="bg-label-warning">Images</option>
+                        <option value="App" data-color="bg-label-secondary">App</option>
+                        <option value="Charts & Maps" data-color="bg-label-primary">Charts & Maps</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" for="taskDueDate">Срок выполнения</label>
+                    <input type="text" class="form-control flatpickr-input" id="taskDueDate" placeholder="Выберите дату">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Исполнители</label>
+                    <div class="member-select" id="memberSelect">
+                        <div class="member-chip" data-member="1">
+                            <img src="../../assets/img/avatars/1.png" alt="User">
+                            <span>Александр</span>
+                            <span class="remove-member" onclick="removeMember(1)">&times;</span>
+                        </div>
+                        <div class="member-chip" data-member="2">
+                            <img src="../../assets/img/avatars/2.png" alt="User">
+                            <span>Мария</span>
+                            <span class="remove-member" onclick="removeMember(2)">&times;</span>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#selectMembersOffcanvas">
+                            <i class="bx bx-plus"></i> Добавить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" for="taskDescription">Описание</label>
+                    <div id="taskDescription" class="quill-editor"></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Вложения</label>
+                    <input type="file" class="form-control" id="taskAttachments" multiple>
+                    <small class="text-muted">Можно выбрать несколько файлов</small>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" for="taskPriority">Приоритет</label>
+                    <select class="form-select" id="taskPriority">
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
+                        <option value="urgent">Срочный</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="offcanvas-footer d-flex gap-2 justify-content-between">
+            <button type="button" class="btn btn-label-danger" id="deleteTaskBtn" style="display: none;">
+                <i class="bx bx-trash me-1"></i>Удалить
+            </button>
+            <div class="ms-auto d-flex gap-2">
+                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Отмена</button>
+                <button type="button" class="btn btn-primary" id="saveTaskBtn">
+                    <i class="bx bx-check me-1"></i><span id="saveTaskText">Создать</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas: Select Members -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="selectMembersOffcanvas" aria-labelledby="selectMembersOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-info">
+                    <i class="bx bx-user"></i>
+                </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="selectMembersOffcanvasLabel">Выбрать исполнителей</h5>
+                <small class="text-muted">Добавьте участников задачи</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div class="p-4 flex-grow-1" style="overflow-y: auto;">
+            <div class="list-group">
+                <label class="list-group-item d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" value="1">
+                    <img src="../../assets/img/avatars/1.png" class="rounded-circle me-2" width="30" height="30">
+                    <span>Александр Петров</span>
+                </label>
+                <label class="list-group-item d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" value="2">
+                    <img src="../../assets/img/avatars/2.png" class="rounded-circle me-2" width="30" height="30">
+                    <span>Мария Иванова</span>
+                </label>
+                <label class="list-group-item d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" value="3">
+                    <img src="../../assets/img/avatars/3.png" class="rounded-circle me-2" width="30" height="30">
+                    <span>Дмитрий Сидоров</span>
+                </label>
+                <label class="list-group-item d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" value="4">
+                    <img src="../../assets/img/avatars/4.png" class="rounded-circle me-2" width="30" height="30">
+                    <span>Елена Козлова</span>
+                </label>
+                <label class="list-group-item d-flex align-items-center">
+                    <input class="form-check-input me-3" type="checkbox" value="5">
+                    <img src="../../assets/img/avatars/5.png" class="rounded-circle me-2" width="30" height="30">
+                    <span>Андрей Николаев</span>
+                </label>
+            </div>
+        </div>
+        <div class="offcanvas-footer">
+            <button type="button" class="btn btn-primary w-100" id="confirmMembersBtn">
+                <i class="bx bx-check me-1"></i>Применить
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas: Task Details -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="taskDetailsOffcanvas" aria-labelledby="taskDetailsOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-warning">
+                    <i class="bx bx-detail"></i>
+                </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="taskDetailsOffcanvasLabel">Детали задачи</h5>
+                <small class="text-muted" id="taskDetailsSubtitle">Просмотр информации</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <ul class="nav nav-tabs px-4 pt-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#taskInfo" role="tab">
+                    <i class="bx bx-info-circle me-1"></i>Информация
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#taskActivity" role="tab">
+                    <i class="bx bx-history me-1"></i>Активность
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#taskComments" role="tab">
+                    <i class="bx bx-comment me-1"></i>Комментарии
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content p-4 flex-grow-1" style="overflow-y: auto;">
+            <div class="tab-pane fade show active" id="taskInfo" role="tabpanel">
+                <div class="task-detail-content">
+                    <h5 id="detailTaskTitle" class="mb-3"></h5>
+                    <div class="mb-3">
+                        <span class="badge" id="detailTaskLabel"></span>
+                        <span class="due-date-badge ms-2" id="detailTaskDueDate"></span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Описание:</strong>
+                        <p id="detailTaskDescription" class="text-muted"></p>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Исполнители:</strong>
+                        <div class="avatar-group mt-2" id="detailTaskMembers"></div>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Вложения:</strong>
+                        <div class="mt-2" id="detailTaskAttachments"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="taskActivity" role="tabpanel">
+                <div class="activity-list" id="taskActivityList">
+                    <div class="activity-item">
+                        <div class="avatar activity-avatar">
+                            <img src="../../assets/img/avatars/1.png" class="rounded-circle" alt="User">
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text"><strong>Александр</strong> создал задачу</p>
+                            <p class="activity-time">Сегодня, 10:30</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="avatar activity-avatar">
+                            <img src="../../assets/img/avatars/2.png" class="rounded-circle" alt="User">
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text"><strong>Мария</strong> добавила комментарий</p>
+                            <p class="activity-time">Сегодня, 11:15</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="avatar activity-avatar">
+                            <span class="avatar-initial bg-label-success rounded-circle">С</span>
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text"><strong>Система</strong> изменила статус</p>
+                            <p class="activity-time">Вчера, 16:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="taskComments" role="tabpanel">
+                <div class="comments-list mb-3" id="taskCommentsList">
+                    <div class="activity-item">
+                        <div class="avatar activity-avatar">
+                            <img src="../../assets/img/avatars/1.png" class="rounded-circle" alt="User">
+                        </div>
+                        <div class="activity-content">
+                            <p class="activity-text">Нужно закончить до конца недели</p>
+                            <p class="activity-time">Сегодня, 12:00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-input">
+                    <textarea class="form-control mb-2" rows="3" placeholder="Напишите комментарий..."></textarea>
+                    <button class="btn btn-primary btn-sm w-100">
+                        <i class="bx bx-send me-1"></i>Отправить
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="offcanvas-footer d-flex gap-2">
+            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
+            <button type="button" class="btn btn-primary ms-auto" id="editTaskFromDetailBtn">
+                <i class="bx bx-edit me-1"></i>Редактировать
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas: Confirm Delete -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="deleteConfirmOffcanvas" aria-labelledby="deleteConfirmOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom bg-label-danger">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+                <span class="avatar-initial rounded bg-label-danger">
+                    <i class="bx bx-error-circle"></i>
+                </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0 text-danger" id="deleteConfirmOffcanvasLabel">Подтверждение удаления</h5>
+                <small class="text-muted">Это действие нельзя отменить</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+
+    <div class="offcanvas-body p-0 d-flex flex-column">
+        <div class="p-4 flex-grow-1">
+            <p class="mb-0">Вы уверены, что хотите удалить эту <span id="deleteItemType" class="fw-bold">задачу</span>?</p>
+            <p class="text-muted small mt-2">Все данные будут безвозвратно удалены.</p>
+        </div>
+        <div class="offcanvas-footer d-flex gap-2">
+            <button type="button" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Отмена</button>
+            <button type="button" class="btn btn-danger ms-auto" id="confirmDeleteBtn">
+                <i class="bx bx-trash me-1"></i>Удалить
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
 {% block extra_js_top %}{% endblock extra_js_top %}
+
+{% block extra_js_bottom %}
 <!-- Core JS -->
-<!-- build:js assets/vendor/js/theme.js  -->
 <script src="{% static 'moderation/libs/moment/moment.js' %}"></script>
 <script src="{% static 'moderation/libs/flatpickr/flatpickr.js' %}"></script>
+<script src="{% static 'moderation/libs/flatpickr/ru.js' %}"></script>
 <script src="{% static 'moderation/libs/select2/select2.js' %}"></script>
-<script src="{% static 'moderation/libs/jkanban/jkanban.js' %}"></script>
-<script src="{% static 'moderation/libs/quill/katex.js' %}"></script>
 <script src="{% static 'moderation/libs/quill/quill.js' %}"></script>
-<script src="{% static 'moderation/app-kanban.js' %}"></script>
 
-{% block extra_js_bottom %}{% endblock extra_js_bottom %}
+<!-- Kanban Application JS -->
+<script>
+// Инициализация переменных
+let quillEditor = null;
+let selectedTaskId = null;
+let selectedBoardId = null;
+let deleteItemId = null;
+let deleteItemType = 'task';
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    initOffcanvas();
+    initFormHandlers();
+    initQuillEditor();
+    initFlatpickr();
+    initSelect2();
+    initDragAndDrop();
+});
+
+// Инициализация offcanvas
+function initOffcanvas() {
+    // Создание доски
+    document.getElementById('saveBoardBtn').addEventListener('click', createNewBoard);
+
+    // Создание/редактирование задачи
+    document.getElementById('saveTaskBtn').addEventListener('click', saveTask);
+    document.getElementById('deleteTaskBtn').addEventListener('click', function() {
+        if (selectedTaskId) {
+            deleteItemType = 'task';
+            deleteItemId = selectedTaskId;
+            document.getElementById('deleteItemType').textContent = 'задачу';
+            new bootstrap.Offcanvas(document.getElementById('deleteConfirmOffcanvas')).show();
+        }
+    });
+
+    // Подтверждение удаления
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (deleteItemType === 'task') {
+            deleteTask(deleteItemId);
+        } else if (deleteItemType === 'board') {
+            deleteBoard(deleteItemId);
+        }
+        bootstrap.Offcanvas.getInstance(document.getElementById('deleteConfirmOffcanvas')).hide();
+    });
+
+    // Выбор исполнителей
+    document.getElementById('confirmMembersBtn').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('#selectMembersOffcanvas input[type="checkbox"]:checked');
+        const memberSelect = document.getElementById('memberSelect');
+
+        checkboxes.forEach(cb => {
+            const memberId = cb.value;
+            if (!memberSelect.querySelector(`[data-member="${memberId}"]`)) {
+                const memberData = getMemberData(memberId);
+                const chip = document.createElement('div');
+                chip.className = 'member-chip';
+                chip.setAttribute('data-member', memberId);
+                chip.innerHTML = `
+                    <img src="../../assets/img/avatars/${memberId}.png" alt="User">
+                    <span>${memberData.name}</span>
+                    <span class="remove-member" onclick="removeMember(${memberId})">&times;</span>
+                `;
+                memberSelect.insertBefore(chip, memberSelect.lastElementChild);
+            }
+        });
+
+        bootstrap.Offcanvas.getInstance(document.getElementById('selectMembersOffcanvas')).hide();
+    });
+
+    // Редактирование из деталей
+    document.getElementById('editTaskFromDetailBtn').addEventListener('click', function() {
+        bootstrap.Offcanvas.getInstance(document.getElementById('taskDetailsOffcanvas')).hide();
+        if (selectedTaskId) {
+            const taskElement = document.querySelector(`[data-task-id="${selectedTaskId}"]`);
+            if (taskElement) {
+                const boardId = taskElement.getAttribute('data-board-id');
+                openTaskOffcanvas(boardId, selectedTaskId);
+            }
+        }
+    });
+}
+
+// Инициализация обработчиков форм
+function initFormHandlers() {
+    // Очистка форм при закрытии offcanvas
+    const offcanvases = document.querySelectorAll('.offcanvas');
+    offcanvases.forEach(offcanvas => {
+        offcanvas.addEventListener('hidden.bs.offcanvas', function() {
+            if (this.id === 'createTaskOffcanvas') {
+                document.getElementById('createTaskForm').reset();
+                document.getElementById('taskId').value = '';
+                document.getElementById('taskBoardId').value = '';
+                document.getElementById('createTaskOffcanvasLabel').textContent = 'Создать задачу';
+                document.getElementById('taskOffcanvasSubtitle').textContent = 'Добавление новой задачи';
+                document.getElementById('saveTaskText').textContent = 'Создать';
+                document.getElementById('deleteTaskBtn').style.display = 'none';
+                selectedTaskId = null;
+            } else if (this.id === 'createBoardOffcanvas') {
+                document.getElementById('createBoardForm').reset();
+            }
+        });
+    });
+}
+
+// Инициализация Quill редактора
+function initQuillEditor() {
+    quillEditor = new Quill('#taskDescription', {
+        theme: 'snow',
+        placeholder: 'Введите описание задачи...',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        }
+    });
+}
+
+// Инициализация Flatpickr (выбор даты)
+function initFlatpickr() {
+    flatpickr('#taskDueDate', {
+        locale: 'ru',
+        dateFormat: 'd.m.Y',
+        minDate: 'today',
+        allowInput: true
+    });
+}
+
+// Инициализация Select2
+function initSelect2() {
+    $('.select2-label').select2({
+        dropdownParent: $('#createTaskOffcanvas'),
+        templateResult: function(data) {
+            if (!data.id) return data.text;
+            const color = $(data.element).data('color');
+            return $('<span class="badge ' + color + '">' + data.text + '</span>');
+        },
+        templateSelection: function(data) {
+            if (!data.id) return data.text;
+            const color = $(data.element).data('color');
+            return $('<span class="badge ' + color + '">' + data.text + '</span>');
+        }
+    });
+}
+
+// Инициализация Drag-and-Drop
+function initDragAndDrop() {
+    const items = document.querySelectorAll('.kanban-item');
+    const dragZones = document.querySelectorAll('.kanban-drag');
+
+    items.forEach(item => {
+        item.setAttribute('draggable', 'true');
+
+        item.addEventListener('dragstart', function(e) {
+            this.classList.add('is-moving');
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                taskId: this.getAttribute('data-task-id'),
+                fromBoard: this.getAttribute('data-board-id')
+            }));
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        item.addEventListener('dragend', function() {
+            this.classList.remove('is-moving');
+        });
+    });
+
+    dragZones.forEach(zone => {
+        zone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            this.style.background = '#e8f4ff';
+        });
+
+        zone.addEventListener('dragleave', function() {
+            this.style.background = '';
+        });
+
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.background = '';
+
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const taskId = data.taskId;
+            const fromBoard = data.fromBoard;
+            const toBoard = this.getAttribute('data-board-id');
+
+            if (fromBoard !== toBoard) {
+                moveTask(taskId, fromBoard, toBoard);
+            }
+        });
+    });
+}
+
+// Перемещение задачи между досками
+function moveTask(taskId, fromBoardId, toBoardId) {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+    const toZone = document.querySelector(`.kanban-drag[data-board-id="${toBoardId}"]`);
+
+    if (taskElement && toZone) {
+        taskElement.setAttribute('data-board-id', toBoardId);
+        toZone.appendChild(taskElement);
+        showToast('Задача перемещена успешно!', 'success');
+    }
+}
+
+// Создание новой доски
+function createNewBoard() {
+    const title = document.getElementById('boardTitle').value.trim();
+    const color = document.getElementById('boardColor').value;
+
+    if (!title) {
+        showToast('Введите название доски', 'warning');
+        return;
+    }
+
+    const boardId = 'board-' + Date.now();
+    const kanbanContainer = document.getElementById('kanban-board');
+
+    const boardHTML = `
+        <div class="kanban-board" data-board-id="${boardId}">
+            <div class="kanban-board-header">
+                <div class="kanban-title-board" contenteditable="true" data-board-id="${boardId}">
+                    ${title}
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="editBoard('${boardId}')">
+                            <i class="bx bx-edit me-1"></i>Переименовать
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0)" onclick="confirmDeleteBoard('${boardId}')">
+                            <i class="bx bx-trash me-1"></i>Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="kanban-drag" data-board-id="${boardId}"></div>
+            <div class="p-3">
+                <button class="btn btn-sm btn-outline-primary w-100" onclick="openTaskOffcanvas('${boardId}')">
+                    <i class="bx bx-plus me-1"></i>Добавить задачу
+                </button>
+            </div>
+        </div>
+    `;
+
+    kanbanContainer.insertAdjacentHTML('beforeend', boardHTML);
+
+    bootstrap.Offcanvas.getInstance(document.getElementById('createBoardOffcanvas')).hide();
+    showToast('Доска создана успешно!', 'success');
+}
+
+// Открытие offcanvas задачи
+function openTaskOffcanvas(boardId, taskId = null) {
+    selectedBoardId = boardId;
+    selectedTaskId = taskId;
+
+    const offcanvas = document.getElementById('createTaskOffcanvas');
+    const offcanvasTitle = document.getElementById('createTaskOffcanvasLabel');
+    const offcanvasSubtitle = document.getElementById('taskOffcanvasSubtitle');
+    const saveText = document.getElementById('saveTaskText');
+    const deleteBtn = document.getElementById('deleteTaskBtn');
+
+    if (taskId) {
+        // Редактирование существующей задачи
+        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+        if (taskElement) {
+            offcanvasTitle.textContent = 'Редактировать задачу';
+            offcanvasSubtitle.textContent = 'Изменение параметров задачи';
+            saveText.textContent = 'Сохранить';
+            deleteBtn.style.display = 'block';
+
+            document.getElementById('taskId').value = taskId;
+            document.getElementById('taskBoardId').value = boardId;
+            document.getElementById('taskTitle').value = taskElement.querySelector('.kanban-text').textContent;
+
+            const labelBadge = taskElement.querySelector('.badge');
+            if (labelBadge) {
+                document.getElementById('taskLabel').value = labelBadge.textContent.trim();
+            }
+
+            const dueDateBadge = taskElement.querySelector('.due-date-badge');
+            if (dueDateBadge) {
+                document.getElementById('taskDueDate').value = dueDateBadge.textContent.replace('📅', '').trim();
+            }
+        }
+    } else {
+        // Создание новой задачи
+        offcanvasTitle.textContent = 'Создать задачу';
+        offcanvasSubtitle.textContent = 'Добавление новой задачи';
+        saveText.textContent = 'Создать';
+        deleteBtn.style.display = 'none';
+
+        document.getElementById('taskId').value = '';
+        document.getElementById('taskBoardId').value = boardId;
+        document.getElementById('taskTitle').value = '';
+        document.getElementById('taskLabel').value = 'UX';
+        document.getElementById('taskDueDate').value = '';
+        quillEditor.root.innerHTML = '';
+    }
+
+    new bootstrap.Offcanvas(offcanvas).show();
+}
+
+// Сохранение задачи
+function saveTask() {
+    const taskId = document.getElementById('taskId').value;
+    const boardId = document.getElementById('taskBoardId').value || selectedBoardId;
+    const title = document.getElementById('taskTitle').value.trim();
+    const label = document.getElementById('taskLabel').value;
+    const dueDate = document.getElementById('taskDueDate').value;
+    const description = quillEditor.root.innerHTML;
+
+    if (!title) {
+        showToast('Введите название задачи', 'warning');
+        return;
+    }
+
+    // Получение метки цвета
+    const labelSelect = document.getElementById('taskLabel');
+    const selectedOption = labelSelect.options[labelSelect.selectedIndex];
+    const labelColor = selectedOption.getAttribute('data-color') || 'bg-label-secondary';
+
+    // Получение исполнителей
+    const memberChips = document.querySelectorAll('#memberSelect .member-chip');
+    let membersHTML = '';
+    memberChips.forEach((chip, index) => {
+        const img = chip.querySelector('img');
+        if (img) {
+            membersHTML += `
+                <div class="avatar avatar-xs" style="margin-left: ${index > 0 ? '-8px' : '0'}; border: 2px solid #fff;">
+                    <img src="${img.src}" class="rounded-circle" alt="Member">
+                </div>
+            `;
+        }
+    });
+
+    if (taskId) {
+        // Обновление существующей задачи
+        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+        if (taskElement) {
+            taskElement.querySelector('.kanban-text').textContent = title;
+
+            const badge = taskElement.querySelector('.badge');
+            if (badge) {
+                badge.className = `badge ${labelColor}`;
+                badge.textContent = label;
+            }
+
+            const dueDateBadge = taskElement.querySelector('.due-date-badge');
+            if (dueDateBadge) {
+                dueDateBadge.innerHTML = `<i class="bx bx-calendar me-1"></i>${dueDate}`;
+            }
+
+            const avatarGroup = taskElement.querySelector('.avatar-group');
+            if (avatarGroup) {
+                avatarGroup.innerHTML = membersHTML;
+            }
+
+            showToast('Задача обновлена успешно!', 'success');
+        }
+    } else {
+        // Создание новой задачи
+        const newTaskId = 'task-' + Date.now();
+        const dragZone = document.querySelector(`.kanban-drag[data-board-id="${boardId}"]`);
+
+        const taskHTML = `
+            <div class="kanban-item" data-task-id="${newTaskId}" data-board-id="${boardId}">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="item-badges">
+                        <span class="badge ${labelColor}">${label}</span>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-icon p-0" data-bs-toggle="dropdown">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="openTaskOffcanvas('${boardId}', '${newTaskId}')">
+                                <i class="bx bx-edit me-1"></i>Редактировать
+                            </a>
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="viewTaskDetails('${newTaskId}')">
+                                <i class="bx bx-detail me-1"></i>Детали
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteTask('${newTaskId}')">
+                                <i class="bx bx-trash me-1"></i>Удалить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <span class="kanban-text">${title}</span>
+                ${dueDate ? `<div class="due-date-badge mb-2"><i class="bx bx-calendar me-1"></i>${dueDate}</div>` : ''}
+                <div class="task-meta">
+                    <div class="d-flex gap-3">
+                        <span class="task-meta-item">
+                            <i class="bx bx-paperclip"></i>
+                            <span>0</span>
+                        </span>
+                        <span class="task-meta-item">
+                            <i class="bx bx-chat"></i>
+                            <span>0</span>
+                        </span>
+                    </div>
+                    <div class="avatar-group">
+                        ${membersHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        dragZone.insertAdjacentHTML('beforeend', taskHTML);
+        showToast('Задача создана успешно!', 'success');
+    }
+
+    bootstrap.Offcanvas.getInstance(document.getElementById('createTaskOffcanvas')).hide();
+}
+
+// Просмотр деталей задачи
+function viewTaskDetails(taskId) {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (!taskElement) return;
+
+    selectedTaskId = taskId;
+
+    document.getElementById('detailTaskTitle').textContent = taskElement.querySelector('.kanban-text').textContent;
+
+    const badge = taskElement.querySelector('.badge');
+    const detailLabel = document.getElementById('detailTaskLabel');
+    if (badge) {
+        detailLabel.className = badge.className;
+        detailLabel.textContent = badge.textContent;
+    }
+
+    const dueDateBadge = taskElement.querySelector('.due-date-badge');
+    document.getElementById('detailTaskDueDate').textContent = dueDateBadge ? dueDateBadge.textContent.replace('📅', '').trim() : 'Нет срока';
+
+    document.getElementById('detailTaskDescription').textContent = 'Описание задачи...';
+
+    // Исполнители
+    const avatarGroup = taskElement.querySelector('.avatar-group');
+    document.getElementById('detailTaskMembers').innerHTML = avatarGroup ? avatarGroup.innerHTML : '';
+
+    // Вложения
+    const attachments = taskElement.querySelector('.task-meta-item .bx-paperclip + span');
+    document.getElementById('detailTaskAttachments').innerHTML = attachments && attachments.textContent !== '0'
+        ? `<span class="badge bg-label-secondary"><i class="bx bx-paperclip me-1"></i>${attachments.textContent} файлов</span>`
+        : '<span class="text-muted">Нет вложений</span>';
+
+    new bootstrap.Offcanvas(document.getElementById('taskDetailsOffcanvas')).show();
+}
+
+// Удаление задачи
+function confirmDeleteTask(taskId) {
+    deleteItemType = 'task';
+    deleteItemId = taskId;
+    document.getElementById('deleteItemType').textContent = 'задачу';
+    new bootstrap.Offcanvas(document.getElementById('deleteConfirmOffcanvas')).show();
+}
+
+function deleteTask(taskId) {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (taskElement) {
+        taskElement.remove();
+        showToast('Задача удалена успешно!', 'success');
+    }
+}
+
+// Удаление доски
+function confirmDeleteBoard(boardId) {
+    deleteItemType = 'board';
+    deleteItemId = boardId;
+    document.getElementById('deleteItemType').textContent = 'доску';
+    new bootstrap.Offcanvas(document.getElementById('deleteConfirmOffcanvas')).show();
+}
+
+function deleteBoard(boardId) {
+    const boardElement = document.querySelector(`.kanban-board[data-board-id="${boardId}"]`);
+    if (boardElement) {
+        boardElement.remove();
+        showToast('Доска удалена успешно!', 'success');
+    }
+}
+
+// Редактирование доски
+function editBoard(boardId) {
+    const boardElement = document.querySelector(`.kanban-board[data-board-id="${boardId}"]`);
+    if (boardElement) {
+        const titleElement = boardElement.querySelector('.kanban-title-board');
+        titleElement.focus();
+    }
+}
+
+// Вспомогательные функции
+function getMemberData(memberId) {
+    const members = {
+        '1': { name: 'Александр', avatar: '1.png' },
+        '2': { name: 'Мария', avatar: '2.png' },
+        '3': { name: 'Дмитрий', avatar: '3.png' },
+        '4': { name: 'Елена', avatar: '4.png' },
+        '5': { name: 'Андрей', avatar: '5.png' }
+    };
+    return members[memberId] || { name: 'Пользователь', avatar: '1.png' };
+}
+
+function removeMember(memberId) {
+    const chip = document.querySelector(`.member-chip[data-member="${memberId}"]`);
+    if (chip) {
+        chip.remove();
+    }
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'danger'} alert-dismissible fade show`;
+    toast.style.position = 'fixed';
+    toast.style.top = '20px';
+    toast.style.right = '20px';
+    toast.style.zIndex = '9999';
+    toast.style.minWidth = '300px';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+{% endblock extra_js_bottom %}

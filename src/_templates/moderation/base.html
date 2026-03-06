@@ -531,11 +531,6 @@
                 <div>Товары</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'technological_maps_list' %}active{% endif %}">
-              <a href="{% url 'storage:technological_maps_list' %}" class="menu-link">
-                <div>Технологические карты</div>
-              </a>
-            </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'warehouse_operations_list' %}active{% endif %}">
               <a href="{% url 'storage:warehouse_operations_list' %}" class="menu-link">
                 <div>Складские операции</div>
@@ -546,24 +541,9 @@
                 <div>Инвентаризация</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'price_tags_print_list' %}active{% endif %}">
-              <a href="{% url 'storage:price_tags_print_list' %}" class="menu-link">
-                <div>Печать товарных ценников</div>
-              </a>
-            </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'storage_reports_list' %}active{% endif %}">
               <a href="{% url 'storage:storage_reports_list' %}" class="menu-link">
                 <div>Отчеты</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'storage_settings_list' %}active{% endif %}">
-              <a href="{% url 'storage:storage_settings_list' %}" class="menu-link">
-                <div>Настройки</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'product_labeling_list' %}active{% endif %}">
-              <a href="{% url 'storage:product_labeling_list' %}" class="menu-link">
-                <div>Маркировка товаров</div>
               </a>
             </li>
           </ul>

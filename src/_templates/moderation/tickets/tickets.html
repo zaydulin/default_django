@@ -1,5 +1,6 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
+
 {% block title %}{% endblock title %}
 {% block description %}{% endblock description %}
 {% block propertytitle %}{% endblock propertytitle %}
@@ -7,6 +8,7 @@
 {% block propertyimage %}{% endblock propertyimage %}
 {% block keywords %}{% endblock keywords %}
 {% block head %}{% endblock head %}
+
 {% block content %}
 <div class="flex-grow-1 container-p-y container-fluid">
     <!-- Виджеты статистики -->
@@ -105,14 +107,13 @@
           <i class="icon-base bx bx-trash icon-sm"></i>
         </button>
 
-        <!-- 4. Выпадающий список: Поиск по (Открывает модальное окно) -->
+        <!-- 4. Выпадающий список: Поиск по -->
         <div class="dropdown">
           <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="icon-base bx bx-search me-1"></i>
             <span class="d-none d-sm-inline">Поиск по...</span>
           </button>
           <ul class="dropdown-menu">
-            <!-- Добавил onclick для открытия модалки -->
             <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('ID')">ID</a></li>
             <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Тема')">Тема</a></li>
             <li><a class="dropdown-item" href="javascript:void(0);" onclick="openSearchModal('Дата')">Дата</a></li>
@@ -150,12 +151,31 @@
             <td><strong>#1024</strong></td>
             <td>Вопрос по оплате заказа</td>
             <td>20.10.2023</td>
-            <td><span class="badge bg-label-primary">Новый</span></td>
+            <td>
+                <!-- 🔹 Выпадающий список для изменения статуса -->
+                <div class="dropdown">
+                    <span class="badge bg-label-primary dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                          style="cursor: pointer;">
+                        Новый
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1024', 'new', 'Новый', 'bg-label-primary')">Новый</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1024', 'in_progress', 'В работе', 'bg-label-warning')">В работе</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1024', 'completed', 'Завершен', 'bg-label-success')">Завершен</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1024', 'pending', 'Ожидает', 'bg-label-secondary')">Ожидает</a></li>
+                    </ul>
+                </div>
+            </td>
             <td>
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"
+                     onclick="openChatOffcanvas('#1024', 'Вопрос по оплате заказа')">
+                     <i class="icon-base bx bx-chat me-1"></i> Перейти в чат
+                  </a>
                   <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
                 </div>
               </div>
@@ -171,12 +191,30 @@
             <td><strong>#1025</strong></td>
             <td>Проблема с доставкой</td>
             <td>21.10.2023</td>
-            <td><span class="badge bg-label-warning">В работе</span></td>
+            <td>
+                <div class="dropdown">
+                    <span class="badge bg-label-warning dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                          style="cursor: pointer;">
+                        В работе
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1025', 'new', 'Новый', 'bg-label-primary')">Новый</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1025', 'in_progress', 'В работе', 'bg-label-warning')">В работе</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1025', 'completed', 'Завершен', 'bg-label-success')">Завершен</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1025', 'pending', 'Ожидает', 'bg-label-secondary')">Ожидает</a></li>
+                    </ul>
+                </div>
+            </td>
             <td>
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"
+                     onclick="openChatOffcanvas('#1025', 'Проблема с доставкой')">
+                     <i class="icon-base bx bx-chat me-1"></i> Перейти в чат
+                  </a>
                   <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
                 </div>
               </div>
@@ -192,12 +230,30 @@
             <td><strong>#1026</strong></td>
             <td>Возврат товара</td>
             <td>22.10.2023</td>
-            <td><span class="badge bg-label-success">Завершен</span></td>
+            <td>
+                <div class="dropdown">
+                    <span class="badge bg-label-success dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                          style="cursor: pointer;">
+                        Завершен
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1026', 'new', 'Новый', 'bg-label-primary')">Новый</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1026', 'in_progress', 'В работе', 'bg-label-warning')">В работе</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1026', 'completed', 'Завершен', 'bg-label-success')">Завершен</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1026', 'pending', 'Ожидает', 'bg-label-secondary')">Ожидает</a></li>
+                    </ul>
+                </div>
+            </td>
             <td>
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"
+                     onclick="openChatOffcanvas('#1026', 'Возврат товара')">
+                     <i class="icon-base bx bx-chat me-1"></i> Перейти в чат
+                  </a>
                   <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
                 </div>
               </div>
@@ -213,12 +269,30 @@
             <td><strong>#1027</strong></td>
             <td>Консультация по тарифам</td>
             <td>23.10.2023</td>
-            <td><span class="badge bg-label-secondary">Ожидает</span></td>
+            <td>
+                <div class="dropdown">
+                    <span class="badge bg-label-secondary dropdown-toggle"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                          style="cursor: pointer;">
+                        Ожидает
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1027', 'new', 'Новый', 'bg-label-primary')">Новый</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1027', 'in_progress', 'В работе', 'bg-label-warning')">В работе</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1027', 'completed', 'Завершен', 'bg-label-success')">Завершен</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0);" onclick="changeStatus(this, '#1027', 'pending', 'Ожидает', 'bg-label-secondary')">Ожидает</a></li>
+                    </ul>
+                </div>
+            </td>
             <td>
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="icon-base bx bx-dots-vertical-rounded"></i></button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-chat me-1"></i> Перейти в чат</a>
+                  <a class="dropdown-item" href="javascript:void(0);"
+                     onclick="openChatOffcanvas('#1027', 'Консультация по тарифам')">
+                     <i class="icon-base bx bx-chat me-1"></i> Перейти в чат
+                  </a>
                   <a class="dropdown-item" href="javascript:void(0);"><i class="icon-base bx bx-trash me-1"></i> Удалить</a>
                 </div>
               </div>
@@ -245,7 +319,7 @@
 {% endblock content %}
 
 {% block demo %}
-<!-- Модальное окно поиска (Универсальное) -->
+<!-- Модальное окно поиска -->
 <div class="modal fade" id="searchModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -256,7 +330,6 @@
       <div class="modal-body">
         <form>
           <div class="mb-3">
-            <!-- Label будет меняться через JS -->
             <label for="searchInput" class="form-label" id="searchLabel">Поиск по...</label>
             <input type="text" class="form-control" id="searchInput" placeholder="Введите значение...">
           </div>
@@ -270,18 +343,66 @@
   </div>
 </div>
 
-<!-- Кнопка создания (Offcanvas) -->
-<div class="buy-now">
-    <a href="#" class="btn btn-danger btn-buy-now" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Создать</a>
+<!-- Offcanvas для чата -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="chatOffcanvas" aria-labelledby="chatOffcanvasLabel" style="width: 100%; max-width: 450px;">
+    <div class="offcanvas-header border-bottom">
+        <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-3">
+              <span class="avatar-initial rounded bg-label-primary">
+                <i class="icon-base bx bx-user"></i>
+              </span>
+            </div>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="chatOffcanvasLabel">Чат</h5>
+                <small class="text-muted" id="chatOffcanvasTicketId">ID: ...</small>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+
+    <div class="offcanvas-body p-0 d-flex flex-column" style="height: calc(100vh - 140px);">
+        <div class="chat-messages p-3 flex-grow-1" id="chatMessages" style="overflow-y: auto; background: #f9f9f9;">
+          <div class="d-flex mb-3">
+            <div class="avatar avatar-xs me-2">
+              <span class="avatar-initial rounded bg-label-secondary">U</span>
+            </div>
+            <div class="chat-message bg-white border rounded-3 p-2 px-3 max-w-75">
+              <small class="text-muted d-block mb-1">Клиент • 14:30</small>
+              <p class="mb-0">Здравствуйте, у меня вопрос по оплате заказа...</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3 justify-content-end">
+            <div class="chat-message bg-primary text-white rounded-3 p-2 px-3 max-w-75">
+              <small class="opacity-75 d-block mb-1">Вы • 14:32</small>
+              <p class="mb-0">Добрый день! Чем могу помочь?</p>
+            </div>
+            <div class="avatar avatar-xs ms-2">
+              <span class="avatar-initial rounded bg-label-primary">Я</span>
+            </div>
+          </div>
+        </div>
+        <div class="border-top p-3 bg-white">
+            <form class="w-100" onsubmit="sendChatMessage(event)">
+              <div class="input-group">
+                <input type="text" class="form-control" id="chatOffcanvasInput" placeholder="Введите сообщение..." autocomplete="off">
+                <button class="btn btn-primary" type="submit">
+                  <i class="icon-base bx bx-send"></i>
+                </button>
+              </div>
+            </form>
+        </div>
+    </div>
 </div>
-<!-- Offcanvas справа -->
+
+
+<!-- Offcanvas создания обращения -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 100%; max-width: 450px;">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание</h5>
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Создание обращения</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
     <div class="offcanvas-body">
-        <p>Контент попапа на всю ширину справа...</p>
+        <p>Форма создания нового обращения...</p>
     </div>
     <div class="offcanvas-footer p-3 border-top">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">Закрыть</button>
@@ -289,22 +410,153 @@
     </div>
 </div>
 
-<!-- Скрипт для работы модального окна поиска -->
+<!-- Стили для чата -->
+<style>
+    .chat-messages .max-w-75 { max-width: 75%; }
+    .chat-messages .bg-white { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .chat-messages .bg-primary { box-shadow: 0 2px 4px rgba(13,110,253,0.15); }
+    .chat-messages .avatar-xs { width: 28px !important; height: 28px !important; font-size: 0.75rem; }
+    .chat-messages::-webkit-scrollbar { width: 6px; }
+    .chat-messages::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+    .chat-messages { scrollbar-width: thin; scrollbar-color: #c1c1c1 #f1f1f1; }
+
+    @media (max-width: 576px) {
+        #chatOffcanvas { max-width: 100% !important; }
+        .chat-messages .max-w-75 { max-width: 85%; }
+    }
+</style>
+
+<!-- Скрипты -->
 <script>
+    // Открытие модального окна поиска
     function openSearchModal(fieldType) {
-        // Находим элементы модального окна
         var modalLabel = document.getElementById('searchLabel');
         var modalTitle = document.getElementById('searchModalLabel');
         var searchInput = document.getElementById('searchInput');
-        
-        // Устанавливаем текст в зависимости от выбора
+
         modalTitle.innerText = 'Поиск';
         modalLabel.innerText = 'Поиск по: ' + fieldType;
         searchInput.placeholder = 'Введите ' + fieldType.toLowerCase();
-        
-        // Открываем модалку через Bootstrap API
+
         var searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
         searchModal.show();
     }
+
+    // 🔹 Изменение статуса тикета (через выпадающий список)
+    function changeStatus(element, ticketId, statusKey, statusText, statusClass) {
+        // Находим родительский dropdown и badge внутри него
+        var dropdown = element.closest('.dropdown');
+        var badge = dropdown.querySelector('.badge');
+
+        // Удаляем все классы статусов
+        badge.classList.remove('bg-label-primary', 'bg-label-warning', 'bg-label-success', 'bg-label-secondary');
+
+        // Добавляем новый класс
+        badge.classList.add(statusClass);
+
+        // Обновляем текст
+        badge.innerText = statusText;
+
+        // 🔹 Здесь можно добавить отправку на сервер (Django AJAX):
+        /*
+        fetch('/api/tickets/' + ticketId.replace('#', '') + '/status/', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ status: statusKey })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Статус обновлён:', data);
+            showNotification('Статус успешно изменён!', 'success');
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            showNotification('Ошибка при изменении статуса', 'danger');
+        });
+        */
+
+        // Показать уведомление об успехе
+        showNotification('Статус успешно изменён!', 'success');
+    }
+
+    // 🔹 Уведомление об успехе/ошибке
+    function showNotification(message, type) {
+        var notification = document.createElement('div');
+        notification.className = 'alert alert-' + (type === 'success' ? 'success' : 'danger') + ' alert-dismissible fade show position-fixed';
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+        `;
+        document.body.appendChild(notification);
+
+        setTimeout(function() {
+            notification.remove();
+        }, 3000);
+    }
+
+    // Открытие чата в offcanvas
+    function openChatOffcanvas(ticketId, ticketTitle) {
+        document.getElementById('chatOffcanvasLabel').innerText = ticketTitle;
+        document.getElementById('chatOffcanvasTicketId').innerText = 'ID: ' + ticketId;
+
+        var chatOffcanvas = new bootstrap.Offcanvas(document.getElementById('chatOffcanvas'));
+        chatOffcanvas.show();
+
+        document.getElementById('chatOffcanvas').addEventListener('shown.bs.offcanvas', function () {
+            document.getElementById('chatOffcanvasInput').focus();
+            var container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }, {once: true});
+    }
+
+    // Отправка сообщения в чате
+    function sendChatMessage(event) {
+        event.preventDefault();
+        var input = document.getElementById('chatOffcanvasInput');
+        var message = input.value.trim();
+        var messagesContainer = document.getElementById('chatMessages');
+
+        if (!message) return;
+
+        var now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        var msgHtml = `
+          <div class="d-flex mb-3 justify-content-end">
+            <div class="chat-message bg-primary text-white rounded-3 p-2 px-3 max-w-75">
+              <small class="opacity-75 d-block mb-1">Вы • ${now}</small>
+              <p class="mb-0">${message}</p>
+            </div>
+            <div class="avatar avatar-xs ms-2">
+              <span class="avatar-initial rounded bg-label-primary">Я</span>
+            </div>
+          </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', msgHtml);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        input.value = '';
+    }
+
+    // Хелпер для CSRF-токена
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
+</div>
 {% endblock demo %}
