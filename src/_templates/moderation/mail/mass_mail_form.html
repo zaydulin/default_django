@@ -1,0 +1,267 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}{% if is_edit %}Редактирование{% else %}Создание{% endif %} кампании - {{ block.super }}{% endblock %}
+
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<style>
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #7367f0;
+    }
+    .recipient-area {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    .email-count {
+        font-size: 0.9rem;
+        color: #28a745;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'mail:message_list' %}">Сообщения</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'mail:mass_mail_list' %}">Массовая рассылка</a>
+            </li>
+            <li class="breadcrumb-item active">
+                {% if is_edit %}Редактирование{% else %}Создание{% endif %} кампании
+            </li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                {% if is_edit %}Редактирование кампании{% else %}Создание новой кампании{% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="campaignForm">
+                {% csrf_token %}
+
+                <!-- Основная информация -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="icon-base bx bx-info-circle me-2"></i>Основная информация
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Название кампании <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" required
+                                   value="{{ campaign.name|default:'' }}"
+                                   placeholder="Например: Весенняя рассылка 2024">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Приоритет</label>
+                            <select class="form-select" name="priority">
+                                <option value="low" {% if campaign.priority == 'low' %}selected{% endif %}>Низкий</option>
+                                <option value="normal" {% if campaign.priority == 'normal' or not campaign %}selected{% endif %}>Средний</option>
+                                <option value="high" {% if campaign.priority == 'high' %}selected{% endif %}>Высокий</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">SMTP настройки</label>
+                           <!-- Вместо итерации по smtp_settings -->
+<select class="form-select" name="use_smtp">
+    <option value="">-- Использовать стандартные --</option>
+    {% if smtp_settings %}
+        {# Проверяем, является ли smtp_settings списком/queryset #}
+        {% if smtp_settings.all %}
+            {% for smtp in smtp_settings.all %}
+            <option value="{{ smtp.id }}" {% if campaign.use_smtp_settings.id == smtp.id %}selected{% endif %}>
+                {{ smtp.email_host }} ({{ smtp.default_from_email }})
+            </option>
+            {% endfor %}
+        {% else %}
+            {# Если это один объект #}
+            <option value="{{ smtp_settings.id }}" {% if campaign.use_smtp_settings.id == smtp_settings.id %}selected{% endif %}>
+                {{ smtp_settings.email_host }} ({{ smtp_settings.default_from_email }})
+            </option>
+        {% endif %}
+    {% endif %}
+</select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Письмо -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="icon-base bx bx-envelope me-2"></i>Письмо
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Тема письма <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="subject" required
+                                   value="{{ campaign.subject|default:'' }}"
+                                   placeholder="Тема письма">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Отправитель (Email)</label>
+                            <input type="email" class="form-control" name="from_email"
+                                   value="{{ campaign.from_email|default:user.email }}"
+                                   placeholder="email@example.com">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Имя отправителя</label>
+                            <input type="text" class="form-control" name="from_name"
+                                   value="{{ campaign.from_name|default:user.get_full_name|default:user.username }}"
+                                   placeholder="Имя отправителя">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Текст письма <span class="text-danger">*</span></label>
+                        <textarea class="form-control summernote" name="message" rows="10" required>{{ campaign.message|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Получатели -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="icon-base bx bx-group me-2"></i>Получатели
+                    </div>
+
+                    <div class="recipient-area">
+                        <div class="mb-3">
+                            <label class="form-label">Email получателей</label>
+                            <textarea class="form-control" name="recipient_emails" rows="5"
+                                      placeholder="email1@example.com&#10;email2@example.com, email3@example.com&#10;email4@example.com">{{ campaign.recipient_emails|default:'' }}</textarea>
+                            <div class="form-text">
+                                Введите email адреса через запятую или по одному в строке
+                            </div>
+                            <div class="email-count" id="emailCount"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Или загрузите файл со списком</label>
+                            <input type="file" class="form-control" name="recipient_file" accept=".txt,.csv">
+                            <div class="form-text">
+                                Поддерживаются текстовые файлы (.txt, .csv) с email адресами
+                            </div>
+                            {% if campaign.recipient_file %}
+                            <div class="mt-2">
+                                <small>Текущий файл: {{ campaign.recipient_file.name }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Планирование -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="icon-base bx bx-time me-2"></i>Планирование
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Запланировать отправку</label>
+                        <input type="datetime-local" class="form-control" name="scheduled_time"
+                               value="{{ campaign.scheduled_time|date:'Y-m-d\\TH:i'|default:'' }}">
+                        <div class="form-text">
+                            Если оставить пустым, рассылка будет запущена сразу после создания
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопки -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'mail:mass_mail_list' %}" class="btn btn-outline-secondary">
+                        <i class="icon-base bx bx-x me-1"></i>Отмена
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="icon-base bx bx-save me-1"></i>
+                        {% if is_edit %}Сохранить изменения{% else %}Создать кампанию{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Инициализация Summernote
+    $('.summernote').summernote({
+        height: 300,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'italic', 'clear']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ]
+    });
+
+    // Подсчет email адресов
+    function countEmails() {
+        var text = $('textarea[name="recipient_emails"]').val();
+        if (!text) {
+            $('#emailCount').text('');
+            return;
+        }
+
+        var emails = [];
+        var lines = text.split('\n');
+        lines.forEach(function(line) {
+            line.split(',').forEach(function(email) {
+                email = email.trim();
+                if (email && email.includes('@')) {
+                    emails.push(email);
+                }
+            });
+        });
+
+        // Убираем дубликаты
+        var uniqueEmails = [...new Set(emails)];
+
+        if (uniqueEmails.length > 0) {
+            $('#emailCount').text('Найдено email: ' + uniqueEmails.length);
+        } else {
+            $('#emailCount').text('');
+        }
+    }
+
+    $('textarea[name="recipient_emails"]').on('keyup change', countEmails);
+    countEmails();
+
+    // Предотвращение двойной отправки
+    $('#campaignForm').on('submit', function() {
+        $(this).find('button[type="submit"]').prop('disabled', true).html(
+            '<span class="spinner-border spinner-border-sm me-2"></span>Сохранение...'
+        );
+    });
+});
+</script>
+{% endblock %}

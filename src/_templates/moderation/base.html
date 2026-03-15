@@ -141,14 +141,24 @@
             <div>Почта</div>
           </a>
           <ul class="menu-sub">
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_mails_list' %}active{% endif %}">
-              <a href="{% url 'mail:moderation_mails_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'message_list' %}active{% endif %}">
+              <a href="{% url 'mail:message_list' %}" class="menu-link">
                 <div>Письма</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_mail_settings_list' %}active{% endif %}">
-              <a href="{% url 'mail:moderation_mail_settings_list' %}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.url_name == 'mail_settings' %}active{% endif %}">
+              <a href="{% url 'mail:mail_settings' %}" class="menu-link">
                 <div>Настройки</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'all_messages' %}active{% endif %}">
+              <a href="{% url 'mail:all_messages' %}" class="menu-link">
+                <div>Все письма</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'mass_mail_list' %}active{% endif %}">
+              <a href="{% url 'mail:mass_mail_list' %}" class="menu-link">
+                <div>Рассылка</div>
               </a>
             </li>
           </ul>

@@ -1,0 +1,267 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Массовая рассылка - {{ block.super }}{% endblock %}
+
+{% block head %}
+<style>
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .stat-item {
+        text-align: center;
+        padding: 15px;
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    .campaign-card {
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        transition: all 0.3s;
+        background: white;
+    }
+    .campaign-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .status-draft {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .status-scheduled {
+        background: #cce5ff;
+        color: #004085;
+    }
+    .status-sending {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    .status-sent {
+        background: #d4edda;
+        color: #155724;
+    }
+    .priority-high {
+        color: #dc3545;
+        font-weight: 600;
+    }
+    .priority-normal {
+        color: #28a745;
+    }
+    .priority-low {
+        color: #6c757d;
+    }
+    .progress-custom {
+        height: 6px;
+        border-radius: 3px;
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'mail:message_list' %}">Сообщения</a>
+            </li>
+            <li class="breadcrumb-item active">Массовая рассылка</li>
+        </ol>
+    </nav>
+
+    <!-- Статистика -->
+    <div class="stats-card">
+        <div class="row">
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ total_campaigns }}</div>
+                    <div class="stat-label">Всего кампаний</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ draft_campaigns }}</div>
+                    <div class="stat-label">Черновики</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ scheduled_campaigns }}</div>
+                    <div class="stat-label">Запланировано</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-item">
+                    <div class="stat-number">{{ sent_campaigns }}</div>
+                    <div class="stat-label">Отправлено</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка создания -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Кампании массовой рассылки</h4>
+        <a href="{% url 'mail:mass_mail_create' %}" class="btn btn-primary">
+            <i class="icon-base bx bx-plus me-1"></i>Создать кампанию
+        </a>
+    </div>
+
+    <!-- Список кампаний -->
+    <div class="row">
+        {% for campaign in campaigns %}
+        <div class="col-md-6">
+            <div class="campaign-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h5 class="mb-1">{{ campaign.name }}</h5>
+                        <small class="text-muted">
+                            <i class="icon-base bx bx-calendar me-1"></i>
+                            {{ campaign.created_at|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                    <span class="status-badge status-{{ campaign.status }}">
+                        {{ campaign.get_status_display }}
+                    </span>
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Тема: <strong>{{ campaign.subject|truncatechars:40 }}</strong></span>
+                        <span class="priority-{{ campaign.priority }}">
+                            <i class="icon-base bx bx-flag"></i>
+                            {{ campaign.get_priority_display }}
+                        </span>
+                    </div>
+                    <div class="text-muted small">
+                        {{ campaign.message|striptags|truncatechars:100 }}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <span class="badge bg-label-primary me-2">
+                            <i class="icon-base bx bx-user me-1"></i>
+                            {{ campaign.total_recipients }}
+                        </span>
+                        <span class="badge bg-label-success me-2">
+                            <i class="icon-base bx bx-check-circle me-1"></i>
+                            {{ campaign.sent_count }}
+                        </span>
+                        <span class="badge bg-label-danger">
+                            <i class="icon-base bx bx-error-circle me-1"></i>
+                            {{ campaign.failed_count }}
+                        </span>
+                    </div>
+                    {% if campaign.status == 'sending' and campaign.total_recipients > 0 %}
+                    <div class="small text-muted">
+                        {% with sent_total=campaign.sent_count|add:campaign.failed_count %}
+                        {{ sent_total }}/{{ campaign.total_recipients }}
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if campaign.status == 'sending' and campaign.total_recipients > 0 %}
+                <div class="progress progress-custom">
+                    {% with sent_total=campaign.sent_count|add:campaign.failed_count %}
+                    <div class="progress-bar bg-primary" style="width: {% widthratio sent_total campaign.total_recipients 100 %}%"></div>
+                    {% endwith %}
+                </div>
+                {% endif %}
+
+                <div class="mt-3 d-flex justify-content-end gap-2">
+                    <a href="{% url 'mail:mass_mail_detail' campaign.id %}" class="btn btn-sm btn-outline-primary">
+                        <i class="icon-base bx bx-show"></i>
+                    </a>
+                    {% if campaign.status == 'draft' or campaign.status == 'scheduled' %}
+                    <a href="{% url 'mail:mass_mail_edit' campaign.id %}" class="btn btn-sm btn-outline-secondary">
+                        <i class="icon-base bx bx-edit"></i>
+                    </a>
+                    <form method="post" action="{% url 'mail:mass_mail_send' campaign.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-success"
+                                onclick="return confirm('Запустить рассылку?')">
+                            <i class="icon-base bx bx-send"></i>
+                        </button>
+                    </form>
+                    {% endif %}
+                    <form method="post" action="{% url 'mail:mass_mail_delete' campaign.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Удалить кампанию?')">
+                            <i class="icon-base bx bx-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="icon-base bx bx-envelope-open icon-48px text-muted mb-3"></i>
+                <h5>Нет кампаний</h5>
+                <p class="text-muted">Создайте свою первую кампанию массовой рассылки</p>
+                <a href="{% url 'mail:mass_mail_create' %}" class="btn btn-primary">
+                    <i class="icon-base bx bx-plus me-1"></i>Создать кампанию
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if campaigns.has_other_pages %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if campaigns.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ campaigns.previous_page_number }}">
+                    <i class="icon-base bx bx-chevron-left"></i>
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in campaigns.paginator.page_range %}
+                {% if campaigns.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > campaigns.number|add:'-3' and num < campaigns.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if campaigns.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ campaigns.next_page_number }}">
+                    <i class="icon-base bx bx-chevron-right"></i>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,11 +1,467 @@
 {% extends 'moderation/base.html' %}
 {% load static %}
-{% block title %}{% endblock title %}
-{% block description %}{% endblock description %}
-{% block propertytitle %}{% endblock propertytitle %}
-{% block propertydescription %}{% endblock propertydescription %}
-{% block propertyimage %}{% endblock propertyimage %}
-{% block keywords %}{% endblock keywords %}
-{% block head %}{% endblock head %}
+
+{% block title %}Настройки почты - {{ block.super }}{% endblock %}
+
+{% block head %}
+<style>
+    .settings-card {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #7367f0;
+        box-shadow: 0 0 0 0.2rem rgba(115, 103, 240, 0.25);
+    }
+    .form-check-input:checked {
+        background-color: #7367f0;
+        border-color: #7367f0;
+    }
+    .settings-header {
+        background: linear-gradient(135deg, #7367f0 0%, #9e95f5 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px 12px 0 0;
+        margin-bottom: 0;
+    }
+    .settings-body {
+        padding: 2rem;
+        background: white;
+        border-radius: 0 0 12px 12px;
+    }
+    .btn-save {
+        background: #7367f0;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn-save:hover {
+        background: #5e52d5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.3);
+    }
+    .btn-test {
+        background: #28a745;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn-test:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+    .alert {
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .info-text {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    .port-examples {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    .port-badge {
+        background: #e9ecef;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .port-badge:hover {
+        background: #7367f0;
+        color: white;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-{% endblock content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <!-- Хлебные крошки -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'mail:message_list' %}">Сообщения</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Настройки почты</li>
+                </ol>
+            </nav>
+
+            <!-- Карточка с настройками -->
+            <div class="card settings-card">
+                <div class="settings-header">
+                    <h4 class="mb-2 text-white">
+                        <i class="icon-base bx bx-envelope me-2"></i>
+                        Настройки SMTP
+                    </h4>
+                    <p class="mb-0 text-white-50">
+                        Настройте параметры отправки электронной почты для вашего аккаунта
+                    </p>
+                    {% if created %}
+                    <div class="mt-3 alert alert-info">
+                        <i class="icon-base bx bx-info-circle me-2"></i>
+                        Созданы настройки по умолчанию. Заполните форму для отправки писем.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="settings-body">
+                    <!-- Форма настроек -->
+                    <form method="post" action="{% url 'mail:mail_settings' %}"
+                          hx-post="{% url 'mail:mail_settings' %}"
+                          hx-target="#settings-form-container"
+                          hx-swap="outerHTML"
+                          id="settings-form">
+                        {% csrf_token %}
+
+                        <!-- Блок для сообщений об успехе/ошибке -->
+                        <div id="settings-form-container">
+                            {% include 'moderation/mail/partials/messages.html' %}
+                        </div>
+
+                        <!-- Основные настройки -->
+                        <h5 class="mb-3">Основные настройки</h5>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email_host">
+                                <i class="icon-base bx bx-server me-1"></i>
+                                SMTP сервер
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="email_host"
+                                   name="email_host"
+                                   value="{{ smtp_settings.email_host|default:'' }}"
+                                   placeholder="smtp.gmail.com">
+                            <div class="info-text">
+                                Адрес SMTP сервера (например: smtp.gmail.com, smtp.yandex.ru)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email_port">
+                                <i class="icon-base bx bx-plug me-1"></i>
+                                Порт
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="email_port"
+                                   name="email_port"
+                                   value="{{ smtp_settings.email_port|default:'' }}"
+                                   placeholder="587">
+                            <div class="info-text">Обычные порты:</div>
+                            <div class="port-examples">
+                                <span class="port-badge" onclick="setPort('587')">587 (TLS)</span>
+                                <span class="port-badge" onclick="setPort('465')">465 (SSL)</span>
+                                <span class="port-badge" onclick="setPort('25')">25</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="default_from_email">
+                                <i class="icon-base bx bx-envelope me-1"></i>
+                                Email отправителя
+                            </label>
+                            <input type="email"
+                                   class="form-control"
+                                   id="default_from_email"
+                                   name="default_from_email"
+                                   value="{{ smtp_settings.default_from_email|default:request.user.email }}"
+                                   placeholder="{{ request.user.email }}">
+                            <div class="info-text">
+                                Email, который будет указан как отправитель
+                            </div>
+                        </div>
+
+                        <!-- Аутентификация -->
+                        <h5 class="mb-3 mt-4">Аутентификация</h5>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email_host_user">
+                                <i class="icon-base bx bx-user me-1"></i>
+                                Имя пользователя
+                            </label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="email_host_user"
+                                   name="email_host_user"
+                                   value="{{ smtp_settings.email_host_user|default:'' }}"
+                                   placeholder="your-email@gmail.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email_host_password">
+                                <i class="icon-base bx bx-lock me-1"></i>
+                                Пароль
+                            </label>
+                            <input type="password"
+                                   class="form-control"
+                                   id="email_host_password"
+                                   name="email_host_password"
+                                   value="{{ smtp_settings.email_host_password|default:'' }}"
+                                   placeholder="••••••••">
+                            <div class="info-text">
+                                Для Gmail используйте пароль приложения, не обычный пароль
+                            </div>
+                        </div>
+
+                        <!-- Шифрование -->
+                        <h5 class="mb-3 mt-4">Шифрование</h5>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="email_use_tls"
+                                           name="email_use_tls"
+                                           {% if smtp_settings.email_use_tls %}checked{% endif %}>
+                                    <label class="form-check-label" for="email_use_tls">
+                                        Использовать TLS
+                                    </label>
+                                    <div class="info-text">Обычно для порта 587</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           id="email_use_ssl"
+                                           name="email_use_ssl"
+                                           {% if smtp_settings.email_use_ssl %}checked{% endif %}>
+                                    <label class="form-check-label" for="email_use_ssl">
+                                        Использовать SSL
+                                    </label>
+                                    <div class="info-text">Обычно для порта 465</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Шапка и подвал сообщений -->
+                        <h5 class="mb-3 mt-4">Шапка и подвал сообщений</h5>
+
+                        <div class="form-group">
+                            <label class="form-label" for="message_header">
+                                <i class="icon-base bx bx-header me-1"></i>
+                                Шапка сообщения
+                            </label>
+                            <textarea class="form-control"
+                                      id="message_header"
+                                      name="message_header"
+                                      rows="3"
+                                      placeholder="С уважением,&#10;Команда {{ request.user.get_full_name|default:request.user.username }}">{{ smtp_settings.message_header|default:'' }}</textarea>
+                            <div class="info-text">
+                                Текст, который будет добавляться в начало каждого сообщения
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="message_footer">
+                                <i class="icon-base bx bx-footer me-1"></i>
+                                Подвал сообщения
+                            </label>
+                            <textarea class="form-control"
+                                      id="message_footer"
+                                      name="message_footer"
+                                      rows="3"
+                                      placeholder="--&#10;Это сообщение отправлено из системы обмена сообщениями">{{ smtp_settings.message_footer|default:'' }}</textarea>
+                            <div class="info-text">
+                                Текст, который будет добавляться в конец каждого сообщения
+                            </div>
+                        </div>
+
+                        <!-- Кнопки действий -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn-test" onclick="testConnection()">
+                                <i class="icon-base bx bx-check-circle me-1"></i>
+                                Проверить подключение
+                            </button>
+                            <div>
+                                <a href="{% url 'mail:message_list' %}" class="btn btn-outline-secondary me-2">
+                                    <i class="icon-base bx bx-arrow-back me-1"></i>
+                                    Назад
+                                </a>
+                                <button type="submit" class="btn-save">
+                                    <i class="icon-base bx bx-save me-1"></i>
+                                    Сохранить настройки
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Информация о провайдерах -->
+                    <div class="mt-5 pt-4 border-top">
+                        <h6 class="mb-3">Популярные SMTP серверы:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Провайдер</th>
+                                        <th>SMTP сервер</th>
+                                        <th>Порт TLS</th>
+                                        <th>Порт SSL</th>
+                                        <th>Примечания</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Gmail</td>
+                                        <td>smtp.gmail.com</td>
+                                        <td>587</td>
+                                        <td>465</td>
+                                        <td>Требуется пароль приложения</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Yandex</td>
+                                        <td>smtp.yandex.ru</td>
+                                        <td>587</td>
+                                        <td>465</td>
+                                        <td>Требуется пароль приложения</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mail.ru</td>
+                                        <td>smtp.mail.ru</td>
+                                        <td>587</td>
+                                        <td>465</td>
+                                        <td>Требуется пароль приложения</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Outlook</td>
+                                        <td>smtp-mail.outlook.com</td>
+                                        <td>587</td>
+                                        <td>-</td>
+                                        <td>TLS обязателен</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для тестирования подключения -->
+<div class="modal fade" id="testModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Проверка подключения</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="testModalBody">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                    <p>Выполняется проверка подключения к SMTP серверу...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setPort(port) {
+    document.getElementById('email_port').value = port;
+}
+
+function testConnection() {
+    const modal = new bootstrap.Modal(document.getElementById('testModal'));
+    modal.show();
+
+    const modalBody = document.getElementById('testModalBody');
+
+    // Собираем данные формы
+    const formData = new FormData(document.getElementById('settings-form'));
+    formData.append('test_connection', 'true');
+
+    fetch('{% url "mail:test_smtp_connection" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <i class="icon-base bx bx-check-circle text-success" style="font-size: 48px;"></i>
+                    <h5 class="mt-3 text-success">Подключение успешно!</h5>
+                    <p class="text-muted">SMTP сервер отвечает корректно.</p>
+                </div>
+            `;
+        } else {
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <i class="icon-base bx bx-error-circle text-danger" style="font-size: 48px;"></i>
+                    <h5 class="mt-3 text-danger">Ошибка подключения</h5>
+                    <p class="text-muted">${data.message}</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        modalBody.innerHTML = `
+            <div class="text-center">
+                <i class="icon-base bx bx-error-circle text-danger" style="font-size: 48px;"></i>
+                <h5 class="mt-3 text-danger">Ошибка</h5>
+                <p class="text-muted">Не удалось выполнить проверку</p>
+            </div>
+        `;
+    });
+
+    // Закрываем модальное окно через 3 секунды при успехе
+    setTimeout(() => {
+        modal.hide();
+        setTimeout(() => {
+            modalBody.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                    <p>Выполняется проверка подключения к SMTP серверу...</p>
+                </div>
+            `;
+        }, 500);
+    }, 3000);
+}
+
+// Предотвращаем двойную отправку формы
+document.getElementById('settings-form').addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Сохранение...';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,806 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Сообщения - {{ block.super }}{% endblock title %}
+
+{% block description %}Управление сообщениями{% endblock description %}
+
+{% block propertytitle %}Сообщения{% endblock propertytitle %}
+
+{% block propertydescription %}Система обмена сообщениями{% endblock propertydescription %}
+
+{% block propertyimage %}{% endblock propertyimage %}
+
+{% block keywords %}сообщения, чат, переписка{% endblock keywords %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'moderation/css/pages/app-email.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .email-list-item.active {
+        background-color: rgba(115, 103, 240, 0.08);
+        border-left: 3px solid #7367f0;
+    }
+    .avatar-initial {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        font-weight: 500;
+    }
+    .pagination {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    .select2-container--default .select2-selection--multiple {
+        border: none !important;
+    }
+    .email-list-item-username.h6 {
+        font-weight: 600;
+    }
+    .toast {
+        z-index: 9999;
+    }
+    .unread-badge {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #7367f0;
+        display: inline-block;
+        margin-right: 8px;
+    }
+</style>
+{% endblock head %}
+
+{% block content %}
+<div class="app-email card">
+    <div class="row g-0">
+        <!-- Боковая панель почты -->
+        <div class="col app-email-sidebar border-end flex-grow-0" id="app-email-sidebar">
+            <div class="btn-compost-wrapper d-grid">
+                <button class="btn btn-primary btn-compose" data-bs-toggle="modal" data-bs-target="#emailComposeSidebar" id="emailComposeSidebarLabel">
+                    Написать
+                </button>
+            </div>
+
+            <!-- Фильтры почты -->
+            <div class="email-filters pt-4 pb-2 ps">
+                <!-- Фильтры почты: Папки -->
+                <ul class="email-filter-folders list-unstyled">
+                    <li class="{% if current_folder == 'inbox' %}active{% endif %} d-flex justify-content-between align-items-center mb-1" data-target="inbox">
+                        <a href="?folder=inbox{% if search_query %}&search={{ search_query }}{% endif %}" class="d-flex flex-wrap align-items-center">
+                            <i class="icon-base bx bx-envelope"></i>
+                            <span class="align-middle ms-2">Входящие</span>
+                        </a>
+                        {% if counters.inbox > 0 %}
+                        <div class="badge bg-label-primary rounded-pill">{{ counters.inbox }}</div>
+                        {% endif %}
+                    </li>
+
+                    <li class="{% if current_folder == 'sent' %}active{% endif %} d-flex mb-1" data-target="sent">
+                        <a href="?folder=sent{% if search_query %}&search={{ search_query }}{% endif %}" class="d-flex flex-wrap align-items-center">
+                            <i class="icon-base bx bx-send"></i>
+                            <span class="align-middle ms-2">Отправленные</span>
+                        </a>
+                        {% if counters.sent > 0 %}
+                        <div class="badge bg-label-secondary rounded-pill">{{ counters.sent }}</div>
+                        {% endif %}
+                    </li>
+
+                    <li class="{% if current_folder == 'draft' %}active{% endif %} d-flex justify-content-between align-items-center mb-1" data-target="draft">
+                        <a href="?folder=draft{% if search_query %}&search={{ search_query }}{% endif %}" class="d-flex flex-wrap align-items-center">
+                            <i class="icon-base bx bx-edit"></i>
+                            <span class="align-middle ms-2">Черновики</span>
+                        </a>
+                        {% if counters.draft > 0 %}
+                        <div class="badge bg-label-warning rounded-pill">{{ counters.draft }}</div>
+                        {% endif %}
+                    </li>
+
+                    <li class="{% if current_folder == 'starred' %}active{% endif %} d-flex justify-content-between mb-1" data-target="starred">
+                        <a href="?folder=starred{% if search_query %}&search={{ search_query }}{% endif %}" class="d-flex flex-wrap align-items-center">
+                            <i class="icon-base bx bx-star"></i>
+                            <span class="align-middle ms-2">Помеченные</span>
+                        </a>
+                    </li>
+
+                    <li class="{% if current_folder == 'trash' %}active{% endif %} d-flex align-items-center" data-target="trash">
+                        <a href="?folder=trash{% if search_query %}&search={{ search_query }}{% endif %}" class="d-flex flex-wrap align-items-center">
+                            <i class="icon-base bx bx-trash"></i>
+                            <span class="align-middle ms-2">Корзина</span>
+                        </a>
+                        {% if counters.trash > 0 %}
+                        <div class="badge bg-label-secondary rounded-pill">{{ counters.trash }}</div>
+                        {% endif %}
+                    </li>
+                </ul>
+
+                <!-- Фильтры почты: Метки (динамические из БД) -->
+                {% if user_masks.exists %}
+                <div class="email-filter-labels pt-4">
+                    <p class="small mx-6 text-body-secondary text-uppercase">Метки</p>
+                    <ul class="list-unstyled mb-2">
+                        {% for mask in user_masks %}
+                        <li data-target="{{ mask.mask|lower }}">
+                            <a href="javascript:void(0);" onclick="filterByMask('{{ mask.mask|lower }}')">
+                                <i class="badge badge-dot
+                                    {% if 'important' in mask.mask %}bg-warning{% endif %}
+                                    {% if 'private' in mask.mask %}bg-danger{% endif %}
+                                    {% if 'work' in mask.mask %}bg-success{% endif %}
+                                    {% if 'company' in mask.mask %}bg-primary{% endif %}">
+                                </i>
+                                <span class="align-middle ms-2">{{ mask.mask|title }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Директории пользователя -->
+                {% if user_dirs.exists %}
+                <div class="email-filter-labels pt-4">
+                    <p class="small mx-6 text-body-secondary text-uppercase">Папки</p>
+                    <ul class="list-unstyled mb-2">
+                        {% for dir in user_dirs %}
+                        <li>
+                            <a href="javascript:void(0);" onclick="filterByDir('{{ dir.id }}')">
+                                <i class="icon-base bx bx-folder me-1"></i>
+                                <span class="align-middle">{{ dir.name }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <!--/ Боковая панель почты -->
+
+        <!-- Список писем -->
+        <div class="col app-emails-list">
+            <div class="card shadow-none border-0 rounded-0">
+                <div class="card-body emails-list-header p-3 py-2">
+                    <!-- Поиск по списку писем -->
+                    <div class="d-flex justify-content-between align-items-center px-3 mt-2">
+                        <div class="d-flex align-items-center w-100">
+                            <i class="icon-base bx bx-menu icon-lg cursor-pointer d-block d-lg-none me-4 mb-4"
+                               data-bs-toggle="sidebar" data-target="#app-email-sidebar" data-overlay=""></i>
+                            <div class="mb-4 w-100">
+                                <div class="input-group input-group-merge shadow-none">
+                                    <span class="input-group-text border-0 p-0 pe-4" id="email-search">
+                                        <i class="icon-base bx bx-search icon-md text-body"></i>
+                                    </span>
+                                    <input type="text" class="form-control email-search-input border-0 py-0"
+                                           placeholder="Поиск писем"
+                                           aria-label="Поиск писем"
+                                           aria-describedby="email-search"
+                                           value="{{ search_query }}"
+                                           id="searchInput">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mx-n3 emails-list-header-hr mb-2">
+
+                    <!-- Действия со списком писем -->
+                    <div class="d-flex justify-content-between align-items-center ps-1">
+                        <div class="d-flex align-items-center">
+                            <div class="form-check mb-0 ms-2">
+                                <input class="form-check-input" type="checkbox" id="email-select-all">
+                                <label class="form-check-label" for="email-select-all"></label>
+                            </div>
+                            <div class="btn btn-icon me-1" onclick="deleteSelectedMessages()">
+                                <i class="icon-base bx bx-trash icon-md email-list-delete cursor-pointer"></i>
+                            </div>
+                            <div class="btn btn-icon me-1" onclick="markSelectedAsRead()">
+                                <i class="icon-base bx bx-envelope-open icon-md email-list-read cursor-pointer"></i>
+                            </div>
+
+                            <div class="dropdown me-1">
+                                <button class="btn btn-icon p-0" type="button" id="dropdownMenuFolderOne"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icon-base bx bx-folder icon-md"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuFolderOne">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="moveSelectedTo('spam')">
+                                        <i class="icon-base bx bx-error-alt icon-sm me-1"></i>
+                                        <span class="align-middle">Спам</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="moveSelectedTo('draft')">
+                                        <i class="icon-base bx bx-edit icon-sm me-1"></i>
+                                        <span class="align-middle">Черновики</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="moveSelectedTo('trash')">
+                                        <i class="icon-base bx bx-trash icon-sm me-1"></i>
+                                        <span class="align-middle">Корзина</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="dropdown mx-1">
+                                <button class="btn btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown"
+                                        aria-expanded="true" id="dropdownLabelOne">
+                                    <i class="icon-base bx bx-label icon-md"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLabelOne">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="addLabelToSelected('work')">
+                                        <i class="badge badge-dot bg-success me-1"></i>
+                                        <span class="align-middle">Личное</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="addLabelToSelected('company')">
+                                        <i class="badge badge-dot bg-primary me-1"></i>
+                                        <span class="align-middle">Рабочее</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="addLabelToSelected('important')">
+                                        <i class="badge badge-dot bg-warning me-1"></i>
+                                        <span class="align-middle">Важное</span>
+                                    </a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="addLabelToSelected('private')">
+                                        <i class="badge badge-dot bg-danger me-1"></i>
+                                        <span class="align-middle">Конфиденциально</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <span class="btn btn-icon me-1" onclick="refreshMessages()">
+                                <i class="icon-base bx bx-refresh icon-md scaleX-n1-rtl cursor-pointer email-refresh"></i>
+                            </span>
+                            <div class="dropdown">
+                                <button class="btn btn-icon p-0" type="button" id="emailsActions"
+                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icon-base bx bx-dots-vertical-rounded icon-md"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="emailsActions">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="markSelectedAsRead(true)">Пометить прочитанным</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="markSelectedAsRead(false)">Пометить непрочитанным</a>
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteSelectedMessages()">Удалить</a>
+                                    <a class="dropdown-item" href="javascript:void(0)">В архив</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="container-m-nx m-0">
+
+                <!-- Элементы списка писем -->
+                <div class="email-list pt-0 ps ps--active-y">
+                    <ul class="list-unstyled m-0" id="message-list">
+                        {% for msg in messages %}
+<li class="email-list-item {% if not msg.message_rm %}email-marked-read{% endif %} d-flex align-items-center"
+    data-message-id="{{ msg.id }}"
+    data-starred="false"
+    data-folder="{% if msg.user == request.user %}sent{% else %}inbox{% endif %}"
+    {% if msg.self_field %}data-draft="true"{% endif %}
+    onclick="window.location.href='{% url 'mail:message_detail' msg.id %}'">
+
+    <div class="d-flex align-items-center w-100">
+        <div class="form-check mb-0 ms-2" onclick="event.stopPropagation()">
+            <input class="email-list-item-input form-check-input" type="checkbox"
+                   value="{{ msg.id }}" id="msg-{{ msg.id }}">
+            <label class="form-check-label" for="msg-{{ msg.id }}"></label>
+        </div>
+
+        <span class="ms-sm-3 me-4 d-sm-inline-block d-none" onclick="event.stopPropagation()">
+            <i class="email-list-item-bookmark icon-base bx bx-star icon-md cursor-pointer ms-1"
+               onclick="toggleStar('{{ msg.id }}', event)"></i>
+        </span>
+
+        {% if msg.user.profile and msg.user.profile.avatar %}
+        <img src="{{ msg.user.profile.avatar.url }}"
+             alt="{{ msg.user.get_full_name|default:msg.user.username }}"
+             class="d-block flex-shrink-0 rounded-circle me-sm-2 me-0"
+             height="32" width="32">
+        {% else %}
+        <div class="avatar avatar-sm d-block flex-shrink-0 me-sm-2 me-0">
+            <span class="avatar-initial rounded-circle
+                {% if msg.user == request.user %}bg-label-info{% else %}bg-label-primary{% endif %}">
+                {{ msg.user.username|first|upper }}
+            </span>
+        </div>
+        {% endif %}
+
+        <div class="email-list-item-content ms-2 ms-sm-0 me-2">
+            <div class="d-flex flex-column">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <span class="email-list-item-username me-2 {% if msg.user != request.user %}h6{% endif %}">
+                        {% if msg.user == request.user %}
+                            {% if msg.clients %}
+                                Кому: {{ msg.clients|truncatechars:30 }}
+                            {% else %}
+                                Черновик
+                            {% endif %}
+                        {% else %}
+                            {{ msg.user.get_full_name|default:msg.user.username }}
+                        {% endif %}
+                    </span>
+
+                    <!-- ID сообщения выводим здесь, рядом с именем -->
+                    <small class="text-muted" style="font-size: 10px; background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">
+                        ID: {{ msg.id|slice:":8" }}
+                    </small>
+                </div>
+
+                <small class="email-list-item-subject d-xl-inline-block d-block">
+                    {% if msg.user != request.user and request.user not in msg.read_by.all %}
+                    <span class="unread-badge"></span>
+                    {% endif %}
+                    <strong>{% if msg.subject %}{{ msg.subject }}{% else %}Без темы{% endif %}</strong>
+                    - {{ msg.message|striptags|truncatechars:40 }}
+                </small>
+            </div>
+        </div>
+
+        <div class="email-list-item-meta ms-auto d-flex align-items-center">
+            {% if msg.files.exists %}
+            <i class="email-list-item-attachment icon-base bx bx-paperclip icon-md cursor-pointer me-2 float-end float-sm-none"></i>
+            {% endif %}
+
+            {% for mask in msg.masks.all %}
+            <span class="email-list-item-label badge badge-dot
+                    {% if 'important' in mask.mask %}bg-warning{% endif %}
+                    {% if 'private' in mask.mask %}bg-danger{% endif %}
+                    {% if 'work' in mask.mask %}bg-success{% endif %}
+                    {% if 'company' in mask.mask %}bg-primary{% endif %}
+                    d-none d-md-inline-block me-2"
+                  data-label="{{ mask.mask }}"></span>
+            {% endfor %}
+
+            <small class="email-list-item-time text-body-secondary">
+                {{ msg.created_at|date:"d.m.Y H:i" }}
+            </small>
+
+            <ul class="list-inline email-list-item-actions" onclick="event.stopPropagation()">
+                <li class="list-inline-item email-delete btn btn-icon"
+                    onclick="deleteMessage('{{ msg.id }}', event)">
+                    <i class="icon-base bx bx-trash icon-md"></i>
+                </li>
+                <li class="list-inline-item email-unread btn btn-icon"
+                    onclick="markAsRead('{{ msg.id }}', event)">
+                    <i class="icon-base bx bx-envelope icon-md"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+</li>
+{% empty %}
+<li class="text-center py-5">
+    <div class="my-5">
+        <i class="icon-base bx bx-envelope-open icon-48px text-muted mb-3"></i>
+        <h5>Нет сообщений</h5>
+        <p class="text-muted">В папке "{{ current_folder|title }}" пока нет сообщений</p>
+        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#emailComposeSidebar">
+            Написать первое сообщение
+        </button>
+    </div>
+</li>
+{% endfor %}
+                    </ul>
+
+                    <!-- Пагинация -->
+                    {% if messages.has_other_pages %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if messages.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ messages.previous_page_number }}{% if current_folder %}&folder={{ current_folder }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="icon-base bx bx-chevron-left"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for num in messages.paginator.page_range %}
+                            {% if messages.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                            {% elif num > messages.number|add:'-3' and num < messages.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if current_folder %}&folder={{ current_folder }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    {{ num }}
+                                </a>
+                            </li>
+                            {% endif %}
+                            {% endfor %}
+
+                            {% if messages.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ messages.next_page_number }}{% if current_folder %}&folder={{ current_folder }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}">
+                                    <i class="icon-base bx bx-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="app-overlay"></div>
+        </div>
+        <!-- /Список писем -->
+    </div>
+    <!-- Написать письмо -->
+    <div class="app-email-compose modal" id="emailComposeSidebar" tabindex="-1"
+         aria-labelledby="emailComposeSidebarLabel" aria-hidden="true">
+        <div class="modal-dialog m-0 me-md-6 mb-6 modal-lg">
+            <div class="modal-content p-0">
+                <div class="modal-header py-3 justify-content-between">
+                    <h5 class="modal-title text-body fs-5">Новое сообщение</h5>
+                    <div class="d-flex align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-icon" data-bs-dismiss="modal" aria-label="Закрыть">
+                            <i class="icon-base bx bx-x icon-20px"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-body flex-grow-1 pb-sm-0 px-6 py-2">
+                    <!-- ВАЖНО: Оставляем action, но добавим обработчик -->
+                    <form id="composeForm" method="post" enctype="multipart/form-data" action="{% url 'mail:message_create' %}">
+                        {% csrf_token %}
+
+                        <div class="email-compose-to d-flex align-items-center">
+                            <label class="fw-medium mb-1 text-body-secondary me-2">Кому:</label>
+
+                            <input
+                                    type="text"
+                                    class="form-control border-0 shadow-none flex-grow-1"
+                                    id="emailRecipients"
+                                    name="recipients"
+                                    placeholder="Введите username или email (через запятую)"
+                            >
+                        </div>
+                        <hr class="mx-n6 my-2">
+
+                        <div class="email-compose-subject d-flex align-items-center">
+                            <label for="email-subject" class="fw-medium text-body-secondary">Тема:</label>
+                            <input type="text" class="form-control border-0 shadow-none flex-grow-1 mx-2"
+                                   id="email-subject" name="subject" placeholder="Тема сообщения">
+                        </div>
+
+                        <hr class="mx-n6 my-2">
+
+                        <div class="email-compose-message">
+                            <div class="mb-3">
+                            <textarea class="form-control" id="message-text" name="message" rows="8"
+                                      placeholder="Напишите ваше сообщение..."></textarea>
+                            </div>
+                        </div>
+
+                        <hr class="mx-n6 my-2">
+
+                        <div class="mb-3">
+                            <label for="attach-file" class="form-label">
+                                <i class="icon-base bx bx-paperclip me-1"></i>Прикрепить файлы
+                            </label>
+                            <input type="file" class="form-control" id="attach-file" name="files" multiple>
+                        </div>
+
+                        <div class="email-compose-actions d-flex justify-content-between align-items-center my-4">
+                            <div class="d-flex align-items-center">
+                                <!-- ВАЖНО: Оставляем type="submit" -->
+                                <button type="submit" class="btn btn-primary" id="sendMessageBtn">
+                                    Отправить
+                                    <i class="icon-base bx bx-paper-plane icon-sm ms-2"></i>
+                                </button>
+
+                                <div class="form-check ms-3">
+                                    <input class="form-check-input" type="checkbox" id="selfField" name="self_field">
+                                    <label class="form-check-label" for="selfField">
+                                        Сохранить в черновики
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    Отмена
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Шаблоны для URL в JavaScript -->
+<script>
+    window.URLS = {
+        message_delete: '{% url "mail:message_delete" "00000000-0000-0000-0000-000000000000" %}',
+        message_mark_read: '{% url "mail:message_mark_read" "00000000-0000-0000-0000-000000000000" %}',
+        message_toggle_star: '{% url "mail:message_toggle_star" "00000000-0000-0000-0000-000000000000" %}',
+        message_create: '{% url "mail:message_create" %}',
+        get_users_list: '{% url "mail:get_users_list" %}',
+        csrf_token: '{{ csrf_token }}'
+    };
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'moderation/js/app-email.js' %}"></script>
+
+<script>
+    // Функция для форматирования UUID в URL
+    function formatUrl(url, messageId) {
+        return url.replace(
+            '00000000-0000-0000-0000-000000000000',
+            messageId
+        );
+    }
+
+    // Инициализация Select2 для выбора получателей
+
+
+    // Остальные функции (deleteMessage, markAsRead и т.д.) остаются без изменений
+
+    // Поиск с задержкой
+    let searchTimeout;
+    $('#searchInput').on('keyup', function() {
+        clearTimeout(searchTimeout);
+        const search = $(this).val();
+        searchTimeout = setTimeout(function() {
+            const url = new URL(window.location.href);
+            if (search) {
+                url.searchParams.set('search', search);
+            } else {
+                url.searchParams.delete('search');
+            }
+            window.location.href = url.toString();
+        }, 500);
+    });
+
+    // Удаление сообщения
+    function deleteMessage(messageId, event) {
+        event.stopPropagation();
+        if (confirm('Удалить это сообщение?')) {
+            $.ajax({
+                url: formatUrl(window.URLS.message_delete, messageId),
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': window.URLS.csrf_token
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        showNotification('success', response.message);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        showNotification('danger', response.message);
+                    }
+                },
+                error: function() {
+                    showNotification('danger', 'Ошибка при удалении');
+                }
+            });
+        }
+    }
+
+    // Пометить как прочитанное
+    function markAsRead(messageId, event) {
+        event.stopPropagation();
+        $.ajax({
+            url: formatUrl(window.URLS.message_mark_read, messageId),
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': window.URLS.csrf_token
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    showNotification('success', 'Сообщение помечено как прочитанное');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    // Переключение звездочки
+    function toggleStar(messageId, event) {
+        event.stopPropagation();
+        const starIcon = $(event.target);
+
+        $.ajax({
+            url: formatUrl(window.URLS.message_toggle_star, messageId),
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': window.URLS.csrf_token
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    if (starIcon.hasClass('bxs-star')) {
+                        starIcon.removeClass('bxs-star').addClass('bx-star');
+                    } else {
+                        starIcon.removeClass('bx-star').addClass('bxs-star');
+                    }
+                    showNotification('success', response.message);
+                }
+            }
+        });
+    }
+
+    // Выделить все сообщения
+    $('#email-select-all').on('change', function() {
+        $('.email-list-item-input').prop('checked', $(this).prop('checked'));
+    });
+
+    // Удалить выбранные
+    function deleteSelectedMessages() {
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            showNotification('warning', 'Выберите сообщения для удаления');
+            return;
+        }
+
+        if (confirm(`Удалить ${selectedIds.length} сообщений?`)) {
+            deleteMessagesBatch(selectedIds);
+        }
+    }
+
+    // Получить ID выбранных сообщений
+    function getSelectedIds() {
+        const ids = [];
+        $('.email-list-item-input:checked').each(function() {
+            ids.push($(this).val());
+        });
+        return ids;
+    }
+
+    // Пакетное удаление
+    function deleteMessagesBatch(ids) {
+        let completed = 0;
+
+        ids.forEach(function(id) {
+            $.ajax({
+                url: formatUrl(window.URLS.message_delete, id),
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': window.URLS.csrf_token
+                },
+                success: function() {
+                    completed++;
+                    if (completed === ids.length) {
+                        showNotification('success', `Удалено ${ids.length} сообщений`);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 500);
+                    }
+                }
+            });
+        });
+    }
+
+    // Обновить страницу
+    function refreshMessages() {
+        location.reload();
+    }
+
+    // Фильтр по метке
+    function filterByMask(mask) {
+        showNotification('info', 'Фильтр по метке: ' + mask);
+    }
+
+    // Фильтр по папке
+    function filterByDir(dirId) {
+        window.location.href = '?dir=' + dirId;
+    }
+
+    // Переместить выбранные в папку
+    function moveSelectedTo(folder) {
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            showNotification('warning', 'Выберите сообщения');
+            return;
+        }
+        showNotification('info', `Перемещение в ${folder}...`);
+    }
+
+    // Добавить метку к выбранным
+    function addLabelToSelected(label) {
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            showNotification('warning', 'Выберите сообщения');
+            return;
+        }
+        showNotification('success', `Метка "${label}" добавлена к ${selectedIds.length} сообщениям`);
+    }
+
+    // Пометить выбранные как прочитанные/непрочитанные
+    function markSelectedAsRead(read = true) {
+        const selectedIds = getSelectedIds();
+        if (selectedIds.length === 0) {
+            showNotification('warning', 'Выберите сообщения');
+            return;
+        }
+        showNotification('success', `Сообщения помечены как ${read ? 'прочитанные' : 'непрочитанные'}`);
+    }
+
+    // Показать уведомление
+    function showNotification(type, message) {
+        const toast = $('<div>', {
+            class: 'toast align-items-center text-white bg-' + type + ' border-0 position-fixed bottom-0 end-0 m-3',
+            role: 'alert',
+            'aria-live': 'assertive',
+            'aria-atomic': 'true'
+        }).html(`
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `);
+
+        $('body').append(toast);
+        const bsToast = new bootstrap.Toast(toast[0], { delay: 3000 });
+        bsToast.show();
+
+        toast.on('hidden.bs.toast', function() {
+            $(this).remove();
+        });
+    }
+
+    // Обработка клавиш
+    $(document).on('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'a') {
+            e.preventDefault();
+            $('#email-select-all').prop('checked', true).trigger('change');
+        }
+    });
+        $(document).ready(function () {
+
+        // Обработка отправки формы ответа
+$(document).ready(function() {
+    $('#composeForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        var submitBtn = $(this).find('button[type="submit"]');
+        var originalText = submitBtn.html();
+
+        // Получаем выбранные email из Select2
+        var selectedEmails = $('#replyRecipients').val();
+        if (selectedEmails && selectedEmails.length > 0) {
+            formData.delete('recipients');
+            selectedEmails.forEach(email => formData.append('recipients', email));
+        }
+
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Отправка...');
+
+        $.ajax({
+            url: window.URLS.message_create,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {'X-CSRFToken': window.URLS.csrf_token},
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#emailComposeSidebar').modal('hide');
+                    showNotification('success', 'Ответ отправлен');
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    showNotification('danger', response.message);
+                }
+            },
+            error: function(xhr) {
+                showNotification('danger', 'Ошибка при отправке');
+                console.error(xhr.responseText);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+});
+
+
+    });
+</script>
+
+{% endblock content %}

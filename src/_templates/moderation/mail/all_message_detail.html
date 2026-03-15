@@ -1,0 +1,418 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Сообщение - {{ block.super }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'moderation/css/pages/app-email.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .email-view-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .email-header {
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+        background: #fff;
+    }
+    .email-avatar {
+        width: 48px;
+        height: 48px;
+        margin-top: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 18px;
+    }
+    .email-body {
+        padding: 30px 20px;
+        background: #fff;
+        min-height: 300px;
+        line-height: 1.6;
+    }
+    .email-attachment {
+        padding: 15px 20px;
+        border-top: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+    .badge-email {
+        background: #e9ecef;
+        color: #495057;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .badge-email:hover {
+        background: #dee2e6;
+        transform: scale(1.05);
+    }
+    .action-buttons {
+        position: sticky;
+        top: 70px;
+        z-index: 100;
+        background: white;
+        padding: 15px 20px;
+        border-bottom: 1px solid #e9ecef;
+        margin-bottom: 20px;
+    }
+    .badge-type {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 4px;
+    }
+    .badge-incoming {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .badge-outgoing {
+        background-color: #d1ecf1;
+        color: #0c5460;
+    }
+    .badge-draft {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+    .badge-you {
+        background-color: #e3f2fd;
+        color: #1976d2;
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+    .filter-badge {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .filter-badge:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+    .message-id {
+        font-size: 12px;
+        color: #6c757d;
+        background: #f8f9fa;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <!-- Панель действий -->
+            <div class="action-buttons d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{% url 'mail:message_list' %}{% if request.GET.folder %}?folder={{ request.GET.folder }}{% endif %}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="icon-base bx bx-arrow-back me-1"></i>Назад
+                    </a>
+
+                </div>
+
+                <small class="text-muted">
+                    <i class="icon-base bx bx-time me-1"></i>
+                    {{ message.created_at|date:"d.m.Y H:i" }}
+                </small>
+            </div>
+
+            <!-- Карточка сообщения -->
+            <div class="card">
+                <!-- Заголовок сообщения -->
+                <div class="card-header bg-transparent">
+                    <div class="d-flex align-items-start gap-3">
+                        <!-- Аватар -->
+                        {% if message.user.profile and message.user.profile.avatar %}
+                            <img src="{{ message.user.profile.avatar.url }}"
+                                 alt="{{ message.user.get_full_name }}"
+                                 class="rounded-circle" width="48" height="48">
+                        {% else %}
+                            <div class="avatar avatar-md">
+                                <span class="avatar-initial rounded-circle
+                                    {% if message.display_type == 'incoming' %}bg-label-success
+                                    {% elif message.display_type == 'outgoing' %}bg-label-info
+                                    {% elif message.display_type == 'draft' %}bg-label-warning
+                                    {% else %}bg-label-primary{% endif %}">
+                                    {% if message.display_type == 'outgoing' %}
+                                        <i class="icon-base bx bx-upload"></i>
+                                    {% elif message.display_type == 'draft' %}
+                                        <i class="icon-base bx bx-edit"></i>
+                                    {% else %}
+                                        {{ message.user.username|first|upper }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <!-- Информация об отправителе -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                {% if message.display_type == 'incoming' %}
+                                    <span class="badge bg-success">Входящее</span>
+                                {% elif message.display_type == 'outgoing' %}
+                                    <span class="badge bg-info">Исходящее</span>
+                                {% elif message.display_type == 'draft' %}
+                                    <span class="badge bg-warning">Черновик</span>
+                                {% endif %}
+
+                                <h5 class="mb-0">{{ message.user.get_full_name|default:message.user.username }}</h5>
+                                <small class="text-muted">&lt;{{ message.user.email }}&gt;</small>
+
+                                {% if message.display_type == 'incoming' and request.user not in message.read_by.all %}
+                                    <span class="badge bg-primary">Новое</span>
+                                {% endif %}
+
+                                {% if message.user == request.user %}
+                                    <span class="badge bg-label-info">Вы</span>
+                                {% endif %}
+                            </div>
+
+                            {% if message.subject %}
+                            <h6 class="text-primary mb-2">{{ message.subject }}</h6>
+                            {% endif %}
+
+                            <!-- Получатели -->
+                            {% if message.clients %}
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                <small class="text-muted me-2">Кому:</small>
+                                {% for email in message.get_clients_list %}
+                                    <span class="badge-email">
+                                        <i class="icon-base bx bx-envelope me-1"></i>{{ email }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- ID сообщения -->
+                            <div class="mt-2">
+                                <span class="message-id">
+                                    <i class="icon-base bx bx-hash me-1"></i>
+                                    ID: {{ message.id }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Тело сообщения -->
+                <div class="card-body">
+                    <div class="email-body p-0">
+                        {{ message.message|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Вложения -->
+                {% if message.files.exists %}
+                <div class="card-footer bg-transparent">
+                    <h6 class="mb-3">
+                        <i class="icon-base bx bx-paperclip me-2"></i>
+                        Вложения ({{ message.files.count }})
+                    </h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for file in message.files.all %}
+                        <a href="{{ file.file.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                            <i class="icon-base bx bx-file me-1"></i>
+                            {{ file.file.name|slice:"14:"|truncatechars:20 }}
+                            <small class="text-muted ms-2">({{ file.file.size|filesizeformat }})</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для ответа -->
+<div class="modal fade" id="emailComposeSidebar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Новое сообщение</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="composeForm" method="post" enctype="multipart/form-data" action="{% url 'mail:message_create' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Кому:</label>
+                        <select class="form-control" id="replyRecipients" name="recipients" multiple style="width: 100%;">
+                            <option value="{{ message.user.email }}" selected>
+                                {{ message.user.get_full_name|default:message.user.username }} ({{ message.user.email }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Тема:</label>
+                        <input type="text" class="form-control" id="replySubject" name="subject"
+                               value="Re: {{ message.subject|default:'Без темы' }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Сообщение:</label>
+                        <textarea class="form-control" name="message" rows="8"
+                                  placeholder="Напишите ваше сообщение..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="icon-base bx bx-paperclip me-1"></i>Прикрепить файлы
+                        </label>
+                        <input type="file" class="form-control" name="files" multiple>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+window.URLS = {
+    message_delete: '{% url "mail:message_delete" "00000000-0000-0000-0000-000000000000" %}',
+    message_mark_read: '{% url "mail:message_mark_read" "00000000-0000-0000-0000-000000000000" %}',
+    message_toggle_star: '{% url "mail:message_toggle_star" "00000000-0000-0000-0000-000000000000" %}',
+    message_create: '{% url "mail:message_create" %}',
+    get_users_list: '{% url "mail:get_users_list" %}',
+    csrf_token: '{{ csrf_token }}'
+};
+
+function formatUrl(url, messageId) {
+    return url.replace('00000000-0000-0000-0000-000000000000', messageId);
+}
+
+function replyToMessage() {
+    $('#emailComposeSidebar').modal('show');
+
+    // Инициализируем Select2 для ответа
+    setTimeout(function() {
+        if (!$('#replyRecipients').data('select2')) {
+            $('#replyRecipients').select2({
+                ajax: {
+                    url: window.URLS.get_users_list,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return { search: params.term };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data.results.map(function(user) {
+                                return {
+                                    id: user.email,
+                                    text: user.text + ' (' + user.email + ')'
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 2,
+                placeholder: 'Введите email получателя',
+                allowClear: true,
+                tags: true,
+                tokenSeparators: [',', ';', ' '],
+                width: '100%'
+            });
+        }
+    }, 100);
+}
+
+function deleteMessage(messageId, event) {
+    if (event) event.stopPropagation();
+    if (confirm('Удалить это сообщение?')) {
+        $.ajax({
+            url: formatUrl(window.URLS.message_delete, messageId),
+            type: 'POST',
+            headers: {'X-CSRFToken': window.URLS.csrf_token},
+            success: function(response) {
+                if (response.status === 'success') {
+                    window.location.href = '{% url "mail:message_list" %}?folder={% if request.GET.folder %}{{ request.GET.folder }}{% else %}inbox{% endif %}';
+                }
+            },
+            error: function(xhr) {
+                alert('Ошибка при удалении');
+                console.error(xhr.responseText);
+            }
+        });
+    }
+}
+
+function toggleStar(messageId, event) {
+    event.stopPropagation();
+    $.ajax({
+        url: formatUrl(window.URLS.message_toggle_star, messageId),
+        type: 'POST',
+        headers: {'X-CSRFToken': window.URLS.csrf_token},
+        error: function(xhr) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+
+// Обработка отправки формы ответа
+$(document).ready(function() {
+    $('#composeForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        var submitBtn = $(this).find('button[type="submit"]');
+        var originalText = submitBtn.html();
+
+        // Получаем выбранные email из Select2
+        var selectedEmails = $('#replyRecipients').val();
+        if (selectedEmails && selectedEmails.length > 0) {
+            formData.delete('recipients');
+            selectedEmails.forEach(email => formData.append('recipients', email));
+        }
+
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Отправка...');
+
+        $.ajax({
+            url: window.URLS.message_create,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {'X-CSRFToken': window.URLS.csrf_token},
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#emailComposeSidebar').modal('hide');
+                    alert('Ответ отправлен');
+                    setTimeout(function() { location.reload(); }, 1000);
+                } else {
+                    alert('Ошибка: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Ошибка при отправке');
+                console.error(xhr.responseText);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
