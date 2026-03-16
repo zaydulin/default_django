@@ -2,8 +2,14 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     ContactList, Contact, MessageDir, MessageRm, MessageMask,
-    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog
+    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageDirectory
 )
+from django.contrib.auth import get_user_model
+
+from django.db.models import Max
+from django.conf import settings
+from django.apps import apps
+User = get_user_model()
 
 
 @admin.register(ContactList)
@@ -113,17 +119,19 @@ class MessageFileInline(admin.TabularInline):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('short_id', 'user', 'subject_preview', 'message_type', 'message_preview',
-                    'recipients_count', 'read_by_count', 'has_files', 'created_at')
+    list_display = ('custom_id', 'user', 'subject_preview', 'message_type', 'message_preview',
+                    'recipients_count', 'read_by_count', 'has_files', 'created_at', 'short_uuid')
+    list_display_links = ('custom_id', 'subject_preview')  # Чтобы можно было кликнуть по номеру
     list_filter = ('message_type', 'self_field', 'user', 'created_at')
-    search_fields = ('subject', 'message', 'clients', 'user__username', 'user__email')
-    readonly_fields = ('id', 'created_at', 'updated_at', 'full_message', 'recipients_list', 'read_by_list')
+    search_fields = ('custom_id', 'subject', 'message', 'clients', 'user__username', 'user__email')
+    readonly_fields = ('id', 'custom_id', 'created_at', 'updated_at', 'full_message',
+                       'recipients_list', 'read_by_list', 'short_uuid')
     inlines = [MessageFileInline]
     filter_horizontal = ('dirs', 'masks', 'read_by')
 
     fieldsets = (
         ('Основная информация', {
-            'fields': ('id', 'user', 'message_type', 'self_field', 'subject')
+            'fields': ('id', 'custom_id', 'user', 'message_type', 'self_field', 'subject')
         }),
         ('Сообщение', {
             'fields': ('full_message',)
@@ -141,10 +149,12 @@ class MessageAdmin(admin.ModelAdmin):
         }),
     )
 
-    def short_id(self, obj):
+    def short_uuid(self, obj):
+        """Показывает сокращенный UUID для справки"""
         return str(obj.id)[:8] + '...'
 
-    short_id.short_description = 'ID'
+    short_uuid.short_description = 'UUID'
+    short_uuid.admin_order_field = 'id'  # Можно сортировать по UUID
 
     def subject_preview(self, obj):
         if obj.subject:
@@ -152,6 +162,7 @@ class MessageAdmin(admin.ModelAdmin):
         return '(без темы)'
 
     subject_preview.short_description = 'Тема'
+    subject_preview.admin_order_field = 'subject'  # Сортировка по теме
 
     def message_preview(self, obj):
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
@@ -160,32 +171,50 @@ class MessageAdmin(admin.ModelAdmin):
 
     def recipients_count(self, obj):
         count = len(obj.get_clients_list())
-        return format_html('<b>{}</b>', count)
+        return format_html('<b style="color: {};">{}</b>',
+                           '#28a745' if count > 0 else '#6c757d', count)
 
     recipients_count.short_description = 'Получателей'
+    recipients_count.admin_order_field = 'clients'  # Приблизительная сортировка
 
     def read_by_count(self, obj):
         count = obj.read_by.count()
+        total = len(obj.get_clients_list())
+        if total > 0:
+            percentage = int(count / total * 100)
+            return format_html('<b style="color: {};">{} ({}%)</b>',
+                               '#28a745' if percentage == 100 else '#ffc107',
+                               count, percentage)
         return format_html('<b>{}</b>', count)
 
     read_by_count.short_description = 'Прочитано'
 
     def has_files(self, obj):
         if obj.files.exists():
-            return format_html('<img src="/static/admin/img/icon-yes.svg" alt="True">')
-        return format_html('<img src="/static/admin/img/icon-no.svg" alt="False">')
+            return format_html('<img src="/static/admin/img/icon-yes.svg" alt="Да" title="Есть файлы">')
+        return format_html('<img src="/static/admin/img/icon-no.svg" alt="Нет" title="Нет файлов">')
 
     has_files.short_description = 'Файлы'
 
     def full_message(self, obj):
-        return format_html('<div style="white-space: pre-wrap;">{}</div>', obj.message)
+        return format_html(
+            '<div style="white-space: pre-wrap; background: #f8f9fa; padding: 15px; border-radius: 5px;">{}</div>',
+            obj.message)
 
     full_message.short_description = 'Полный текст сообщения'
 
     def recipients_list(self, obj):
         recipients = obj.get_clients_list()
         if recipients:
-            return format_html('<br>'.join(recipients))
+            items = []
+            for email in recipients:
+                # Проверяем, есть ли такой пользователь в системе
+                try:
+                    user = User.objects.get(email=email)
+                    items.append(f'<span style="color: #28a745;">✓ {email} ({user.username})</span>')
+                except User.DoesNotExist:
+                    items.append(f'<span style="color: #ffc107;">○ {email}</span>')
+            return format_html('<br>'.join(items))
         return '-'
 
     recipients_list.short_description = 'Список получателей'
@@ -193,12 +222,33 @@ class MessageAdmin(admin.ModelAdmin):
     def read_by_list(self, obj):
         users = obj.read_by.all()
         if users:
-            return format_html('<br>'.join([f"{u.get_full_name() or u.username} ({u.email})" for u in users]))
+            items = []
+            for u in users:
+                items.append(f'{u.get_full_name() or u.username} <span style="color: #6c757d;">({u.email})</span>')
+            return format_html('<br>'.join(items))
         return '-'
 
     read_by_list.short_description = 'Прочитано пользователями'
 
+    def get_queryset(self, request):
+        """Оптимизация запросов"""
+        return super().get_queryset(request).select_related(
+            'user', 'message_rm'
+        ).prefetch_related(
+            'dirs', 'masks', 'read_by', 'files'
+        )
 
+    def get_readonly_fields(self, request, obj=None):
+        """Делаем custom_id только для чтения всегда"""
+        readonly = list(self.readonly_fields)
+        if 'custom_id' not in readonly:
+            readonly.append('custom_id')
+        return readonly
+
+    class Media:
+        css = {
+            'all': ('admin/css/custom_admin.css',)
+        }
 @admin.register(MessageFile)
 class MessageFileAdmin(admin.ModelAdmin):
     list_display = ('file_name', 'file_size', 'message_link', 'uploaded_at')
@@ -418,3 +468,5 @@ class MassMailLogAdmin(admin.ModelAdmin):
         )
 
     status_colored.short_description = 'Статус'
+
+admin.site.register(MessageDirectory)

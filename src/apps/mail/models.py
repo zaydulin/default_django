@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.db.models import Max
 
 
 class ContactList(models.Model):
@@ -61,6 +62,24 @@ class Contact(models.Model):
             except ValidationError:
                 raise ValidationError({'value': 'Введите корректный email адрес'})
 
+class MessageDirectory(models.Model):
+    """Директория сообщений"""
+    name = models.CharField(max_length=255, verbose_name="Название")  # Добавил поле name
+    number = models.CharField(max_length=10, verbose_name="Номер", unique=True)  # Уникальный номер типа "01", "02"
+    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='message_directory',
+                                  verbose_name="Пользователь")
+
+    class Meta:
+        verbose_name = "Директория сообщений"
+        verbose_name_plural = "Директории сообщений"
+        ordering = ['number']
+
+    def __str__(self):
+        users = ", ".join([u.username for u in self.user.all()[:3]])
+        if self.user.count() > 3:
+            users += f" и еще {self.user.count() - 3}"
+        return f"{self.name} ({self.number}) - {users}"
+
 
 class MessageDir(models.Model):
     """Директория сообщений"""
@@ -112,6 +131,9 @@ class Message(models.Model):
         ('draft', 'Черновик'),
     )
 
+    # Кастомный ID в формате "01-0001"
+    custom_id = models.CharField(max_length=20, unique=True, editable=False, verbose_name="Номер сообщения")
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name="ID")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='messages_sent',
                              verbose_name="Отправитель")
@@ -121,11 +143,11 @@ class Message(models.Model):
     subject = models.CharField(max_length=255, verbose_name="Тема", blank=True, null=True, default='')
     message_type = models.CharField(max_length=20, choices=MESSAGE_TYPES, default='outgoing',
                                     verbose_name="Тип сообщения")
-    message_rm = models.ForeignKey(MessageRm, on_delete=models.SET_NULL, null=True, blank=True,
+    message_rm = models.ForeignKey('MessageRm', on_delete=models.SET_NULL, null=True, blank=True,
                                    related_name='messages', verbose_name="Связанное удаленное сообщение")
     self_field = models.BooleanField(default=False, verbose_name="Для себя")
-    dirs = models.ManyToManyField(MessageDir, related_name='messages', verbose_name="Директории", blank=True)
-    masks = models.ManyToManyField(MessageMask, related_name='messages', verbose_name="Маски", blank=True)
+    dirs = models.ManyToManyField('MessageDir', related_name='messages', verbose_name="Директории", blank=True)
+    masks = models.ManyToManyField('MessageMask', related_name='messages', verbose_name="Маски", blank=True)
     read_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='read_messages', blank=True,
                                      verbose_name="Прочитано пользователями")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
@@ -137,22 +159,219 @@ class Message(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Сообщение {self.id} от {self.user.username}"
+        return f"{self.custom_id} - {self.subject or 'Без темы'}"
+
+    def generate_custom_id(self):
+        """
+        Генерирует ID в формате "01-0001" на основе директории пользователя
+        """
+        from django.apps import apps
+        import time
+
+        print(f"\n   🔧 GENERATE_CUSTOM_ID called")
+
+        MessageDirectory = apps.get_model('mail', 'MessageDirectory')
+
+        # Значение по умолчанию
+        dir_number = "00"
+        user_dir = None
+
+        # Пробуем найти директорию, связанную с пользователем
+        if hasattr(self, 'user') and self.user and self.user.pk:
+            try:
+                print(f"   👤 Looking for directory for user: {self.user.username}")
+
+                # Ищем директории, где есть этот пользователь
+                user_dirs = MessageDirectory.objects.filter(user=self.user)
+
+                if user_dirs.exists():
+                    # Берем первую директорию
+                    user_dir = user_dirs.first()
+                    if user_dir and user_dir.number:
+                        dir_number = str(user_dir.number).zfill(2)
+                        print(f"   📁 Found directory: {user_dir.name} with number: {dir_number}")
+                else:
+                    print(f"   📁 No directory found, creating default...")
+                    # Создаем директорию по умолчанию
+                    user_dir = self.create_default_directory()
+                    if user_dir and user_dir.number:
+                        dir_number = str(user_dir.number).zfill(2)
+                        print(f"   ✅ Created directory with number: {dir_number}")
+            except Exception as e:
+                print(f"   ⚠️ Error getting directory: {e}")
+                # Продолжаем с dir_number = "00"
+
+        print(f"   📁 Using directory number: {dir_number}")
+
+        # Находим следующий порядковый номер
+        max_num = 0
+        try:
+            # Ищем все сообщения с таким префиксом
+            prefix = f"{dir_number}-"
+            print(f"   🔍 Looking for messages with prefix: {prefix}")
+
+            # Получаем все сообщения с таким префиксом
+            messages = Message.objects.filter(custom_id__startswith=prefix)
+
+            if messages.exists():
+                print(f"   📊 Found {messages.count()} messages with this prefix")
+                # Извлекаем числовые части
+                numbers = []
+                for msg in messages:
+                    if msg.custom_id and '-' in msg.custom_id:
+                        try:
+                            num_part = msg.custom_id.split('-')[1]
+                            print(f"      - Extracting number from: {msg.custom_id} -> {num_part}")
+                            if num_part.isdigit():
+                                numbers.append(int(num_part))
+                        except (IndexError, ValueError) as e:
+                            print(f"      ⚠️ Error extracting number: {e}")
+                            continue
+
+                if numbers:
+                    max_num = max(numbers)
+                    print(f"   📊 Max number found: {max_num}")
+            else:
+                print(f"   📊 No messages found with prefix {prefix}")
+        except Exception as e:
+            print(f"   ⚠️ Error finding max number: {e}")
+
+        next_num = max_num + 1
+        print(f"   🔢 Next number: {next_num}")
+
+        # Формируем новый ID
+        new_id = f"{dir_number}-{next_num:04d}"
+        print(f"   🆕 Generated new_id: {new_id}")
+
+        # Проверяем, не существует ли уже такой ID
+        attempt = 0
+        while Message.objects.filter(custom_id=new_id).exists() and attempt < 10:
+            print(f"   ⚠️ ID {new_id} already exists, trying next...")
+            next_num += 1
+            new_id = f"{dir_number}-{next_num:04d}"
+            attempt += 1
+
+        print(f"   ✅ Final custom_id: {new_id}\n")
+        return new_id
+
+    def create_default_directory(self):
+        """
+        Создает директорию по умолчанию для пользователя
+        """
+        from django.apps import apps
+        from django.db import transaction
+        from django.db.models import Max
+
+        MessageDirectory = apps.get_model('mail', 'MessageDirectory')
+
+        with transaction.atomic():
+            # Находим максимальный номер
+            max_obj = MessageDirectory.objects.aggregate(
+                Max('number')
+            )
+            max_number = max_obj['number__max']
+
+            if max_number:
+                try:
+                    # Пробуем преобразовать в число
+                    if max_number.isdigit():
+                        next_num = int(max_number) + 1
+                    else:
+                        # Если не число, ищем первый свободный
+                        existing = set(MessageDirectory.objects.values_list('number', flat=True))
+                        next_num = 1
+                        while f"{next_num:02d}" in existing:
+                            next_num += 1
+                except (ValueError, AttributeError):
+                    next_num = 1
+            else:
+                next_num = 1
+
+            # Форматируем номер с ведущим нулем
+            dir_number = f"{next_num:02d}"
+
+            # Создаем новую директорию
+            dir_name = f"Директория пользователя {self.user.username}"
+
+            # Убеждаемся, что такой номер не занят
+            while MessageDirectory.objects.filter(number=dir_number).exists():
+                next_num += 1
+                dir_number = f"{next_num:02d}"
+
+            dir = MessageDirectory.objects.create(
+                name=dir_name,
+                number=dir_number
+            )
+            dir.user.add(self.user)
+
+            return dir
+
+    @classmethod
+    def get_by_custom_id(cls, custom_id):
+        """
+        Получить сообщение по кастомному ID
+        """
+        try:
+            return cls.objects.get(custom_id=custom_id)
+        except cls.DoesNotExist:
+            return None
+
+    @property
+    def formatted_id(self):
+        """
+        Возвращает отформатированный ID для отображения
+        """
+        return self.custom_id or "---"
 
     def save(self, *args, **kwargs):
         """Автоматически определяем тип сообщения при сохранении"""
+        print(f"\n🔧 SAVE CALLED for message {getattr(self, 'pk', 'NEW')}")
+        print(f"   self_field: {self.self_field}")
+        print(f"   custom_id before: {self.custom_id}")
+        print(f"   pk: {self.pk}")
+
+        # Проверяем, есть ли уже ID в базе
+        is_new = True
+        if self.pk:
+            try:
+                # Пробуем найти объект в базе
+                existing = Message.objects.get(pk=self.pk)
+                is_new = False
+                print(f"   Found existing message with pk: {self.pk}")
+            except Message.DoesNotExist:
+                print(f"   No existing message with pk: {self.pk}")
+                is_new = True
+
+        print(f"   is_new (after check): {is_new}")
+
+        # Генерируем custom_id для новых сообщений
+        if is_new and not self.custom_id:
+            print("   🔄 Generating custom_id...")
+            self.custom_id = self.generate_custom_id()
+            print(f"   ✅ Generated custom_id: {self.custom_id}")
+        elif is_new and self.custom_id:
+            print(f"   ℹ️ custom_id already set: {self.custom_id}")
+        else:
+            print(f"   ℹ️ Existing message, custom_id: {self.custom_id}")
+
+        # Остальная логика...
         if not self.message_type and not self.self_field:
             # Проверяем, есть ли email текущего пользователя в получателях
             if self.user and hasattr(self.user, 'email'):
                 user_email = self.user.email.lower()
                 clients_list = [email.lower() for email in self.get_clients_list()]
+                print(f"   user_email: {user_email}")
+                print(f"   clients_list: {clients_list}")
 
                 if user_email in clients_list:
                     self.message_type = 'incoming'
+                    print(f"   ✅ message_type set to: incoming")
                 else:
                     self.message_type = 'outgoing'
+                    print(f"   ✅ message_type set to: outgoing")
 
         super().save(*args, **kwargs)
+        print(f"   ✅ Message saved with custom_id: {self.custom_id}\n")
 
     def get_clients_list(self):
         """Получить список email адресов получателей"""

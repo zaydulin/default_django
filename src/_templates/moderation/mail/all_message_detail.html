@@ -113,7 +113,7 @@
             <!-- Панель действий -->
             <div class="action-buttons d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{% url 'mail:message_list' %}{% if request.GET.folder %}?folder={{ request.GET.folder }}{% endif %}"
+                    <a href="{% url 'mail:all_messages' %}"
                        class="btn btn-outline-secondary btn-sm">
                         <i class="icon-base bx bx-arrow-back me-1"></i>Назад
                     </a>
@@ -197,7 +197,7 @@
                             <div class="mt-2">
                                 <span class="message-id">
                                     <i class="icon-base bx bx-hash me-1"></i>
-                                    ID: {{ message.id }}
+                                    ID: {{ message.custom_id }}
                                 </span>
                             </div>
                         </div>
