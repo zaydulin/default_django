@@ -231,32 +231,3 @@ CKEDITOR_CONFIGS = {
     }
 }
 
-# =====================
-# CELERY
-# =====================
-CELERY_BROKER_URL = 'redis://cb-redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://cb-redis:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/Moscow'  # или ваша временная зона
-CELERY_ENABLE_UTC = False
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-
-# Расписание периодических задач
-CELERY_BEAT_SCHEDULE = {
-    'check-all-smtp-settings': {
-        'task': 'mail.tasks.check_all_smtp_settings',
-        'schedule': crontab(minute='*/30'),  # каждые 30 минут
-        'options': {
-            'expires': 60 * 30,  # задача устаревает через 30 минут
-        }
-    },
-    'check-all-smtp-settings-hourly': {
-        'task': 'mail.tasks.check_all_smtp_settings',
-        'schedule': crontab(minute=0),  # каждый час
-        'options': {
-            'expires': 60 * 60,
-        }
-    },
-}
