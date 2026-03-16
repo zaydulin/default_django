@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     ContactList, Contact, MessageDir, MessageRm, MessageMask,
-    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageDirectory
+    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageDirectory, SmtpCheckLog
 )
 from django.contrib.auth import get_user_model
 
@@ -470,3 +470,4 @@ class MassMailLogAdmin(admin.ModelAdmin):
     status_colored.short_description = 'Статус'
 
 admin.site.register(MessageDirectory)
+admin.site.register(SmtpCheckLog)
