@@ -3,6 +3,7 @@ from pathlib import Path
 from string import  ascii_lowercase, ascii_uppercase, digits
 from environs import Env
 import sys
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -229,3 +230,34 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
+
+# =====================
+# CELERY
+# =====================
+CELERY_BROKER_URL = f"redis://{env.str('DJANGO_REDIS_HOST', 'localhost')}:6379/0"
+CELERY_RESULT_BACKEND = f"redis://{env.str('DJANGO_REDIS_HOST', 'localhost')}:6379/1"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Europe/Moscow"  # или твой часовой пояс
+
+# =====================
+# CELERY LOGGING (по желанию)
+# =====================
+CELERYD_LOG_LEVEL = "DEBUG"
+CELERYD_LOG_FORMAT = "[%(asctime)s: %(levelname)s/%(processName)s] %(message)s"
+CELERYD_LOG_FILE = "/var/www/demo/celery.log"  # только если логировать в файл
+
+# =====================
+# CELERY BEAT
+# =====================
+CELERY_BEAT_SCHEDULE = {
+    'check-hls-every-minute': {
+        'task': 'mail.tasks.check_pending_hls_files',
+        'schedule': crontab(),  # каждая минута
+    }
+}
+
+CELERY_IMPORTS = (
+    'mail.tasks',
+)
