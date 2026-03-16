@@ -234,20 +234,17 @@ CKEDITOR_CONFIGS = {
 # =====================
 # CELERY
 # =====================
-# Celery settings
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = 'redis://cb-redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://cb-redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = TIME_ZONE
+CELERY_TIMEZONE = 'Europe/Moscow'  # или ваша временная зона
 CELERY_ENABLE_UTC = False
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
-# Периодические задачи
-from celery.schedules import crontab
-
+# Расписание периодических задач
 CELERY_BEAT_SCHEDULE = {
-    # Проверка всех SMTP настроек каждые 30 минут
     'check-all-smtp-settings': {
         'task': 'mail.tasks.check_all_smtp_settings',
         'schedule': crontab(minute='*/30'),  # каждые 30 минут
@@ -255,19 +252,11 @@ CELERY_BEAT_SCHEDULE = {
             'expires': 60 * 30,  # задача устаревает через 30 минут
         }
     },
-
-    # Можно добавить проверку в определенное время
     'check-all-smtp-settings-hourly': {
         'task': 'mail.tasks.check_all_smtp_settings',
-        'schedule': crontab(minute=0),  # каждый час в 00 минут
-    },
-
-    # Проверка каждые 15 минут в рабочее время
-    'check-all-smtp-settings-work-hours': {
-        'task': 'mail.tasks.check_all_smtp_settings',
-        'schedule': crontab(minute='*/15', hour='9-18'),  # каждые 15 минут с 9 до 18
+        'schedule': crontab(minute=0),  # каждый час
+        'options': {
+            'expires': 60 * 60,
+        }
     },
 }
-CELERY_IMPORTS = (
-    'mail.tasks',
-)
