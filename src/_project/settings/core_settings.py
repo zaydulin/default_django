@@ -234,30 +234,40 @@ CKEDITOR_CONFIGS = {
 # =====================
 # CELERY
 # =====================
-CELERY_BROKER_URL = f"redis://{env.str('DJANGO_REDIS_HOST', 'localhost')}:6379/0"
-CELERY_RESULT_BACKEND = f"redis://{env.str('DJANGO_REDIS_HOST', 'localhost')}:6379/1"
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TIMEZONE = "Europe/Moscow"  # или твой часовой пояс
+# Celery settings
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = False
 
-# =====================
-# CELERY LOGGING (по желанию)
-# =====================
-CELERYD_LOG_LEVEL = "DEBUG"
-CELERYD_LOG_FORMAT = "[%(asctime)s: %(levelname)s/%(processName)s] %(message)s"
-CELERYD_LOG_FILE = "/var/www/demo/celery.log"  # только если логировать в файл
+# Периодические задачи
+from celery.schedules import crontab
 
-# =====================
-# CELERY BEAT
-# =====================
 CELERY_BEAT_SCHEDULE = {
-    'check-hls-every-minute': {
-        'task': 'mail.tasks.check_pending_hls_files',
-        'schedule': crontab(),  # каждая минута
-    }
-}
+    # Проверка всех SMTP настроек каждые 30 минут
+    'check-all-smtp-settings': {
+        'task': 'mail.tasks.check_all_smtp_settings',
+        'schedule': crontab(minute='*/30'),  # каждые 30 минут
+        'options': {
+            'expires': 60 * 30,  # задача устаревает через 30 минут
+        }
+    },
 
+    # Можно добавить проверку в определенное время
+    'check-all-smtp-settings-hourly': {
+        'task': 'mail.tasks.check_all_smtp_settings',
+        'schedule': crontab(minute=0),  # каждый час в 00 минут
+    },
+
+    # Проверка каждые 15 минут в рабочее время
+    'check-all-smtp-settings-work-hours': {
+        'task': 'mail.tasks.check_all_smtp_settings',
+        'schedule': crontab(minute='*/15', hour='9-18'),  # каждые 15 минут с 9 до 18
+    },
+}
 CELERY_IMPORTS = (
     'mail.tasks',
 )

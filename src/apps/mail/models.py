@@ -457,6 +457,12 @@ class UserSettingsSMTP(models.Model):
     email_use_tls = models.BooleanField("Use TLS", default=False, blank=True, null=True)
     email_use_ssl = models.BooleanField("Use SSL", default=False, blank=True, null=True)
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    last_check_time = models.DateTimeField("Время последней проверки", blank=True, null=True)
+    last_check_success = models.BooleanField("Последняя проверка успешна", default=False)
+    last_error = models.TextField("Последняя ошибка", blank=True, null=True)
+    check_count = models.IntegerField("Количество проверок", default=0)
+    success_count = models.IntegerField("Количество успешных проверок", default=0)
+    failure_count = models.IntegerField("Количество ошибок", default=0)
 
 
 
@@ -464,6 +470,22 @@ class UserSettingsSMTP(models.Model):
         verbose_name = "Настройка почты"
         verbose_name_plural = "Настройки почты"
 
+
+class SmtpCheckLog(models.Model):
+    """Лог проверок SMTP настроек"""
+    smtp_settings = models.ForeignKey(UserSettingsSMTP, on_delete=models.CASCADE,
+                                      related_name='check_logs', verbose_name="SMTP настройки")
+    status = models.CharField(max_length=20, verbose_name="Статус")
+    message = models.TextField(verbose_name="Сообщение")
+    checked_at = models.DateTimeField(auto_now_add=True, verbose_name="Время проверки")
+
+    class Meta:
+        verbose_name = "Лог проверки SMTP"
+        verbose_name_plural = "Логи проверки SMTP"
+        ordering = ['-checked_at']
+
+    def __str__(self):
+        return f"{self.smtp_settings.user.username} - {self.status} - {self.checked_at}"
 
 class MassMailCampaign(models.Model):
     """Кампания массовой рассылки"""
