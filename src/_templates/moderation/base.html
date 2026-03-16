@@ -182,7 +182,7 @@
           </a>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item ">
+        <li class="menu-item d-none">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-cart-alt"></i>
             <div>Магазин</div>
@@ -257,7 +257,7 @@
         </li>
         <!-- e-commerce-app menu end -->
         <!-- e-commerce-app menu start -->
-        <li class="menu-item ">
+        <li class="menu-item d-none ">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-cart-alt"></i>
             <div>Объявления</div>
@@ -332,7 +332,7 @@
         </li>
         <!-- e-commerce-app menu end -->
         <!-- Academy menu start -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_course_dashboard_list' or request.resolver_match.url_name == 'my_courses_list' or request.resolver_match.url_name == 'completed_courses_list' or request.resolver_match.url_name == 'certificates_list' or request.resolver_match.url_name == 'created_courses_list' %}active open{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_course_dashboard_list' or request.resolver_match.url_name == 'my_courses_list' or request.resolver_match.url_name == 'completed_courses_list' or request.resolver_match.url_name == 'certificates_list' or request.resolver_match.url_name == 'created_courses_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-book-open"></i>
             <div>Обучение</div>
@@ -366,24 +366,24 @@
           </ul>
         </li>
         <!-- Academy menu end -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_appeals_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_appeals_list' %}active{% endif %}">
           <a href="{% url 'moderation:moderation_appeals_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-support"></i>
             <div>Обращение</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_tickets_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_tickets_list' %}active{% endif %}">
           <a href="{% url 'ticket:moderation_tickets_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-task"></i>
             <div>Тикеты</div>
           </a>
         </li>
         <!-- Components -->
-        <li class="menu-header small">
+        <li class="menu-header d-none  small">
           <span class="menu-header-text">Интеграции</span>
         </li>
         <!-- Cards -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_social_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_social_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_social_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Соц-сети</div>
@@ -391,7 +391,7 @@
 
         </li>
         <!-- User interface -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_telephony_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-phone"></i>
             <div>Телефония</div>
@@ -399,20 +399,20 @@
 
         </li>
         <!-- Extended components -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_payments_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-credit-card"></i>
             <div >Плат-системы</div>
           </a>
 
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_dopservice_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_dopservice_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_dopservice_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Доп. Сервисы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %}">
+        <li class="menu-item d-none {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %}">
           <a href="{% url 'integrations:moderation_neiro_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Нейронки</div>
