@@ -23,7 +23,6 @@ services:
     env_file:
       - .env
 
-
   cb-app:
     build:
       context: .
@@ -34,6 +33,9 @@ services:
       - .env
     environment:
       WAIT-HOSTS: cb-db, cb-redis
+      # Добавьте переменные для Celery
+      CELERY_BROKER_URL: redis://cb-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://cb-redis:6379/0
     volumes:
       - ./src:/app/marketplace
     ports:
@@ -55,6 +57,9 @@ services:
       - .env
     environment:
       WAIT-HOSTS: cb-db, cb-redis
+      # Исправляем адрес Redis - используем имя сервиса cb-redis, а не redis
+      CELERY_BROKER_URL: redis://cb-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://cb-redis:6379/0
     volumes:
       - ./src:/app/marketplace
     restart: always
@@ -67,5 +72,5 @@ volumes:
   cb-redis-data:
 
 networks:
-  cb-net:
-    external: false
+  default:
+    driver: bridge
