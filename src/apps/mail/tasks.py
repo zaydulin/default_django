@@ -10,7 +10,7 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-@shared_task
+@shared_task(name='mail.tasks.run_check_mass_mail_campaigns')
 def run_check_mass_mail_campaigns():
     """
     Задача для запуска команды check_mass_mail_campaigns
@@ -56,7 +56,7 @@ def run_check_mass_mail_campaigns():
         }
 
 
-@shared_task
+@shared_task(name='mail.tasks.run_check_mail')
 def run_check_mail():
     """
     Задача для запуска команды check_mail
@@ -102,7 +102,7 @@ def run_check_mail():
         }
 
 
-@shared_task
+@shared_task(name='mail.tasks.run_both_checks')
 def run_both_checks():
     """
     Задача для последовательного запуска обеих команд
