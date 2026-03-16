@@ -233,28 +233,52 @@ class EmailService:
         full_message = message_obj.message
         print(f"\n📝 Подготовка сообщения ID: {message_obj.id}")
 
+        # Выводим шапку и подвал для отладки
+        if smtp_settings:
+            print(f"   📌 SMTP Settings found for user: {smtp_settings.user.username}")
+            print(f"   📌 Header present: {bool(smtp_settings.message_header)}")
+            print(f"   📌 Footer present: {bool(smtp_settings.message_footer)}")
+
+            if smtp_settings.message_header:
+                print(f"   📌 Header content: {smtp_settings.message_header[:50]}...")
+            if smtp_settings.message_footer:
+                print(f"   📌 Footer content: {smtp_settings.message_footer[:50]}...")
+        else:
+            print("   ℹ️ No SMTP settings found")
+
         # Добавляем шапку если есть
         if smtp_settings and smtp_settings.message_header:
             full_message = smtp_settings.message_header + "\n\n" + full_message
-            print("📌 Добавлена шапка сообщения")
+            print("   ✅ Шапка добавлена в текстовую версию")
 
         # Добавляем подвал если есть
         if smtp_settings and smtp_settings.message_footer:
             full_message = full_message + "\n\n" + smtp_settings.message_footer
-            print("📌 Добавлен подвал сообщения")
+            print("   ✅ Подвал добавлен в текстовую версию")
 
         # Создаем HTML версию
         try:
-            html_message = render_to_string('moderation/mail/email_template.html', {
+            context = {
                 'message': message_obj.message,
                 'subject': message_obj.subject,
-                'header': smtp_settings.message_header if smtp_settings else None,
-                'footer': smtp_settings.message_footer if smtp_settings else None,
                 'user': message_obj.user,
-            })
+            }
+
+            # Добавляем header и footer в контекст, если они есть
+            if smtp_settings:
+                context['header'] = smtp_settings.message_header
+                context['footer'] = smtp_settings.message_footer
+                print(f"   📌 Header in context: {bool(context.get('header'))}")
+                print(f"   📌 Footer in context: {bool(context.get('footer'))}")
+
+            html_message = render_to_string('moderation/mail/email_template.html', context)
             print("✅ HTML шаблон создан успешно")
+            print(f"   📄 HTML template path: moderation/mail/email_template.html")
+
         except Exception as e:
             print(f"⚠️ Ошибка создания HTML шаблона: {str(e)}")
+            import traceback
+            traceback.print_exc()
             html_message = None
 
         return full_message, html_message
@@ -285,6 +309,16 @@ def send_email_on_message_create(sender, instance, created, **kwargs):
                 print(f"   Port: {smtp_settings.email_port}")
                 print(f"   User: {smtp_settings.email_host_user}")
                 print(f"   From: {smtp_settings.default_from_email}")
+                print(f"   Header: {bool(smtp_settings.message_header)}")
+                print(f"   Footer: {bool(smtp_settings.message_footer)}")
+
+                # Выводим содержимое шапки и подвала
+                if smtp_settings.message_header:
+                    print(f"\n   📌 ШАПКА:")
+                    print(f"   {smtp_settings.message_header}")
+                if smtp_settings.message_footer:
+                    print(f"\n   📌 ПОДВАЛ:")
+                    print(f"   {smtp_settings.message_footer}")
 
                 # Проверяем логин для Beget
                 if smtp_settings.email_host == 'smtp.beget.com':
