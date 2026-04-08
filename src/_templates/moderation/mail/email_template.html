@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    {% if header %}
-    {{ header|linebreaks }}
-    {% endif %}
+{% if header %}
+{{ header|linebreaks }}
+{% endif %}
 
 
-            {{ message|linebreaks }}
+{{ message|safe }}
 
 
-
-    {% if footer %}
-        {{ footer|linebreaks }}
-    {% endif %}
+{% if footer %}
+{{ footer|linebreaks }}
+{% endif %}
 </body>
 </html>

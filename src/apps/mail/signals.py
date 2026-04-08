@@ -1,16 +1,151 @@
 import smtplib
 import ssl
-import base64
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
-from django.conf import settings
-from .models import Message, MassMailCampaign, MassMailLog, UserSettingsSMTP
-
-# Включаем печать для отладки
+from .models import Message
+from django.utils.html import strip_tags
 DEBUG = True
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+from django.contrib.auth import get_user_model
+import logging
+
+# Настройка логирования
+logger = logging.getLogger(__name__)
+
+User = get_user_model()
+
+from django.contrib.auth import get_user_model
+
+from django.contrib.auth import get_user_model
+from .models import UserSettingsSMTP
+
+import json
+import random
+import string
+import requests
+from urllib.parse import urlencode, quote
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+@receiver(post_save, sender=User)
+def create_user_mailbox_and_smtp_settings(sender, instance, created, **kwargs):
+    if created:
+        print("=" * 60)
+        print(f"[DEBUG] Обработка сигнала для: {instance.username}")
+        print("=" * 60)
+
+        # Формируем данные
+        mailbox_name = instance.email.split('@')[0] if instance.email else instance.username
+        domain = "works-all.ru"
+        full_email = f"{mailbox_name}@{domain}"
+
+        random_password = ''.join(random.choices(
+            string.ascii_letters + string.digits + "!@#$%^&*", k=16
+        ))
+
+        api_login = "a90212rd"
+        api_password = "Samira0522"
+        api_url = "https://api.beget.com/api/mail/createMailbox"
+
+        input_data = {
+            "domain": domain,
+            "mailbox": mailbox_name,
+            "mailbox_password": random_password
+        }
+
+        # 🔥 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ:
+        # 1. JSON → строка
+        input_data_json = json.dumps(input_data, ensure_ascii=False, separators=(',', ':'))
+        # 2. URL-кодируем ВСЮ строку (safe='' — кодируем даже / и ?)
+        input_data_encoded = quote(input_data_json, safe='')
+
+        # 3. Простые параметры (их requests закодирует нормально)
+        simple_params = {
+            "login": api_login,
+            "passwd": api_password,
+            "input_format": "json",
+            "output_format": "json",
+        }
+
+        # 4. Собираем базовый query string через urlencode
+        base_query = urlencode(simple_params)
+
+        # 5. Добавляем УЖЕ закодированный input_data БЕЗ повторного кодирования
+        full_query = f"{base_query}&input_data={input_data_encoded}"
+
+        # 6. Финальный URL
+        full_url = f"{api_url}?{full_query}"
+
+        mailbox_created = False
+        real_error = None
+
+        try:
+            print(f"[DEBUG] Отправка запроса: {full_url[:200]}...")  # Обрезаем для лога
+
+            # 🔥 Отправляем готовый URL, БЕЗ params!
+            response = requests.get(full_url, timeout=30)
+
+            print(f"[DEBUG] HTTP Status: {response.status_code}")
+            print(f"[DEBUG] Response body: {response.text[:500]}")
+
+            # Пробуем распарсить ответ
+            try:
+                result = response.json()
+            except json.JSONDecodeError:
+                print(f"[ERROR] Ответ не JSON: {response.text}")
+                result = None
+
+            # Проверка успешного ответа
+            if response.status_code == 200 and result:
+                if result.get('status') == 'success':
+                    answer = result.get('answer', {})
+                    if isinstance(answer, dict) and answer.get('status') == 'success':
+                        print(f"[SUCCESS] ✅ Ящик {full_email} создан!")
+                        mailbox_created = True
+                    else:
+                        errors = answer.get('errors', []) if isinstance(answer, dict) else []
+                        if errors:
+                            err = errors[0]
+                            print(f"[ERROR] ❌ {err.get('error_code')}: {err.get('error_text')}")
+                            real_error = err.get('error_text')
+            else:
+                print(f"[ERROR] ❌ Ошибка API: {result}")
+
+        except requests.exceptions.RequestException as e:
+            print(f"[ERROR] ❌ Сетевая ошибка: {e}")
+            real_error = str(e)
+        except Exception as e:
+            print(f"[ERROR] ❌ Ошибка: {e}")
+            real_error = str(e)
+
+        # Логика создания SMTP-настроек (без изменений)
+        if not mailbox_created:
+            print(f"[WARNING] ⚠️ Ящик НЕ создан. Создайте вручную: {mailbox_name}@{domain}")
+
+        try:
+            UserSettingsSMTP.objects.create(
+                user=instance,
+                email_host="mail.works-all.ru",
+                default_from_email=full_email,
+                email_port=587,
+                email_host_user=full_email,
+                email_host_password=random_password,
+                email_use_tls=True,
+                email_use_ssl=False,
+                message_header=f"Здравствуйте, {instance.get_full_name() or instance.username}!",
+                message_footer="\n--\nС уважением, администрация сайта",
+            )
+            print(f"[SUCCESS] ✅ SMTP-настройки созданы")
+        except Exception as e:
+            print(f"[ERROR] ❌ Ошибка создания SMTP: {e}")
+
+        print("=" * 60)
 
 def debug_print(*args, **kwargs):
     if DEBUG:
@@ -284,93 +419,119 @@ class EmailService:
         return full_message, html_message
 
 
+
+
 @receiver(post_save, sender=Message)
 def send_email_on_message_create(sender, instance, created, **kwargs):
     """
     Сигнал для отправки email при создании нового сообщения
     """
-    # Отправляем только для новых сообщений, не черновиков и с получателями
-    if (created and not instance.self_field and instance.clients):
+
+    # Отправляем только для новых сообщений
+    if created and not instance.self_field and instance.clients:
+
         print("\n" + "=" * 60)
         print("🚀 СИГНАЛ: Новое сообщение создано")
         print("=" * 60)
+
         print(f"📧 ID сообщения: {instance.id}")
         print(f"👤 Отправитель: {instance.user.username} ({instance.user.email})")
         print(f"📋 Тема: {instance.subject}")
 
         try:
-            # Получаем SMTP настройки отправителя
+
+            # -------------------------------------------------------
+            # SMTP НАСТРОЙКИ
+            # -------------------------------------------------------
+
             print("\n🔍 Ищем SMTP настройки пользователя...")
             smtp_settings = UserSettingsSMTP.objects.filter(user=instance.user).first()
 
             if smtp_settings:
-                print(f"✅ Найдены SMTP настройки:")
-                print(f"   Host: {smtp_settings.email_host}")
-                print(f"   Port: {smtp_settings.email_port}")
-                print(f"   User: {smtp_settings.email_host_user}")
-                print(f"   From: {smtp_settings.default_from_email}")
-                print(f"   Header: {bool(smtp_settings.message_header)}")
-                print(f"   Footer: {bool(smtp_settings.message_footer)}")
-
-                # Выводим содержимое шапки и подвала
-                if smtp_settings.message_header:
-                    print(f"\n   📌 ШАПКА:")
-                    print(f"   {smtp_settings.message_header}")
-                if smtp_settings.message_footer:
-                    print(f"\n   📌 ПОДВАЛ:")
-                    print(f"   {smtp_settings.message_footer}")
-
-                # Проверяем логин для Beget
-                if smtp_settings.email_host == 'smtp.beget.com':
-                    if '@' not in smtp_settings.email_host_user:
-                        print(f"   ⚠️ ВНИМАНИЕ: Для Beget логин должен быть полным email!")
-                        print(f"      Будет автоматически исправлено на: {smtp_settings.default_from_email}")
+                print("✅ Найдены SMTP настройки")
+                print(f"Host: {smtp_settings.email_host}")
+                print(f"Port: {smtp_settings.email_port}")
+                print(f"User: {smtp_settings.email_host_user}")
+                print(f"From: {smtp_settings.default_from_email}")
             else:
-                print("ℹ️ SMTP настройки не найдены")
-                print("   Для отправки писем необходимо настроить SMTP в личном кабинете")
+                print("❌ SMTP настройки не найдены")
                 return
 
-            # Получаем список получателей
+            # -------------------------------------------------------
+            # ПОЛУЧАТЕЛИ
+            # -------------------------------------------------------
+
             recipients = instance.get_clients_list()
-            print(f"\n👥 Получатели ({len(recipients)}): {recipients}")
+
+            print(f"\n👥 Получатели ({len(recipients)}):")
+            print(recipients)
 
             if not recipients:
-                print("⚠️ Нет получателей, пропускаем отправку")
+                print("⚠️ Нет получателей")
                 return
 
-            # Подготавливаем сообщение
-            full_message, html_message = EmailService.prepare_message(instance, smtp_settings)
+            # -------------------------------------------------------
+            # ПОДГОТОВКА ПИСЬМА
+            # -------------------------------------------------------
 
-            # Определяем отправителя
-            if smtp_settings and smtp_settings.default_from_email:
+            print("\n📝 Подготавливаем письмо...")
+
+            full_message, html_message = EmailService.prepare_message(
+                instance,
+                smtp_settings
+            )
+
+            # Если HTML есть — делаем текстовую версию
+            if html_message:
+                text_message = strip_tags(html_message)
+            else:
+                text_message = full_message
+
+            # -------------------------------------------------------
+            # ОТПРАВИТЕЛЬ
+            # -------------------------------------------------------
+
+            if smtp_settings.default_from_email:
                 from_email = smtp_settings.default_from_email
             else:
                 from_email = instance.user.email
 
-            # Получаем файлы
+            print(f"\n📤 Отправитель: {from_email}")
+
+            # -------------------------------------------------------
+            # ФАЙЛЫ
+            # -------------------------------------------------------
+
             files = None
+
             if instance.files.exists():
                 files = [f.file.path for f in instance.files.all()]
                 print(f"📎 Прикреплено файлов: {len(files)}")
 
-            # Отправляем email
+            # -------------------------------------------------------
+            # ОТПРАВКА
+            # -------------------------------------------------------
+
             success, result = EmailService.send_email(
                 subject=instance.subject or "Новое сообщение",
-                message=full_message,
+                message=text_message,       # текстовая версия
                 from_email=from_email,
                 recipient_list=recipients,
                 smtp_settings=smtp_settings,
-                html_message=html_message,
+                html_message=html_message,  # HTML версия
                 files=files
             )
 
             if success:
-                print(f"\n✅ УСПЕХ: {result}")
+                print("\n✅ Email успешно отправлен")
             else:
-                print(f"\n❌ ОШИБКА: {result}")
+                print("\n❌ Ошибка отправки:")
+                print(result)
 
         except Exception as e:
-            print(f"\n❌ КРИТИЧЕСКАЯ ОШИБКА В СИГНАЛЕ: {str(e)}")
+            print("\n❌ КРИТИЧЕСКАЯ ОШИБКА")
+            print(str(e))
+
             import traceback
             traceback.print_exc()
 

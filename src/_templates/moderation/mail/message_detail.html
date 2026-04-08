@@ -750,11 +750,13 @@
                                value="Re: {{ message.subject|default:'Без темы' }}">
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Сообщение:</label>
-                        <textarea class="form-control" name="message" rows="8"
-                                  placeholder="Напишите ваше сообщение..."></textarea>
-                    </div>
+                    <span class="btn btn-primary" id="edit-template">Использовать конструктор</span>
+                                <div class="mt-3">
+    <label class="form-label">Предпросмотр письма</label>
+    <iframe id="email-preview" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;"></iframe>
+</div>
+                                <textarea class="form-control" id="message-text" name="message" rows="8"
+                                          placeholder="Напишите ваше сообщение..."></textarea>
 
                     <div class="mb-3">
                         <label class="form-label">
@@ -772,9 +774,87 @@
         </div>
     </div>
 </div>
+<!-- EMAIL BUILDER MODAL -->
+<div class="modal fade" id="builderModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Конструктор письма</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <div id="editor" style="height:600px;"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="apply-template">
+          Применить
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://editor.unlayer.com/embed.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+document.getElementById('apply-template').addEventListener('click', function(){
+
+    unlayer.exportHtml(function(data) {
+
+        const html = data.html
+
+        document.getElementById('message-text').value = html
+
+        const iframe = document.getElementById('email-preview')
+        iframe.srcdoc = html
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
+        modal.hide()
+
+    })
+
+})
+let editorLoaded = false
+
+document.getElementById('edit-template').addEventListener('click', function(){
+
+    const modal = new bootstrap.Modal(document.getElementById('builderModal'))
+    modal.show()
+
+    if(!editorLoaded){
+
+        unlayer.init({
+            id: 'editor',
+            displayMode: 'email'
+        })
+
+        editorLoaded = true
+    }
+
+})
+
+document.getElementById('apply-template').addEventListener('click', function(){
+
+    unlayer.exportHtml(function(data) {
+
+        const html = data.html
+
+        document.getElementById('message-text').value = html
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
+        modal.hide()
+
+    })
+
+})
+
+</script>
 
 <script>
 window.URLS = {
