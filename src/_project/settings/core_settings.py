@@ -31,6 +31,7 @@ AUTH_USER_MODEL = 'useraccount.Profile'
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -239,3 +240,30 @@ CKEDITOR_CONFIGS = {
     }
 }
 
+JAZZMIN_SETTINGS = {
+    "hide_apps": [
+        "admin",
+        "contenttypes",
+        "sessions",
+        "messages",
+        "sites",
+        "balance",
+        "blogs",
+        "mail",
+        "notification",
+        "ticket",
+        "webmain",
+        # все свои приложения тоже сюда
+    ],
+
+    "hide_models": [
+        "auth.group",
+        # ВСЕ остальные модели вручную сюда
+    ],
+
+    "order_with_respect_to": ["auth.user"],
+
+    "icons": {
+        "auth.user": "fas fa-users",
+    },
+}
