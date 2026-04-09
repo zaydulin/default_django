@@ -239,7 +239,6 @@ CKEDITOR_CONFIGS = {
         ]),
     }
 }
-
 JAZZMIN_SETTINGS = {
     "hide_apps": [
         "admin",
@@ -249,21 +248,54 @@ JAZZMIN_SETTINGS = {
         "sites",
         "balance",
         "blogs",
-        "mail",
         "notification",
         "ticket",
         "webmain",
-        # все свои приложения тоже сюда
+        # "mail" - НЕ СКРЫВАЕМ, чтобы показывать модели из mail
     ],
 
     "hide_models": [
         "auth.group",
-        # ВСЕ остальные модели вручную сюда
+        # Скрываем ненужные модели из mail, но оставляем UserSettingsSMTP
+        "mail.message",
+        "mail.messagefile",
+        "mail.contactlist",
+        "mail.contact",
+        "mail.messagedir",
+        "mail.massmailcampaign",
+        "mail.messagedirectory",
+        "mail.massmaillog",
+        "mail.smtpchecklog",
+        "mail.messagemask",
+        "mail.messagerm",
+
     ],
 
-    "order_with_respect_to": ["auth.user"],
+    "order_with_respect_to": ["auth.user", "mail.usersettingssmtp", "mail.messagetemplates"],
 
     "icons": {
         "auth.user": "fas fa-users",
+        "mail.usersettingssmtp": "fas fa-envelope",
+        "mail.messagetemplates": "fas fa-file-alt",
     },
+
+    # Дополнительная настройка для отображения в меню
+    "navigation": [
+        {
+            "name": "Почта",
+            "icon": "fas fa-envelope",
+            "models": [
+                {
+                    "name": "SMTP настройки",
+                    "icon": "fas fa-cog",
+                    "url": "mail/usersettingssmtp/",
+                },
+                {
+                    "name": "Шаблоны сообщений",
+                    "icon": "fas fa-file-alt",
+                    "url": "mail/messagetemplates/",
+                },
+            ]
+        },
+    ],
 }
