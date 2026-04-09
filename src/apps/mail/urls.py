@@ -9,6 +9,19 @@ urlpatterns = [
     path('messages/<uuid:message_id>/', views.MessageDetailView.as_view(), name='message_detail'),
     path('messages/<uuid:message_id>/view/', views.AllMessageDetailView.as_view(), name='all_message_detail'),
     path('all-messages/', views.AllMessagesListView.as_view(), name='all_messages'),
+    path('templates/', views.MessageTemplateListView.as_view(), name='message_templates_list'),
+
+    # Детальный просмотр
+    path('templates/<int:pk>/', views.MessageTemplateDetailView.as_view(), name='message_templates_detail'),
+
+    # Создание шаблона
+    path('templates/create/', views.MessageTemplateCreateView.as_view(), name='message_templates_create'),
+
+    # Редактирование шаблона
+    path('templates/<int:pk>/update/', views.MessageTemplateUpdateView.as_view(), name='message_templates_update'),
+
+    # Удаление шаблона
+    path('templates/<int:pk>/delete/', views.MessageTemplateDeleteView.as_view(), name='message_templates_delete'),
 
     # API endpoints
     path('api/messages/create/', views.MessageCreateView.as_view(), name='message_create'),
@@ -25,6 +38,8 @@ urlpatterns = [
     # Массовая рассылка
     path('mass-mail/', views.MassMailCampaignListView.as_view(), name='mass_mail_list'),
     path('mass-mail/create/', views.MassMailCampaignCreateView.as_view(), name='mass_mail_create'),
+    path('mail/get-template/<int:template_id>/', views.GetTemplateView.as_view(), name='get_template'),
+
     path('mass-mail/<int:campaign_id>/', views.MassMailCampaignDetailView.as_view(), name='mass_mail_detail'),
     path('mass-mail/<int:campaign_id>/edit/', views.MassMailCampaignEditView.as_view(), name='mass_mail_edit'),
     path('mass-mail/<int:campaign_id>/send/', views.MassMailCampaignSendView.as_view(), name='mass_mail_send'),

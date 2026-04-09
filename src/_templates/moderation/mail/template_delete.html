@@ -1,0 +1,30 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Сообщение - {{ block.super }}{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+<div class="app-email card">
+
+    <h1>Удаление шаблона #{{ object.id }}</h1>
+
+    <div class="warning">
+        <strong>Внимание!</strong> Вы действительно хотите удалить этот шаблон?
+    </div>
+
+    <div class="mask-preview">
+        <strong>Маска:</strong>
+        <p><small>Создан: {{ object.created_at|date:"d.m.Y H:i:s" }}</small></p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+            Да, удалить
+        </button>
+        <a href="{% url 'mail:message_templates_list' %}">Отмена</a>
+    </form>
+</div>
+{% endblock content %}

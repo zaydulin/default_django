@@ -1,0 +1,272 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Шаблоны сообщений - {{ block.super }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    .mask-preview {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: monospace;
+        font-size: 12px;
+    }
+
+    .actions-dropdown .dropdown-toggle::after {
+        display: none;
+    }
+
+    .actions-dropdown .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+    }
+
+    .card-stats {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        color: #dee2e6;
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .badge-date {
+        font-size: 11px;
+        font-weight: normal;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">
+                        <i class="fas fa-envelope-open-text me-2 text-primary"></i>
+                        Шаблоны сообщений
+                    </h3>
+                    <p class="text-muted mb-0 mt-2">Управление шаблонами для email рассылок</p>
+                </div>
+                <a href="{% url 'mail:message_templates_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Создать шаблон
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Статистика -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card-stats">
+                        <div class="stat-number">{{ paginator.count }}</div>
+                        <div class="stat-label">Всего шаблонов</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-stats" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="stat-number">{{ templates|length }}</div>
+                        <div class="stat-label">На этой странице</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Сообщения -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Таблица шаблонов -->
+            {% if templates %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="5%">ID</th>
+                                <th width="40%">Маска шаблона</th>
+                                <th width="20%">Дата создания</th>
+                                <th width="20%">Дата обновления</th>
+                                <th width="15%">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for template in templates %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary">{{ template.id }}</span>
+                                </td>
+                                <td>
+                                    <div class="mask-preview" title="{{ template.mask }}">
+                                        <i class="fas fa-code me-2 text-muted"></i>
+                                        {{ template.mask|truncatechars:80 }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <i class="far fa-calendar-alt me-1 text-muted"></i>
+                                    {{ template.created_at|date:"d.m.Y" }}
+                                    <br>
+                                    <small class="text-muted">{{ template.created_at|date:"H:i:s" }}</small>
+                                </td>
+                                <td>
+                                    <i class="far fa-clock me-1 text-muted"></i>
+                                    {{ template.updated_at|date:"d.m.Y" }}
+                                    <br>
+                                    <small class="text-muted">{{ template.updated_at|date:"H:i:s" }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'mail:message_templates_detail' template.pk %}"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Просмотр">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'mail:message_templates_update' template.pk %}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'mail:message_templates_delete' template.pk %}"
+                                           class="btn btn-sm btn-outline-danger"
+                                           title="Удалить">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Пагинация -->
+                {% if is_paginated %}
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <div class="text-muted">
+                        Показано {{ page_obj.start_index }} - {{ page_obj.end_index }} из {{ paginator.count }}
+                    </div>
+                    <nav>
+                        <ul class="pagination mb-0">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1" aria-label="Первая">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Предыдущая">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Первая">
+                                        <span aria-hidden="true">&laquo;&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Предыдущая">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            {% for i in paginator.page_range %}
+                                {% if page_obj.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Следующая">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Последняя">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Следующая">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" aria-label="Последняя">
+                                        <span aria-hidden="true">&raquo;&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+                {% endif %}
+
+            {% else %}
+                <!-- Пустое состояние -->
+                <div class="empty-state">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <h4>Нет созданных шаблонов</h4>
+                    <p class="text-muted">Создайте первый шаблон для email рассылок</p>
+                    <a href="{% url 'mail:message_templates_create' %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i>Создать шаблон
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

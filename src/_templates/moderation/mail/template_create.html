@@ -1,0 +1,133 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Создание шаблона - {{ block.super }}{% endblock %}
+
+{% block head %}
+<style>
+    input#id_name {
+    width: 100%;
+    background: #f5f5f5;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+    .app-email {
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+    }
+
+    #editor-container {
+        height: 600px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 15px 0;
+    }
+
+    #id_mask {
+        display: none;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    button[type="submit"] {
+        padding: 8px 20px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .errorlist {
+        color: #dc3545;
+        list-style: none;
+        padding: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app-email card">
+    <div class="card-header">
+        <h3>{% if object %}Редактирование шаблона{% else %}Создание шаблона{% endif %}</h3>
+    </div>
+
+    <div class="card-body">
+        <form method="post" id="template-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                {{ form.name }}
+
+            </div>
+            <div class="form-group">
+                {{ form.mask.label_tag }}
+                <div id="editor-container"></div>
+                {{ form.mask }}
+
+                {% if form.mask.errors %}
+                <ul class="errorlist">
+                    {% for error in form.mask.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">{% if object %}Сохранить{% else %}Создать{% endif %}</button>
+                <a href="{% url 'mail:message_templates_list' %}">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://editor.unlayer.com/embed.js"></script>
+<script>
+    let editorInitialized = false;
+    const existingHtml = document.getElementById('id_mask').value;
+
+    function initEditor() {
+        unlayer.init({
+            id: 'editor-container',
+            displayMode: 'email',
+            features: {
+                preview: true,
+                responsive: true
+            }
+        });
+
+        // Загружаем существующий HTML если есть
+        if (existingHtml && existingHtml.trim()) {
+            unlayer.loadDesign({ html: existingHtml });
+        }
+
+        // Обновляем скрытое поле при изменениях
+        unlayer.addEventListener('design:updated', function() {
+            unlayer.exportHtml(function(data) {
+                document.getElementById('id_mask').value = data.html;
+            });
+        });
+
+        editorInitialized = true;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initEditor();
+
+        // Перед отправкой формы экспортируем HTML
+        document.getElementById('template-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            unlayer.exportHtml(function(data) {
+                document.getElementById('id_mask').value = data.html;
+                e.target.submit();
+            });
+        });
+    });
+</script>
+{% endblock %}

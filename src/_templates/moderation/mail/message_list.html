@@ -514,6 +514,8 @@
     </div>
 </div>
 <!-- EMAIL BUILDER MODAL -->
+
+<!-- EMAIL BUILDER MODAL -->
 <div class="modal fade" id="builderModal" tabindex="-1">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
@@ -536,7 +538,83 @@
     </div>
   </div>
 </div>
-<!-- Шаблоны для URL в JavaScript -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let editorLoaded = false;
+    let modalInstance = null;
+
+    // 🔹 Инициализация редактора с русским языком
+    function initUnlayer() {
+        if (editorLoaded) return;
+
+        unlayer.init({
+            id: 'editor',
+            displayMode: 'email',
+            locale: 'ru',  // ✅ Включаем русский интерфейс
+            // 🔹 Опционально: свои переводы, если нужно переопределить
+            // translations: {
+            //     'ru': {
+            //         'blocks': {
+            //             'text': 'Текст',
+            //             'image': 'Изображение'
+            //         }
+            //     }
+            // }
+        });
+
+        editorLoaded = true;
+        console.log('✅ Unlayer инициализирован на русском');
+    }
+
+    // 🔹 Открытие модального окна и загрузка редактора
+    document.getElementById('edit-template')?.addEventListener('click', function() {
+        modalInstance = new bootstrap.Modal(document.getElementById('builderModal'));
+        modalInstance.show();
+
+        // Инициализируем редактор при первом открытии
+        if (!editorLoaded) {
+            initUnlayer();
+        }
+    });
+
+    // 🔹 Применение шаблона и закрытие модального окна
+    document.getElementById('apply-template')?.addEventListener('click', function() {
+        unlayer.exportHtml(function(data) {
+            const html = data.html;
+
+            // Вставляем HTML в textarea
+            const textarea = document.getElementById('message-text');
+            if (textarea) {
+                textarea.value = html;
+                // 🔹 Важно: триггерим событие change, если используете JS-фреймворки
+                textarea.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            // 🔹 Обновляем превью, если есть
+            const iframe = document.getElementById('email-preview');
+            if (iframe) {
+                iframe.srcdoc = html;
+            }
+
+            // Закрываем модальное окно
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        });
+    });
+
+    // 🔹 Опционально: загрузка контента при открытии (если нужно редактировать существующее)
+    document.getElementById('builderModal')?.addEventListener('shown.bs.modal', function() {
+        if (editorLoaded) {
+            const textarea = document.getElementById('message-text');
+            if (textarea?.value) {
+                unlayer.loadDesign(JSON.parse(textarea.value));
+            }
+        }
+    });
+});
+</script>
 <script>
     window.URLS = {
         message_delete: '{% url "mail:message_delete" "00000000-0000-0000-0000-000000000000" %}',
@@ -547,60 +625,9 @@
         csrf_token: '{{ csrf_token }}'
     };
 </script>
-<script>
-document.getElementById('apply-template').addEventListener('click', function(){
-
-    unlayer.exportHtml(function(data) {
-
-        const html = data.html
-
-        document.getElementById('message-text').value = html
-
-        const iframe = document.getElementById('email-preview')
-        iframe.srcdoc = html
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
-        modal.hide()
-
-    })
-
-})
-let editorLoaded = false
-
-document.getElementById('edit-template').addEventListener('click', function(){
-
-    const modal = new bootstrap.Modal(document.getElementById('builderModal'))
-    modal.show()
-
-    if(!editorLoaded){
-
-        unlayer.init({
-            id: 'editor',
-            displayMode: 'email'
-        })
-
-        editorLoaded = true
-    }
-
-})
-
-document.getElementById('apply-template').addEventListener('click', function(){
-
-    unlayer.exportHtml(function(data) {
-
-        const html = data.html
-
-        document.getElementById('message-text').value = html
-
-        const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
-        modal.hide()
-
-    })
-
-})
-
-</script>
 <script src="https://editor.unlayer.com/embed.js"></script>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'moderation/js/app-email.js' %}"></script>

@@ -128,6 +128,11 @@
                 <div>Рассылка</div>
               </a>
             </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'message_templates_list' %}active{% endif %}">
+              <a href="{% url 'mail:message_templates_list' %}" class="menu-link">
+                <div>Шаблоны</div>
+              </a>
+            </li>
           </ul>
         </li>
       </ul>

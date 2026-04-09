@@ -62,6 +62,7 @@ class Contact(models.Model):
             except ValidationError:
                 raise ValidationError({'value': 'Введите корректный email адрес'})
 
+
 class MessageDirectory(models.Model):
     """Директория сообщений"""
     name = models.CharField(max_length=255, verbose_name="Название")  # Добавил поле name
@@ -121,6 +122,18 @@ class MessageMask(models.Model):
 
     def __str__(self):
         return f"Маска для {self.user.username}"
+
+
+class MessageTemplates(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Название", blank=True, null=True, default='')
+    mask = models.TextField(verbose_name="Маска")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания", blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления", blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Шаблон сообщений"
+        verbose_name_plural = "Шаблоны сообщений"
+
 
 
 class Message(models.Model):
@@ -433,6 +446,7 @@ class Message(models.Model):
 
         return list(emails)
 
+
 class MessageFile(models.Model):
     """Файлы, прикрепленные к сообщениям"""
     file = models.FileField(upload_to='message_files/%Y/%m/%d/', verbose_name="Файл")
@@ -445,6 +459,7 @@ class MessageFile(models.Model):
 
     def __str__(self):
         return f"Файл для {self.message.id}"
+
 
 class UserSettingsSMTP(models.Model):
     message_header = models.TextField("Шапка сообщения письма", blank=True, null=True)
@@ -486,6 +501,7 @@ class SmtpCheckLog(models.Model):
 
     def __str__(self):
         return f"{self.smtp_settings.user.username} - {self.status} - {self.checked_at}"
+
 
 class MassMailCampaign(models.Model):
     """Кампания массовой рассылки"""

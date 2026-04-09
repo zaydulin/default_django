@@ -7,17 +7,62 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Message, MessageDir, MessageMask, MessageFile, MessageRm, UserSettingsSMTP, MassMailCampaign, MassMailLog
+from .models import Message, MessageDir, MessageMask, MessageFile, MessageRm, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageTemplates
 from django.contrib.auth.models import User
 from django.contrib import messages
 import smtplib
 import ssl
 from useraccount.views import CustomHtmxMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
 
 from django.contrib.auth import get_user_model
 
 User = get_user_model()  # Получаем кастомную модель пользователя
 
+
+
+class MessageTemplateListView(ListView):
+    """Список всех шаблонов"""
+    model = MessageTemplates
+    template_name = 'moderation/mail/template_list.html'
+    context_object_name = 'templates'
+    ordering = ['-created_at']
+    paginate_by = 10
+
+
+class MessageTemplateDetailView(DetailView):
+    """Детальный просмотр шаблона"""
+    model = MessageTemplates
+    template_name = 'moderation/mail/template_detail.html'
+    context_object_name = 'template'
+
+
+class MessageTemplateCreateView(SuccessMessageMixin, CreateView):
+    """Создание нового шаблона"""
+    model = MessageTemplates
+    template_name = 'moderation/mail/template_create.html'
+    fields = ['mask', 'name']  # Указываем поля, которые будут в форме
+    success_url = reverse_lazy('mail:message_templates_list')
+    success_message = "Шаблон успешно создан!"
+
+
+class MessageTemplateUpdateView(SuccessMessageMixin, UpdateView):
+    """Редактирование шаблона"""
+    model = MessageTemplates
+    template_name = 'moderation/mail/template_update.html'
+    fields = ['mask', 'name']  # Указываем поля, которые будут в форме
+    success_url = reverse_lazy('mail:message_templates_list')
+    success_message = "Шаблон успешно обновлен!"
+
+
+class MessageTemplateDeleteView(SuccessMessageMixin, DeleteView):
+    """Удаление шаблона"""
+    model = MessageTemplates
+    template_name = 'moderation/mail/template_delete.html'
+    success_url = reverse_lazy('mail:message_templates_list')
+    success_message = "Шаблон успешно удален!"
 
 class MassMailCampaignListView(LoginRequiredMixin, View):
     """Список кампаний массовой рассылки"""
@@ -56,10 +101,13 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
         # Получаем ВСЕ SMTP настройки пользователя (queryset)
         smtp_settings = UserSettingsSMTP.objects.filter(user=request.user)
 
-        context = {
-            'smtp_settings': smtp_settings,  # Теперь это queryset
-            'is_edit': False,
-        }
+        # Получаем контекст с шаблонами
+        context = self.get_context_data()
+
+        # Добавляем SMTP настройки в контекст
+        context['smtp_settings'] = smtp_settings
+        context['is_edit'] = False
+
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -137,6 +185,36 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
         except Exception as e:
             messages.error(request, f'Ошибка при создании: {str(e)}')
             return redirect('mail:mass_mail_create')
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        context['messagetemplates'] = MessageTemplates.objects.all().order_by('-created_at')
+        context['is_edit'] = False
+        return context
+
+class GetTemplateView(LoginRequiredMixin, View):
+    """Получение шаблона по ID"""
+    def get(self, request, template_id):
+        try:
+            template = MessageTemplates.objects.get(id=template_id)
+            return JsonResponse({
+                'success': True,
+                'id': template.id,
+                'name': template.name,
+                'mask': template.mask,
+                'created_at': template.created_at.strftime('%d.%m.%Y %H:%M:%S'),
+                'updated_at': template.updated_at.strftime('%d.%m.%Y %H:%M:%S'),
+            })
+        except MessageTemplates.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Шаблон не найден'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            }, status=500)
 
 
 class MassMailCampaignCancelView(LoginRequiredMixin, View):

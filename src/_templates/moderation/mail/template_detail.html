@@ -1,0 +1,28 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Сообщение - {{ block.super }}{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+<div class="app-email card">
+
+    <h1>Шаблон сообщений #{{ object.id }}</h1>
+
+    <div class="template-info">
+        <p><strong>ID:</strong> {{ object.id }}</p>
+        <p><strong>Дата создания:</strong> {{ object.created_at|date:"d.m.Y H:i:s" }}</p>
+        <p><strong>Дата обновления:</strong> {{ object.updated_at|date:"d.m.Y H:i:s" }}</p>
+
+        <h3>Маска:</h3>
+        <div class="mask-content">
+            {{ object.mask|safe }}
+        </div>
+    </div>
+
+    <a href="{% url 'mail:message_templates_list' %}">Назад к списку</a>
+    <a href="{% url 'mail:message_templates_update' object.pk %}">Редактировать</a>
+    <a href="{% url 'mail:message_templates_delete' object.pk %}">Удалить</a>
+</div>
+{% endblock content %}
