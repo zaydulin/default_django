@@ -346,9 +346,9 @@ class MassMailLogInline(admin.TabularInline):
 
 @admin.register(MassMailCampaign)
 class MassMailCampaignAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'subject_preview', 'status_colored', 'priority_colored',
+    list_display = ('name', 'user', 'subject_preview', 'status_colored',
                     'total_recipients', 'sent_count', 'failed_count', 'progress_bar', 'created_at')
-    list_filter = ('status', 'priority', 'user', 'created_at')
+    list_filter = ('status',  'user', 'created_at')
     search_fields = ('name', 'subject', 'message', 'user__username', 'user__email')
     readonly_fields = ('total_recipients', 'sent_count', 'failed_count', 'opened_count',
                        'clicked_count', 'created_at', 'updated_at', 'sent_at', 'recipients_preview')
@@ -356,7 +356,7 @@ class MassMailCampaignAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Основная информация', {
-            'fields': ('name', 'user', 'status', 'priority')
+            'fields': ('name', 'user', 'status')
         }),
         ('Письмо', {
             'fields': ('subject', 'message', 'from_email', 'from_name')
@@ -402,19 +402,8 @@ class MassMailCampaignAdmin(admin.ModelAdmin):
 
     status_colored.short_description = 'Статус'
 
-    def priority_colored(self, obj):
-        colors = {
-            'low': '#6c757d',
-            'normal': '#28a745',
-            'high': '#dc3545',
-        }
-        return format_html(
-            '<span style="color: {}; font-weight: bold;">{}</span>',
-            colors.get(obj.priority, '#000000'),
-            obj.get_priority_display()
-        )
 
-    priority_colored.short_description = 'Приоритет'
+
 
     def progress_bar(self, obj):
         if obj.total_recipients == 0:

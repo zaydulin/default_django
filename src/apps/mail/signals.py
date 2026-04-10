@@ -419,8 +419,6 @@ class EmailService:
         return full_message, html_message
 
 
-
-
 @receiver(post_save, sender=Message)
 def send_email_on_message_create(sender, instance, created, **kwargs):
     """

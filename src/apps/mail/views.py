@@ -64,6 +64,7 @@ class MessageTemplateDeleteView(SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy('mail:message_templates_list')
     success_message = "Шаблон успешно удален!"
 
+
 class MassMailCampaignListView(LoginRequiredMixin, View):
     """Список кампаний массовой рассылки"""
     template_name = 'moderation/mail/mass_mail_list.html'
@@ -98,16 +99,10 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
     template_name = 'moderation/mail/mass_mail_form.html'
 
     def get(self, request):
-        # Получаем ВСЕ SMTP настройки пользователя (queryset)
         smtp_settings = UserSettingsSMTP.objects.filter(user=request.user)
-
-        # Получаем контекст с шаблонами
         context = self.get_context_data()
-
-        # Добавляем SMTP настройки в контекст
         context['smtp_settings'] = smtp_settings
         context['is_edit'] = False
-
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -117,11 +112,25 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
             subject = request.POST.get('subject')
             message = request.POST.get('message')
             recipient_emails = request.POST.get('recipient_emails', '')
-            priority = request.POST.get('priority', 'normal')
             from_email = request.POST.get('from_email')
             from_name = request.POST.get('from_name')
             scheduled_time = request.POST.get('scheduled_time')
             use_smtp_id = request.POST.get('use_smtp')
+
+            # Получаем настройки отправки
+            message_count = request.POST.get('message_count', 50)
+            message_interval = request.POST.get('message_interval', 2)
+
+            # Валидация
+            try:
+                message_count = int(message_count)
+                message_interval = int(float(message_interval))
+            except (ValueError, TypeError):
+                message_count = 50
+                message_interval = 2
+
+            message_count = max(1, min(1000, message_count))
+            message_interval = max(0, min(60, message_interval))
 
             # Получаем SMTP настройки
             use_smtp = None
@@ -131,26 +140,26 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
                 except UserSettingsSMTP.DoesNotExist:
                     pass
 
-            # Создаем кампанию
+            # Создаем кампанию с сохранением всех полей
             campaign = MassMailCampaign.objects.create(
                 name=name,
                 subject=subject,
                 message=message,
                 recipient_emails=recipient_emails,
-                priority=priority,
                 from_email=from_email,
                 from_name=from_name,
                 use_smtp_settings=use_smtp,
                 user=request.user,
-                status='draft'
+                status='draft',
+                message_count=message_count,  # Теперь сохраняется
+                message_interval=message_interval  # Теперь сохраняется
             )
 
-            # Обработка файла со списком рассылки
+            # Обработка файла
             if 'recipient_file' in request.FILES:
                 campaign.recipient_file = request.FILES['recipient_file']
                 campaign.save()
 
-                # Парсим файл и добавляем email в поле recipient_emails
                 file_content = campaign.recipient_file.read().decode('utf-8')
                 file_emails = []
                 for line in file_content.split('\n'):
@@ -159,22 +168,17 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
                         if email and '@' in email:
                             file_emails.append(email)
 
-                # Объединяем с существующими email
                 if campaign.recipient_emails:
                     campaign.recipient_emails += '\n' + '\n'.join(file_emails)
                 else:
                     campaign.recipient_emails = '\n'.join(file_emails)
                 campaign.save()
 
-            # Подсчитываем количество получателей
             campaign.total_recipients = len(campaign.get_recipients_list())
             campaign.save()
 
-            # Если указано время отправки
             if scheduled_time:
-                from django.utils import timezone
                 from datetime import datetime
-
                 campaign.scheduled_time = datetime.fromisoformat(scheduled_time)
                 campaign.status = 'scheduled'
                 campaign.save()
@@ -191,6 +195,7 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
         context['messagetemplates'] = MessageTemplates.objects.all().order_by('-created_at')
         context['is_edit'] = False
         return context
+
 
 class GetTemplateView(LoginRequiredMixin, View):
     """Получение шаблона по ID"""

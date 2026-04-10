@@ -512,45 +512,33 @@ class MassMailCampaign(models.Model):
         ('sent', 'Отправлена'),
         ('cancelled', 'Отменена'),
     )
-
-    PRIORITY_CHOICES = (
-        ('low', 'Низкий'),
-        ('normal', 'Средний'),
-        ('high', 'Высокий'),
-    )
-
     name = models.CharField(max_length=255, verbose_name="Название рассылки")
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     message = models.TextField(verbose_name="Текст письма")
-
     # Получатели
     recipient_emails = models.TextField(verbose_name="Email получателей", blank=True,
                                         help_text="Email адреса через запятую или по одному в строке")
     recipient_file = models.FileField(upload_to='mailing_lists/%Y/%m/', verbose_name="Файл со списком рассылки",
                                       blank=True, null=True)
-
     # Настройки
+    message_count = models.IntegerField(default=0, verbose_name="Количество писем")
+    message_interval = models.IntegerField(default=0, verbose_name="Интервал писем")
+
     use_smtp_settings = models.ForeignKey(UserSettingsSMTP, on_delete=models.SET_NULL,
                                           null=True, blank=True, verbose_name="SMTP настройки")
-    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='normal',
-                                verbose_name="Приоритет")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft',
                               verbose_name="Статус")
-
     # Отправитель
     from_email = models.EmailField(verbose_name="Email отправителя", blank=True, null=True)
     from_name = models.CharField(max_length=255, verbose_name="Имя отправителя", blank=True, null=True)
-
     # Планирование
     scheduled_time = models.DateTimeField(verbose_name="Время отправки", blank=True, null=True)
-
     # Статистика
     total_recipients = models.IntegerField(default=0, verbose_name="Всего получателей")
     sent_count = models.IntegerField(default=0, verbose_name="Отправлено")
     failed_count = models.IntegerField(default=0, verbose_name="Ошибок")
     opened_count = models.IntegerField(default=0, verbose_name="Открыто")
     clicked_count = models.IntegerField(default=0, verbose_name="Переходов")
-
     # Метаданные
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              related_name='mass_mail_campaigns', verbose_name="Создатель")

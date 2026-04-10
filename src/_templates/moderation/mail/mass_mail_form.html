@@ -60,53 +60,64 @@
             <form method="post" enctype="multipart/form-data" id="campaignForm">
                 {% csrf_token %}
 
-                <!-- Основная информация -->
-                <div class="form-section">
-                    <div class="section-title">
-                        <i class="icon-base bx bx-info-circle me-2"></i>Основная информация
-                    </div>
+               <!-- Основная информация -->
+<div class="form-section">
+    <div class="section-title">
+        <i class="icon-base bx bx-info-circle me-2"></i>Основная информация
+    </div>
 
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label">Название кампании <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" required
-                                   value="{{ campaign.name|default:'' }}"
-                                   placeholder="Например: Весенняя рассылка 2024">
-                        </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <label class="form-label">Название кампании <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" name="name" required
+                   value="{{ campaign.name|default:'' }}"
+                   placeholder="Например: Весенняя рассылка 2024">
+        </div>
+    </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Приоритет</label>
-                            <select class="form-select" name="priority">
-                                <option value="low" {% if campaign.priority == 'low' %}selected{% endif %}>Низкий</option>
-                                <option value="normal" {% if campaign.priority == 'normal' or not campaign %}selected{% endif %}>Средний</option>
-                                <option value="high" {% if campaign.priority == 'high' %}selected{% endif %}>Высокий</option>
-                            </select>
-                        </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Приоритет</label>
+            <select class="form-select" name="priority">
+                <option value="low" {% if campaign.priority == 'low' %}selected{% endif %}>Низкий</option>
+                <option value="normal" {% if campaign.priority == 'normal' or not campaign %}selected{% endif %}>Средний</option>
+                <option value="high" {% if campaign.priority == 'high' %}selected{% endif %}>Высокий</option>
+            </select>
+        </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">SMTP настройки</label>
-                            <!-- Вместо итерации по smtp_settings -->
-                            <select class="form-select" name="use_smtp">
-                                <option value="">-- Использовать стандартные --</option>
-                                {% if smtp_settings %}
-                                {# Проверяем, является ли smtp_settings списком/queryset #}
-                                {% if smtp_settings.all %}
-                                {% for smtp in smtp_settings.all %}
-                                <option value="{{ smtp.id }}" {% if campaign.use_smtp_settings.id == smtp.id %}selected{% endif %}>
-                                    {{ smtp.email_host }} ({{ smtp.default_from_email }})
-                                </option>
-                                {% endfor %}
-                                {% else %}
-                                {# Если это один объект #}
-                                <option value="{{ smtp_settings.id }}" {% if campaign.use_smtp_settings.id == smtp_settings.id %}selected{% endif %}>
-                                    {{ smtp_settings.email_host }} ({{ smtp_settings.default_from_email }})
-                                </option>
-                                {% endif %}
-                                {% endif %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">SMTP настройки</label>
+            <select class="form-select" name="use_smtp">
+                <option value="">-- Использовать стандартные --</option>
+                {% for smtp in smtp_settings %}
+                <option value="{{ smtp.id }}" {% if campaign.use_smtp_settings.id == smtp.id %}selected{% endif %}>
+                    {{ smtp.email_host }} ({{ smtp.default_from_email }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Количество писем за один раз</label>
+            <input type="number" class="form-control" name="message_count"
+                   value="50" min="1" max="1000">
+            <div class="form-text text-muted">
+                <small>Сколько писем отправлять за один раз (рекомендуется: 50-100)</small>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Интервал между письмами (секунды)</label>
+            <input type="number" class="form-control" name="message_interval"
+                   value="2" min="0" max="60" step="0.5">
+            <div class="form-text text-muted">
+                <small>Пауза между отправкой каждого письма (сек)</small>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Письмо -->
                 <div class="form-section">
@@ -168,45 +179,45 @@
 
                             <!-- Образцы -->
                             <!-- Образцы -->
-<div class="tab-pane fade" id="samples" role="tabpanel">
-    <div class="search-templates mb-3">
-        <input type="text" class="form-control" id="searchTemplates" placeholder="Поиск шаблонов...">
-    </div>
-    <div class="templates-list" id="templatesList">
-        {% if messagetemplates %}
-            {% for template in messagetemplates %}
-            <div class="template-item" data-template-id="{{ template.id }}">
-                <div class="template-title">
-                    <span class="template-badge"></span>
-                    {% if template.name %}
-                        {{ template.name }}
-                    {% else %}
-                        Шаблон #{{ template.id }}
-                    {% endif %}
-                </div>
-                <div class="template-preview">
-                    {{ template.mask|striptags|truncatechars:100 }}
-                </div>
-                <div class="template-meta">
-                    <i class="bx bx-calendar"></i> {{ template.created_at|date:"d.m.Y H:i" }}
-                    <i class="bx bx-time ms-2"></i> {{ template.updated_at|date:"H:i" }}
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-primary btn-use-template"
-        data-template-id="{{ template.id }}"
-        data-template-html='{{ template.mask|escapejs }}'>
-    <i class="bx bx-check"></i> Использовать
-</button>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="empty-templates">
-                <i class="bx bx-folder-open"></i>
-                <p>Нет сохраненных шаблонов</p>
-                <small>Создайте шаблон в разделе "Шаблоны сообщений"</small>
-            </div>
-        {% endif %}
-    </div>
-</div>
+                            <div class="tab-pane fade" id="samples" role="tabpanel">
+                                <div class="search-templates mb-3">
+                                    <input type="text" class="form-control" id="searchTemplates" placeholder="Поиск шаблонов...">
+                                </div>
+                                <div class="templates-list" id="templatesList">
+                                    {% if messagetemplates %}
+                                    {% for template in messagetemplates %}
+                                    <div class="template-item" data-template-id="{{ template.id }}">
+                                        <div class="template-title">
+                                            <span class="template-badge"></span>
+                                            {% if template.name %}
+                                            {{ template.name }}
+                                            {% else %}
+                                            Шаблон #{{ template.id }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="template-preview">
+                                            {{ template.mask|striptags|truncatechars:100 }}
+                                        </div>
+                                        <div class="template-meta">
+                                            <i class="bx bx-calendar"></i> {{ template.created_at|date:"d.m.Y H:i" }}
+                                            <i class="bx bx-time ms-2"></i> {{ template.updated_at|date:"H:i" }}
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary btn-use-template"
+                                                data-template-id="{{ template.id }}"
+                                                data-template-html='{{ template.mask|escapejs }}'>
+                                            <i class="bx bx-check"></i> Использовать
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <div class="empty-templates">
+                                        <i class="bx bx-folder-open"></i>
+                                        <p>Нет сохраненных шаблонов</p>
+                                        <small>Создайте шаблон в разделе "Шаблоны сообщений"</small>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -382,29 +393,29 @@
 </script>
 
 <script>
-$(document).on('click', '.btn-use-template', function(e) {
-    e.preventDefault();
+    $(document).on('click', '.btn-use-template', function(e) {
+        e.preventDefault();
 
-    var templateId = $(this).data('template-id');
+        var templateId = $(this).data('template-id');
 
-    $.ajax({
-        url: '/mail/get-template/' + templateId + '/',
-        type: 'GET',
-        success: function(response) {
+        $.ajax({
+            url: '/mail/get-template/' + templateId + '/',
+            type: 'GET',
+            success: function(response) {
 
-            if (response.success && response.mask) {
+                if (response.success && response.mask) {
 
-                // ✅ ПРОСТО вставляем
-                $('#message-text').val(response.mask);
+                    // ✅ ПРОСТО вставляем
+                    $('#message-text').val(response.mask);
 
-                // ✅ preview
-                updatePreview(response.mask);
+                    // ✅ preview
+                    updatePreview(response.mask);
 
-                // вкладка
-                $('#message-tab').tab('show');
+                    // вкладка
+                    $('#message-tab').tab('show');
+                }
             }
-        }
+        });
     });
-});
 </script>
 {% endblock %}
