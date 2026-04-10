@@ -60,57 +60,53 @@
             <form method="post" enctype="multipart/form-data" id="campaignForm">
                 {% csrf_token %}
 
-               <!-- Основная информация -->
-<div class="form-section">
-    <div class="section-title">
-        <i class="icon-base bx bx-info-circle me-2"></i>Основная информация
-    </div>
+                <!-- Основная информация -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="icon-base bx bx-info-circle me-2"></i>Основная информация
+                    </div>
 
-    <div class="row">
-        <div class="col-md-12 mb-3">
-            <label class="form-label">Название кампании <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="name" required
-                   value="{{ campaign.name|default:'' }}"
-                   placeholder="Например: Весенняя рассылка 2024">
-        </div>
-    </div>
-
-    <div class="row">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Название кампании <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" required
+                                   value="{{ campaign.name|default:'' }}"
+                                   placeholder="Например: Весенняя рассылка 2024">
+                        </div>
 
 
-        <div class="col-md-4 mb-3">
-            <label class="form-label">SMTP настройки</label>
-            <select class="form-select" name="use_smtp">
-                <option value="">-- Использовать стандартные --</option>
-                {% for smtp in smtp_settings %}
-                <option value="{{ smtp.id }}" {% if campaign.use_smtp_settings.id == smtp.id %}selected{% endif %}>
-                    {{ smtp.email_host }} ({{ smtp.default_from_email }})
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Количество писем за один раз</label>
-            <input type="number" class="form-control" name="message_count"
-                   value="50" min="1" max="1000">
-            <div class="form-text text-muted">
-                <small>Сколько писем отправлять за один раз (рекомендуется: 50-100)</small>
-            </div>
-        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">SMTP настройки</label>
+                            <select class="form-select" name="use_smtp">
+                                <option value="">-- Использовать стандартные --</option>
+                                {% for smtp in smtp_settings %}
+                                <option value="{{ smtp.id }}" {% if campaign.use_smtp_settings.id == smtp.id %}selected{% endif %}>
+                                    {{ smtp.email_host }} ({{ smtp.default_from_email }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-        <div class="col-md-4 mb-3">
-            <label class="form-label">Интервал между письмами (секунды)</label>
-            <input type="number" class="form-control" name="message_interval"
-                   value="2" min="0" max="60" step="0.5">
-            <div class="form-text text-muted">
-                <small>Пауза между отправкой каждого письма (сек)</small>
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Количество писем за один раз</label>
+                            <input type="number" class="form-control" name="message_count"
+                                   value="50" min="1" max="1000">
+                            <div class="form-text text-muted">
+                                <small>Сколько писем отправлять за один раз (рекомендуется: 50-100)</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Интервал между письмами (секунды)</label>
+                            <input type="number" class="form-control" name="message_interval"
+                                   value="2" min="0"  step="0.5">
+                            <div class="form-text text-muted">
+                                <small>Пауза между отправкой каждого письма (сек)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Письмо -->
                 <div class="form-section">
