@@ -39,7 +39,7 @@ services:
     volumes:
       - ./src:/app/marketplace
     ports:
-      - "8000:8000"
+      - "8002:8000"
       - "8001:8001"
     tty: true
     restart: on-failure
