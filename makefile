@@ -16,15 +16,15 @@ restart:
 destroy:
 	docker-compose -f docker-compose.yaml down -v $(c)
 log:
-	docker-compose -f docker-compose.yaml logs --tail=150 -f cb-app
+	docker-compose -f docker-compose.yaml logs --tail=150 -f cb-mail-app
 shell:
-	docker-compose -f docker-compose.yaml exec cb-app /bin/bash
+	docker-compose -f docker-compose.yaml exec cb-mail-app /bin/bash
 manage:
-	docker-compose -f docker-compose.yaml exec cb-app python manage.py $(c)
+	docker-compose -f docker-compose.yaml exec cb-mail-app python manage.py $(c)
 makemigrations:
-	docker-compose -f docker-compose.yaml exec cb-app python manage.py makemigrations
+	docker-compose -f docker-compose.yaml exec cb-mail-app python manage.py makemigrations
 migrate:
-	docker-compose -f docker-compose.yaml exec cb-app python manage.py migrate
+	docker-compose -f docker-compose.yaml exec cb-mail-app python manage.py migrate
 test:
-	docker-compose -f docker-compose.yaml exec cb-app python manage.py test
+	docker-compose -f docker-compose.yaml exec cb-mail-app python manage.py test
 
