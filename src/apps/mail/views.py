@@ -331,10 +331,6 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
             messages.error(request, f'Ошибка при создании: {str(e)}')
             return redirect('mail:mass_mail_create')
 
-def unlayer_proxy(request):
-    url = "https://editor.unlayer.com/embed.js"
-    r = requests.get(url)
-    return HttpResponse(r.content, content_type="application/javascript")
 
 class MassMailCampaignEditView(LoginRequiredMixin, View):
     """Редактирование кампании массовой рассылки"""

@@ -41,7 +41,6 @@ urlpatterns = [
     path('mass-mail/', views.MassMailCampaignListView.as_view(), name='mass_mail_list'),
     path('mass-mail/create/', views.MassMailCampaignCreateView.as_view(), name='mass_mail_create'),
     path('mail/get-template/<int:template_id>/', views.GetTemplateView.as_view(), name='get_template'),
-    path("unlayer.js", views.unlayer_proxy),
     path('mass-mail/<int:campaign_id>/', views.MassMailCampaignDetailView.as_view(), name='mass_mail_detail'),
     path('mass-mail/<int:campaign_id>/edit/', views.MassMailCampaignEditView.as_view(), name='mass_mail_edit'),
     path('mass-mail/move-to-stoplist/<int:campaign_id>/', views.MassMailMoveToStopListView.as_view(), name='mass_mail_move_to_stoplist'),
