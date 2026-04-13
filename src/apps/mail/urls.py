@@ -10,6 +10,8 @@ urlpatterns = [
     path('messages/<uuid:message_id>/view/', views.AllMessageDetailView.as_view(), name='all_message_detail'),
     path('all-messages/', views.AllMessagesListView.as_view(), name='all_messages'),
     path('templates/', views.MessageTemplateListView.as_view(), name='message_templates_list'),
+    path('stoplist/', views.StopListView.as_view(), name='stoplist'),
+    path('stoplist/api/', views.StopListAPIView.as_view(), name='stoplist_api'),
 
     # Детальный просмотр
     path('templates/<int:pk>/', views.MessageTemplateDetailView.as_view(), name='message_templates_detail'),
@@ -42,6 +44,7 @@ urlpatterns = [
 
     path('mass-mail/<int:campaign_id>/', views.MassMailCampaignDetailView.as_view(), name='mass_mail_detail'),
     path('mass-mail/<int:campaign_id>/edit/', views.MassMailCampaignEditView.as_view(), name='mass_mail_edit'),
+path('mass-mail/move-to-stoplist/<int:campaign_id>/', views.MassMailMoveToStopListView.as_view(), name='mass_mail_move_to_stoplist'),
     path('mass-mail/<int:campaign_id>/send/', views.MassMailCampaignSendView.as_view(), name='mass_mail_send'),
     path('mass-mail/<int:campaign_id>/delete/', views.MassMailCampaignDeleteView.as_view(), name='mass_mail_delete'),
 

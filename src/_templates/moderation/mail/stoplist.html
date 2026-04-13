@@ -1,0 +1,353 @@
+{% extends 'moderation/base.html' %}
+{% load static %}
+
+{% block title %}Стоп-лист писем | Модерация{% endblock %}
+
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    .stoplist-container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .stoplist-header {
+        background: linear-gradient(135deg, #2964be 0%, #0070f8 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .stoplist-card {
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .stoplist-card:hover {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    .stoplist-card .card-header {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-bottom: 3px solid #2964be;
+        padding: 1rem 1.5rem;
+    }
+
+    .email-list {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+
+    .email-item {
+        background: white;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        border-left: 4px solid #2964be;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .email-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        background: #fff5f5;
+    }
+
+    .email-address {
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        color: #495057;
+        word-break: break-all;
+    }
+
+    .btn-remove {
+        background: none;
+        border: none;
+        color: #2964be;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .btn-remove:hover {
+        background: #2964be;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #2964be 0%, #0070f8 100%);
+        border: none;
+        padding: 10px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+        color: white;
+    }
+
+    .btn-outline-gradient {
+        background: transparent;
+        border: 2px solid #2964be;
+        padding: 10px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: #2964be;
+    }
+
+    .btn-outline-gradient:hover {
+        background: linear-gradient(135deg, #2964be 0%, #0070f8 100%);
+        color: white;
+        border: 2px solid transparent;
+        transform: translateY(-2px);
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .stats-number {
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #2964be 0%, #0070f8 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .alert-custom {
+        background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        border: none;
+        border-radius: 12px;
+        color: #2d5a27;
+        font-weight: 500;
+    }
+
+    textarea, input[type="text"] {
+        border-radius: 12px !important;
+        border: 2px solid #e9ecef !important;
+        transition: all 0.3s ease;
+    }
+
+    textarea:focus, input[type="text"]:focus {
+        border-color: #2964be !important;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    }
+
+    .column-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #2964be;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .badge-count {
+        background: #2964be;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+
+    .empty-column {
+        text-align: center;
+        padding: 2rem;
+        color: #adb5bd;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .email-item {
+        animation: fadeIn 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container stoplist-container mt-4">
+    <!-- Сообщения -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-custom alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if created %}
+    <div class="alert alert-custom alert-dismissible fade show" role="alert">
+        <i class="fas fa-magic me-2"></i>
+        <strong>Готово!</strong> Стоп-лист писем успешно создан.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="stoplist-header text-center">
+        <h1 class="display-5 fw-bold mb-3">
+            <i class="fas fa-envelope fa-fw me-3"></i>
+            Стоп-лист писем
+        </h1>
+        <p class="lead mb-3">Управление заблокированными email-адресами</p>
+        <div class="stats-card d-inline-block px-4">
+            <span class="stats-number">{{ total_count }}</span>
+            <span class="text-muted ms-2">всего адресов</span>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Левая колонка - Добавление email -->
+        <div class="col-lg-4">
+            <div class="card stoplist-card">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Добавить email
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_single">
+                        <div class="mb-3">
+                            <label class="form-label">Email адрес</label>
+                            <input type="email" name="email" class="form-control" placeholder="user@example.com" required>
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100">
+                            <i class="fas fa-plus me-2"></i>Добавить
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card stoplist-card">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-layer-group me-2"></i>
+                        Массовое добавление
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add_bulk">
+                        <div class="mb-3">
+                            <label class="form-label">Список email-адресов</label>
+                            <textarea name="bulk_emails" class="form-control" rows="6"
+                                placeholder="mail1@example.com, mail2@example.com
+mail3@example.com mail4@example.com
+mail5@example.com
+mail6@example.com" required></textarea>
+                            <div class="form-text text-muted mt-2">
+                                <small>Поддерживаются разделители: запятые, пробелы, переводы строк</small>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-gradient w-100">
+                            <i class="fas fa-upload me-2"></i>Массовое добавление
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правая колонка - Три списка email -->
+        <div class="col-lg-8">
+            <div class="card stoplist-card">
+                <div class="card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="fas fa-list-ul me-2"></i>
+                        Список заблокированных адресов
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for column in columns %}
+                        <div class="col-md-4">
+                            <div class="column-title">
+                                {% if forloop.counter == 1 %}
+                                    <i class="fas fa-columns me-1"></i>
+                                {% elif forloop.counter == 2 %}
+                                    <i class="fas fa-columns me-1"></i>
+                                {% else %}
+                                    <i class="fas fa-columns me-1"></i>
+                                {% endif %}
+                                Колонка {{ forloop.counter }}
+                                <span class="badge-count">{{ column|length }}</span>
+                            </div>
+                            <div class="email-list">
+                                {% if column %}
+                                    {% for email in column %}
+                                    <div class="email-item">
+                                        <span class="email-address">
+                                            <i class="fas fa-envelope fa-fw me-2 text-danger"></i>
+                                            {{ email }}
+                                        </span>
+                                        <form method="post" style="display: inline;" onsubmit="return confirm('Удалить {{ email }} из стоп-листа?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="remove">
+                                            <input type="hidden" name="email" value="{{ email }}">
+                                            <button type="submit" class="btn-remove" title="Удалить">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="empty-column">
+                                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                                        <p class="mb-0">Нет адресов</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Автоматическое скрытие сообщений через 3 секунды
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            setTimeout(() => bsAlert.close(), 1000);
+        });
+    }, 3000);
+</script>
+{% endblock %}

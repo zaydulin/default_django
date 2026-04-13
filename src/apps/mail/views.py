@@ -7,7 +7,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Message, MessageDir, MessageMask, MessageFile, MessageRm, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageTemplates
+from .models import Message, MessageDir, MessageMask,StopList, MessageFile, MessageRm, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageTemplates
 from django.contrib.auth.models import User
 from django.contrib import messages
 import smtplib
@@ -21,6 +21,133 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()  # Получаем кастомную модель пользователя
 
+# moderation/mail/stoplist.html
+
+
+class StopListView(View):
+    """
+    Стоп-лист для блокировки нежелательных писем
+    """
+
+    def get(self, request):
+        # Получаем или создаём единственную запись
+        stoplist, created = StopList.objects.get_or_create(
+            id=1,
+            defaults={'list': 'mail@na.ru, mail2@na.ru'}
+        )
+
+        # Получаем список email-адресов
+        emails = stoplist.get_emails_list()
+
+        # Разбиваем на три колонки
+        total = len(emails)
+        chunk_size = (total + 2) // 3  # Округление вверх
+
+        columns = [
+            emails[i:i + chunk_size]
+            for i in range(0, total, chunk_size)
+        ]
+
+        # Дополняем до трёх колонок пустыми списками
+        while len(columns) < 3:
+            columns.append([])
+
+        context = {
+            'stoplist': stoplist,
+            'created': created,
+            'columns': columns,
+            'total_count': total,
+        }
+
+        return render(request, 'moderation/mail/stoplist.html', context)
+
+    def post(self, request):
+        stoplist, created = StopList.objects.get_or_create(id=1)
+        action = request.POST.get('action', '')
+
+        if action == 'add_single':
+            # Добавление одного email
+            email = request.POST.get('email', '').strip()
+            if email:
+                if stoplist.add_email(email):
+                    messages.success(request, f'✅ Email "{email}" добавлен в стоп-лист!')
+                else:
+                    messages.warning(request, f'⚠️ Email "{email}" уже есть в стоп-листе!')
+            else:
+                messages.error(request, '❌ Введите email адрес!')
+
+        elif action == 'add_bulk':
+            # Массовое добавление
+            bulk_emails = request.POST.get('bulk_emails', '').strip()
+            if bulk_emails:
+                # Поддерживаем разделение по запятым, пробелам и переводам строк
+                import re
+                # Разделяем по запятым, пробелам, переводам строк
+                emails_list = re.split(r'[,\n\s]+', bulk_emails)
+                # Фильтруем пустые и валидные email
+                valid_emails = [e for e in emails_list if e and '@' in e]
+
+                if valid_emails:
+                    new_emails = stoplist.add_emails_bulk(valid_emails)
+                    if new_emails:
+                        messages.success(
+                            request,
+                            f'✅ Добавлено {len(new_emails)} новых email-адресов!'
+                        )
+                    else:
+                        messages.warning(request, '⚠️ Все email-адреса уже есть в стоп-листе!')
+                else:
+                    messages.error(request, '❌ Не найдено валидных email-адресов!')
+            else:
+                messages.error(request, '❌ Введите email-адреса для добавления!')
+
+        elif action == 'remove':
+            # Удаление email
+            email = request.POST.get('email', '').strip()
+            if email and stoplist.remove_email(email):
+                messages.success(request, f'✅ Email "{email}" удалён из стоп-листа!')
+            else:
+                messages.error(request, f'❌ Email "{email}" не найден в стоп-листе!')
+
+        return redirect('mail:stoplist')
+
+
+class StopListAPIView(View):
+    """API для работы со стоп-листом"""
+
+    def get(self, request):
+        """Получить все email"""
+        stoplist, _ = StopList.objects.get_or_create(id=1)
+        emails = stoplist.get_emails_list()
+        return JsonResponse({'emails': emails, 'count': len(emails)})
+
+    def post(self, request):
+        """Добавить email через API"""
+        import json
+        data = json.loads(request.body)
+        stoplist, _ = StopList.objects.get_or_create(id=1)
+
+        if 'email' in data:
+            success = stoplist.add_email(data['email'])
+            return JsonResponse({'success': success, 'email': data['email']})
+
+        if 'emails' in data:
+            new_emails = stoplist.add_emails_bulk(data['emails'])
+            return JsonResponse({'success': True, 'added': new_emails, 'count': len(new_emails)})
+
+        return JsonResponse({'error': 'No email provided'}, status=400)
+
+    def delete(self, request):
+        """Удалить email через API"""
+        import json
+        data = json.loads(request.body)
+        stoplist, _ = StopList.objects.get_or_create(id=1)
+
+        if 'email' in data:
+            success = stoplist.remove_email(data['email'])
+            return JsonResponse({'success': success, 'email': data['email']})
+
+        return JsonResponse({'error': 'No email provided'}, status=400)
 
 
 class MessageTemplateListView(ListView):
@@ -100,9 +227,19 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
 
     def get(self, request):
         smtp_settings = UserSettingsSMTP.objects.filter(user=request.user)
-        context = self.get_context_data()
-        context['smtp_settings'] = smtp_settings
-        context['is_edit'] = False
+        messagetemplates = MessageTemplates.objects.all().order_by('-created_at')
+
+        # Получаем глобальный стоп-лист
+        global_stoplist = StopList.get_instance()
+        stoplist_emails = global_stoplist.get_emails_list()
+
+        context = {
+            'smtp_settings': smtp_settings,
+            'messagetemplates': messagetemplates,
+            'is_edit': False,
+            'global_stoplist': global_stoplist,
+            'stoplist_emails': stoplist_emails,
+        }
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -116,6 +253,7 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
             from_name = request.POST.get('from_name')
             scheduled_time = request.POST.get('scheduled_time')
             use_smtp_id = request.POST.get('use_smtp')
+            stop_list = request.POST.get('stop_list', '')
 
             # Получаем настройки отправки
             message_count = request.POST.get('message_count', 50)
@@ -140,7 +278,7 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
                 except UserSettingsSMTP.DoesNotExist:
                     pass
 
-            # Создаем кампанию с сохранением всех полей
+            # Создаем кампанию
             campaign = MassMailCampaign.objects.create(
                 name=name,
                 subject=subject,
@@ -151,8 +289,9 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
                 use_smtp_settings=use_smtp,
                 user=request.user,
                 status='draft',
-                message_count=message_count,  # Теперь сохраняется
-                message_interval=message_interval  # Теперь сохраняется
+                message_count=message_count,
+                message_interval=message_interval,
+                stop_list=stop_list
             )
 
             # Обработка файла
@@ -190,11 +329,142 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
             messages.error(request, f'Ошибка при создании: {str(e)}')
             return redirect('mail:mass_mail_create')
 
-    def get_context_data(self, **kwargs):
-        context = {}
-        context['messagetemplates'] = MessageTemplates.objects.all().order_by('-created_at')
-        context['is_edit'] = False
-        return context
+
+class MassMailCampaignEditView(LoginRequiredMixin, View):
+    """Редактирование кампании массовой рассылки"""
+    template_name = 'moderation/mail/mass_mail_form.html'
+
+    def get(self, request, campaign_id):
+        campaign = get_object_or_404(MassMailCampaign, id=campaign_id, user=request.user)
+        smtp_settings = UserSettingsSMTP.objects.filter(user=request.user)
+        messagetemplates = MessageTemplates.objects.all().order_by('-created_at')
+
+        # Получаем глобальный стоп-лист
+        global_stoplist = StopList.get_instance()
+        stoplist_emails = global_stoplist.get_emails_list()
+
+        context = {
+            'campaign': campaign,
+            'smtp_settings': smtp_settings,
+            'messagetemplates': messagetemplates,
+            'is_edit': True,
+            'global_stoplist': global_stoplist,
+            'stoplist_emails': stoplist_emails,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, campaign_id):
+        campaign = get_object_or_404(MassMailCampaign, id=campaign_id, user=request.user)
+
+        try:
+            # Обновляем данные
+            campaign.name = request.POST.get('name')
+            campaign.subject = request.POST.get('subject')
+            campaign.message = request.POST.get('message')
+            campaign.recipient_emails = request.POST.get('recipient_emails', '')
+            campaign.from_email = request.POST.get('from_email')
+            campaign.from_name = request.POST.get('from_name')
+            campaign.stop_list = request.POST.get('stop_list', '')
+
+            # Настройки отправки
+            message_count = request.POST.get('message_count', 50)
+            message_interval = request.POST.get('message_interval', 2)
+
+            try:
+                campaign.message_count = int(message_count)
+                campaign.message_interval = int(float(message_interval))
+            except (ValueError, TypeError):
+                campaign.message_count = 50
+                campaign.message_interval = 2
+
+            campaign.message_count = max(1, min(1000, campaign.message_count))
+            campaign.message_interval = max(0, min(60, campaign.message_interval))
+
+            # SMTP настройки
+            use_smtp_id = request.POST.get('use_smtp')
+            if use_smtp_id:
+                try:
+                    campaign.use_smtp_settings = UserSettingsSMTP.objects.get(
+                        id=use_smtp_id, user=request.user
+                    )
+                except UserSettingsSMTP.DoesNotExist:
+                    campaign.use_smtp_settings = None
+            else:
+                campaign.use_smtp_settings = None
+
+            # Планирование
+            scheduled_time = request.POST.get('scheduled_time')
+            if scheduled_time:
+                from datetime import datetime
+                campaign.scheduled_time = datetime.fromisoformat(scheduled_time)
+            else:
+                campaign.scheduled_time = None
+
+            # Обработка нового файла
+            if 'recipient_file' in request.FILES:
+                campaign.recipient_file = request.FILES['recipient_file']
+                campaign.save()
+
+                file_content = campaign.recipient_file.read().decode('utf-8')
+                file_emails = []
+                for line in file_content.split('\n'):
+                    for email in line.split(','):
+                        email = email.strip()
+                        if email and '@' in email:
+                            file_emails.append(email)
+
+                if campaign.recipient_emails:
+                    campaign.recipient_emails += '\n' + '\n'.join(file_emails)
+                else:
+                    campaign.recipient_emails = '\n'.join(file_emails)
+
+            # Обновляем количество получателей
+            campaign.total_recipients = len(campaign.get_recipients_list())
+            campaign.save()
+
+            messages.success(request, f'Кампания "{campaign.name}" успешно обновлена')
+            return redirect('mail:mass_mail_list')
+
+        except Exception as e:
+            messages.error(request, f'Ошибка при обновлении: {str(e)}')
+            return redirect('mail:mass_mail_edit', campaign_id=campaign.id)
+
+
+class MassMailMoveToStopListView(LoginRequiredMixin, View):
+    """
+    Перемещает все загруженные email-адреса из текущей кампании в глобальный стоп-лист
+    """
+
+    def post(self, request, campaign_id):
+        campaign = get_object_or_404(MassMailCampaign, id=campaign_id, user=request.user)
+
+        # Получаем все email из получателей
+        recipients = campaign.get_recipients_list()
+
+        if not recipients:
+            messages.warning(request, '⚠️ Нет email-адресов для перемещения в стоп-лист!')
+            return redirect('mail:mass_mail_edit', campaign_id=campaign.id)
+
+        # Перемещаем в стоп-лист
+        result = campaign.move_emails_to_stoplist(recipients)
+
+        if result['added_count'] > 0:
+            messages.success(
+                request,
+                f'✅ Перемещено {result["added_count"]} email-адресов в глобальный стоп-лист!\n'
+                f'Осталось получателей: {result["remaining_count"]}'
+            )
+
+            # Показываем первые 5 добавленных
+            for email in result['added_emails'][:5]:
+                messages.info(request, f'📧 Добавлен в стоп-лист: {email}')
+
+            if result['added_count'] > 5:
+                messages.info(request, f'... и ещё {result["added_count"] - 5} адресов')
+        else:
+            messages.info(request, 'ℹ️ Не удалось переместить адреса')
+
+        return redirect('mail:mass_mail_edit', campaign_id=campaign.id)
 
 
 class GetTemplateView(LoginRequiredMixin, View):
@@ -231,77 +501,6 @@ class MassMailCampaignCancelView(LoginRequiredMixin, View):
         campaign.save()
         messages.success(request, f'Рассылка "{campaign.name}" отменена')
         return redirect('mail:mass_mail_detail', campaign_id=campaign.id)
-
-class MassMailCampaignEditView(LoginRequiredMixin, View):
-    """Редактирование кампании массовой рассылки"""
-    template_name = 'moderation/mail/mass_mail_form.html'
-
-    def get(self, request, campaign_id):
-        campaign = get_object_or_404(MassMailCampaign, id=campaign_id, user=request.user)
-        # Получаем ВСЕ SMTP настройки пользователя
-        smtp_settings = UserSettingsSMTP.objects.filter(user=request.user)
-
-        context = {
-            'campaign': campaign,
-            'smtp_settings': smtp_settings,  # Теперь это queryset
-            'is_edit': True,
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request, campaign_id):
-        campaign = get_object_or_404(MassMailCampaign, id=campaign_id, user=request.user)
-
-        try:
-            # Обновляем данные
-            campaign.name = request.POST.get('name')
-            campaign.subject = request.POST.get('subject')
-            campaign.message = request.POST.get('message')
-            campaign.recipient_emails = request.POST.get('recipient_emails', '')
-            campaign.priority = request.POST.get('priority', 'normal')
-            campaign.from_email = request.POST.get('from_email')
-            campaign.from_name = request.POST.get('from_name')
-
-            use_smtp_id = request.POST.get('use_smtp')
-            if use_smtp_id:
-                try:
-                    campaign.use_smtp_settings = UserSettingsSMTP.objects.get(
-                        id=use_smtp_id, user=request.user
-                    )
-                except UserSettingsSMTP.DoesNotExist:
-                    pass
-            else:
-                campaign.use_smtp_settings = None
-
-            # Обработка нового файла
-            if 'recipient_file' in request.FILES:
-                campaign.recipient_file = request.FILES['recipient_file']
-
-                # Парсим файл
-                file_content = campaign.recipient_file.read().decode('utf-8')
-                file_emails = []
-                for line in file_content.split('\n'):
-                    for email in line.split(','):
-                        email = email.strip()
-                        if email and '@' in email:
-                            file_emails.append(email)
-
-                # Добавляем к существующим
-                if campaign.recipient_emails:
-                    campaign.recipient_emails += '\n' + '\n'.join(file_emails)
-                else:
-                    campaign.recipient_emails = '\n'.join(file_emails)
-
-            # Обновляем количество получателей
-            campaign.total_recipients = len(campaign.get_recipients_list())
-            campaign.save()
-
-            messages.success(request, f'Кампания "{campaign.name}" успешно обновлена')
-            return redirect('mail:mass_mail_list')
-
-        except Exception as e:
-            messages.error(request, f'Ошибка при обновлении: {str(e)}')
-            return redirect('mail:mass_mail_edit', campaign_id=campaign.id)
-
 
 class MassMailCampaignDetailView(LoginRequiredMixin, View):
     """Детальный просмотр кампании массовой рассылки"""

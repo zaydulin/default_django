@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import (
     ContactList, Contact, MessageDir, MessageRm, MessageMask,
-    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageDirectory, SmtpCheckLog
+    Message, MessageFile, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageDirectory, SmtpCheckLog, StopList
 )
 from django.contrib.auth import get_user_model
 
@@ -333,6 +333,20 @@ class UserSettingsSMTPAdmin(admin.ModelAdmin):
         return format_html('<img src="/static/admin/img/icon-no.svg" alt="No">')
 
     has_header_footer.short_description = 'Шапка/подвал'
+
+
+@admin.register(StopList)
+class StopListAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        # Запрещаем создание новой записи, если одна уже есть
+        if StopList.objects.exists():
+            return False
+        return super().has_add_permission(request)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Показываем только первую запись (обычно она одна)
+        return qs[:1]
 
 
 class MassMailLogInline(admin.TabularInline):

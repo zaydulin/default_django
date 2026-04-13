@@ -30,12 +30,164 @@
         color: #28a745;
         margin-top: 5px;
     }
+
+    .lists-tabs {
+        margin-top: 10px;
+    }
+    .lists-tabs .nav-tabs {
+        border-bottom: 2px solid #e9ecef;
+    }
+    .lists-tabs .nav-tabs .nav-link {
+        border: none;
+        color: #6c757d;
+        padding: 12px 24px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .lists-tabs .nav-tabs .nav-link:hover {
+        color: #7367f0;
+        background: transparent;
+    }
+    .lists-tabs .nav-tabs .nav-link.active {
+        color: #7367f0;
+        border-bottom: 3px solid #7367f0;
+        background: transparent;
+    }
+    .tab-content-list {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 0 0 10px 10px;
+    }
+    .email-item-list {
+        background: white;
+        padding: 10px 15px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        border-left: 3px solid #7367f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .email-address {
+        font-family: monospace;
+        font-size: 13px;
+        color: #495057;
+    }
+    .badge-count-list {
+        background: #7367f0;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        margin-left: 8px;
+    }
+    .stoplist-badge {
+        background: #dc3545;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        margin-left: 8px;
+    }
+    .global-stoplist-badge {
+        background: #ffc107;
+        color: #856404;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        margin-left: 8px;
+    }
+    .btn-compare {
+        background: linear-gradient(135deg, #ffc107, #ff9800);
+        border: none;
+        color: #333;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-compare:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    }
+    .btn-move-all {
+        background: #dc3545;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-move-all:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+    .btn-apply-stoplist {
+        background: #28a745;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-apply-stoplist:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+    .result-alert {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    .template-item {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: white;
+    }
+    .template-item:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .template-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #7367f0;
+    }
+    .template-preview {
+        color: #666;
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+    .template-meta {
+        color: #999;
+        font-size: 11px;
+        margin-bottom: 10px;
+    }
+    .empty-list {
+        text-align: center;
+        padding: 40px;
+        color: #adb5bd;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-xxl flex-grow-1 container-p-y">
-    <!-- Хлебные крошки -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -74,8 +226,6 @@
                                    placeholder="Например: Весенняя рассылка 2024">
                         </div>
 
-
-
                         <div class="col-md-4 mb-3">
                             <label class="form-label">SMTP настройки</label>
                             <select class="form-select" name="use_smtp">
@@ -91,19 +241,13 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Количество писем за один раз</label>
                             <input type="number" class="form-control" name="message_count"
-                                   value="50" min="1" max="1000">
-                            <div class="form-text text-muted">
-                                <small>Сколько писем отправлять за один раз (рекомендуется: 50-100)</small>
-                            </div>
+                                   value="{{ campaign.message_count|default:'50' }}" min="1" max="1000">
                         </div>
 
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Интервал между письмами (секунды)</label>
                             <input type="number" class="form-control" name="message_interval"
-                                   value="2" min="0"  step="0.5">
-                            <div class="form-text text-muted">
-                                <small>Пауза между отправкой каждого письма (сек)</small>
-                            </div>
+                                   value="{{ campaign.message_interval|default:'2' }}" min="0" step="0.5">
                         </div>
                     </div>
                 </div>
@@ -140,9 +284,10 @@
                     <div class="mb-3">
                         <label class="form-label">Текст письма <span class="text-danger">*</span></label>
 
-                        <span class="btn btn-primary" id="edit-template">Использовать конструктор</span>
+                        <button type="button" class="btn btn-primary" id="edit-template">
+                            <i class="bx bx-buildings me-1"></i>Использовать конструктор
+                        </button>
 
-                        <!-- Вкладки -->
                         <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="message-tab" data-bs-toggle="tab" data-bs-target="#message" type="button" role="tab">Текст письма</button>
@@ -156,18 +301,12 @@
                         </ul>
 
                         <div class="tab-content mt-3">
-                            <!-- Текст письма -->
                             <div class="tab-pane fade show active" id="message" role="tabpanel">
                                 <textarea class="form-control summernote" name="message" id="message-text" rows="10" required>{{ campaign.message|default:'' }}</textarea>
                             </div>
-
-                            <!-- Предпросмотр -->
                             <div class="tab-pane fade" id="preview" role="tabpanel">
                                 <iframe id="email-preview" style="width:100%;height:400px;border:1px solid #ddd;border-radius:6px;"></iframe>
                             </div>
-
-                            <!-- Образцы -->
-                            <!-- Образцы -->
                             <div class="tab-pane fade" id="samples" role="tabpanel">
                                 <div class="search-templates mb-3">
                                     <input type="text" class="form-control" id="searchTemplates" placeholder="Поиск шаблонов...">
@@ -177,7 +316,6 @@
                                     {% for template in messagetemplates %}
                                     <div class="template-item" data-template-id="{{ template.id }}">
                                         <div class="template-title">
-                                            <span class="template-badge"></span>
                                             {% if template.name %}
                                             {{ template.name }}
                                             {% else %}
@@ -189,7 +327,6 @@
                                         </div>
                                         <div class="template-meta">
                                             <i class="bx bx-calendar"></i> {{ template.created_at|date:"d.m.Y H:i" }}
-                                            <i class="bx bx-time ms-2"></i> {{ template.updated_at|date:"H:i" }}
                                         </div>
                                         <button type="button" class="btn btn-sm btn-outline-primary btn-use-template"
                                                 data-template-id="{{ template.id }}"
@@ -202,7 +339,6 @@
                                     <div class="empty-templates">
                                         <i class="bx bx-folder-open"></i>
                                         <p>Нет сохраненных шаблонов</p>
-                                        <small>Создайте шаблон в разделе "Шаблоны сообщений"</small>
                                     </div>
                                     {% endif %}
                                 </div>
@@ -211,34 +347,109 @@
                     </div>
                 </div>
 
-                <!-- Получатели -->
+                <!-- Три вкладки с кнопками -->
                 <div class="form-section">
                     <div class="section-title">
-                        <i class="icon-base bx bx-group me-2"></i>Получатели
+                        <i class="icon-base bx bx-list-ul me-2"></i>Управление списками
                     </div>
 
-                    <div class="recipient-area">
-                        <div class="mb-3">
-                            <label class="form-label">Email получателей</label>
-                            <textarea class="form-control" name="recipient_emails" rows="5"
-                                      placeholder="email1@example.com&#10;email2@example.com, email3@example.com&#10;email4@example.com">{{ campaign.recipient_emails|default:'' }}</textarea>
-                            <div class="form-text">
-                                Введите email адреса через запятую или по одному в строке
-                            </div>
-                            <div class="email-count" id="emailCount"></div>
-                        </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-compare" id="compareAndMoveBtn">
+                            <i class="bx bx-compare me-2"></i>
+                            Сравнить и перенести (найти email из глобального стоп-листа в получателях)
+                        </button>
+                        <button type="button" class="btn btn-move-all" id="moveAllToCampaignStoplistBtn" style="margin-left: 10px;">
+                            <i class="bx bx-transfer-alt me-2"></i>
+                            Перенести ВСЕ email из получателей в стоп-лист
+                        </button>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Или загрузите файл со списком</label>
-                            <input type="file" class="form-control" name="recipient_file" accept=".txt,.csv">
-                            <div class="form-text">
-                                Поддерживаются текстовые файлы (.txt, .csv) с email адресами
+                    <div class="lists-tabs">
+                        <ul class="nav nav-tabs" id="listsTab" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="recipients-tab" data-bs-toggle="tab" data-bs-target="#recipients-list" type="button">
+                                    <i class="bx bx-group me-1"></i>
+                                    Получатели
+                                    <span class="badge-count-list" id="recipientsCount">0</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="campaign-stoplist-tab" data-bs-toggle="tab" data-bs-target="#campaign-stoplist" type="button">
+                                    <i class="bx bx-block me-1"></i>
+                                    Стоп-лист кампании
+                                    <span class="stoplist-badge" id="campaignStoplistCount">0</span>
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="global-stoplist-tab" data-bs-toggle="tab" data-bs-target="#global-stoplist" type="button">
+                                    <i class="bx bx-shield-alt me-1"></i>
+                                    Глобальный стоп-лист
+                                    <span class="global-stoplist-badge" id="globalStoplistCount">{{ stoplist_emails|length }}</span>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content-list">
+                            <!-- Вкладка 1: Получатели -->
+                            <div class="tab-pane fade show active" id="recipients-list" role="tabpanel">
+                                <div class="recipient-area">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email получателей</label>
+                                        <textarea class="form-control" name="recipient_emails" id="recipientEmails" rows="5"
+                                                  placeholder="email1@example.com, email2@example.com, email3@example.com">{{ campaign.recipient_emails|default:'' }}</textarea>
+                                        <div class="form-text">
+                                            Введите email адреса через запятую или по одному в строке
+                                        </div>
+                                        <div class="email-count" id="emailCount"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Или загрузите файл со списком</label>
+                                        <input type="file" class="form-control" name="recipient_file" accept=".txt,.csv" id="recipientFile">
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-apply-stoplist" id="applyStoplistBtn">
+                                            <i class="bx bx-filter-alt me-2"></i>
+                                            Применить стоп-лист (удалить заблокированные email)
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            {% if campaign.recipient_file %}
-                            <div class="mt-2">
-                                <small>Текущий файл: {{ campaign.recipient_file.name }}</small>
+
+                            <!-- Вкладка 2: Стоп-лист кампании -->
+                            <div class="tab-pane fade" id="campaign-stoplist" role="tabpanel">
+                                <div class="alert alert-warning">
+                                    <i class="bx bx-block me-2"></i>
+                                    Эти адреса будут исключены из рассылки
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Редактировать стоп-лист кампании</label>
+                                    <textarea class="form-control" name="stop_list" id="campaignStopList" rows="5"
+                                              placeholder="email1@example.com, email2@example.com">{{ campaign.stop_list|default:'' }}</textarea>
+                                </div>
                             </div>
-                            {% endif %}
+
+                            <!-- Вкладка 3: Глобальный стоп-лист -->
+                            <div class="tab-pane fade" id="global-stoplist" role="tabpanel">
+                                <div class="alert alert-danger">
+                                    <i class="bx bx-shield-alt me-2"></i>
+                                    Глобальный стоп-лист (блокировка для всех рассылок)
+                                </div>
+                                {% if stoplist_emails %}
+                                    <div style="max-height: 300px; overflow-y: auto;">
+                                        {% for email in stoplist_emails %}
+                                        <div class="email-item-list">
+                                            <i class="bx bx-block text-danger me-2"></i>
+                                            <span class="email-address">{{ email }}</span>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="empty-list">
+                                        <i class="bx bx-block"></i>
+                                        <p>Глобальный стоп-лист пуст</p>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -248,24 +459,17 @@
                     <div class="section-title">
                         <i class="icon-base bx bx-time me-2"></i>Планирование
                     </div>
-
                     <div class="mb-3">
                         <label class="form-label">Запланировать отправку</label>
                         <input type="datetime-local" class="form-control" name="scheduled_time"
                                value="{{ campaign.scheduled_time|date:'Y-m-d\\TH:i'|default:'' }}">
-                        <div class="form-text">
-                            Если оставить пустым, рассылка будет запущена сразу после создания
-                        </div>
                     </div>
                 </div>
 
                 <!-- Кнопки -->
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{% url 'mail:mass_mail_list' %}" class="btn btn-outline-secondary">
-                        <i class="icon-base bx bx-x me-1"></i>Отмена
-                    </a>
+                    <a href="{% url 'mail:mass_mail_list' %}" class="btn btn-outline-secondary">Отмена</a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="icon-base bx bx-save me-1"></i>
                         {% if is_edit %}Сохранить изменения{% else %}Создать кампанию{% endif %}
                     </button>
                 </div>
@@ -273,137 +477,311 @@
         </div>
     </div>
 </div>
+
 <!-- EMAIL BUILDER MODAL -->
 <div class="modal fade" id="builderModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h5 class="modal-title">Конструктор письма</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
             <div class="modal-body p-0">
                 <div id="editor" style="height:600px;"></div>
             </div>
-
             <div class="modal-footer">
-                <button class="btn btn-primary" id="apply-template">
-                    Применить
-                </button>
+                <button class="btn btn-primary" id="apply-template">Применить</button>
             </div>
-
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://editor.unlayer.com/embed.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+<script src="https://editor.unlayer.com/embed.js"></script>
 
 <script>
+    // ============ СТАРЫЕ РАБОЧИЕ СКРИПТЫ (КОНСТРУКТОР) ============
     document.getElementById('apply-template').addEventListener('click', function(){
-
         unlayer.exportHtml(function(data) {
-
             const html = data.html
-
             document.getElementById('message-text').value = html
-
             const iframe = document.getElementById('email-preview')
             iframe.srcdoc = html
-
             const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
             modal.hide()
-
         })
-
     })
+
     let editorLoaded = false
-
     document.getElementById('edit-template').addEventListener('click', function(){
-
         const modal = new bootstrap.Modal(document.getElementById('builderModal'))
         modal.show()
-
         if(!editorLoaded){
-
             unlayer.init({
                 id: 'editor',
                 displayMode: 'email'
             })
-
             editorLoaded = true
         }
-
     })
 
-    document.getElementById('apply-template').addEventListener('click', function(){
-
-        unlayer.exportHtml(function(data) {
-
-            const html = data.html
-
-            document.getElementById('message-text').value = html
-
-            const modal = bootstrap.Modal.getInstance(document.getElementById('builderModal'))
-            modal.hide()
-
-        })
-
-    })
-
-</script>
-
-
-<script>
+    // ============ ФУНКЦИЯ ДЛЯ SUMMERNOTE ============
     function setSummernoteContent(html) {
-    if (!html || html === '' || html === 'null') {
-        return false;
-    }
-
-    // Декодируем, если строка была экранирована
-    try {
-        // Пытаемся декодировать JSON-строку если нужно
-        if (typeof html === 'string' && html.startsWith('"') && html.endsWith('"')) {
-            html = JSON.parse(html);
+        if (!html || html === '' || html === 'null') {
+            return false;
         }
-    } catch (e) {
-        // Если не получилось — используем как есть
+        try {
+            if (typeof html === 'string' && html.startsWith('"') && html.endsWith('"')) {
+                html = JSON.parse(html);
+            }
+        } catch (e) {}
+
+        $('#message-text').summernote('code', html);
+        updatePreview(html);
+        return true;
     }
 
-    // Вставляем в Summernote
-    $('#message-text').summernote('code', html);
+    function updatePreview(html) {
+        $('#email-preview').attr('srcdoc', html);
+    }
 
-    // Обновляем предпросмотр
-    updatePreview(html);
+    // ============ ИСПРАВЛЕННЫЙ ПАРСИНГ EMAIL ============
+    function parseEmails(text) {
+        var emails = [];
+        if (!text) return emails;
+        var parts = text.split(/[,\n\s]+/);
+        for (var i = 0; i < parts.length; i++) {
+            var email = parts[i].trim();
+            if (email && email.indexOf('@') > 0 && email.indexOf('.') > 0) {
+                if (emails.indexOf(email) === -1) {
+                    emails.push(email);
+                }
+            }
+        }
+        return emails;
+    }
 
-    return true;
-}
-</script>
+    // ============ ОБНОВЛЕНИЕ СЧЁТЧИКОВ ============
+    function updateEmailCount() {
+        var text = $('#recipientEmails').val();
+        var emails = parseEmails(text);
+        $('#emailCount').text('Найдено email-адресов: ' + emails.length);
+        $('#recipientsCount').text(emails.length);
+        return emails;
+    }
 
-<script>
+    function updateCampaignStoplistCount() {
+        var text = $('#campaignStopList').val();
+        var emails = parseEmails(text);
+        $('#campaignStoplistCount').text(emails.length);
+        return emails;
+    }
+
+    // ============ УВЕДОМЛЕНИЯ ============
+    function showAlert(message, type) {
+        var icon = type === 'success' ? 'check-circle' : (type === 'warning' ? 'error-alt' : 'info-circle');
+        var alertDiv = $('<div class="alert alert-' + type + ' alert-dismissible fade show result-alert" role="alert">' +
+            '<i class="bx bx-' + icon + ' me-2"></i>' +
+            message +
+            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+            '</div>');
+        $('body').append(alertDiv);
+        setTimeout(function() {
+            alertDiv.fadeOut(500, function() { $(this).remove(); });
+        }, 5000);
+    }
+
+    // ============ РАБОТА СО СТОП-ЛИСТОМ ============
+    var globalStoplistEmails = {{ stoplist_emails|default:'[]'|safe }};
+
+    function addToCampaignStoplist(emailsToAdd) {
+        var currentText = $('#campaignStopList').val();
+        var currentEmails = parseEmails(currentText);
+        var newEmails = [...currentEmails];
+        var added = [];
+
+        for (var i = 0; i < emailsToAdd.length; i++) {
+            if (newEmails.indexOf(emailsToAdd[i]) === -1) {
+                newEmails.push(emailsToAdd[i]);
+                added.push(emailsToAdd[i]);
+            }
+        }
+
+        if (added.length > 0) {
+            $('#campaignStopList').val(newEmails.join(', '));
+            updateCampaignStoplistCount();
+        }
+        return added;
+    }
+
+    function removeFromRecipients(emailsToRemove) {
+        var currentText = $('#recipientEmails').val();
+        var currentEmails = parseEmails(currentText);
+        var remainingEmails = [];
+
+        for (var i = 0; i < currentEmails.length; i++) {
+            if (emailsToRemove.indexOf(currentEmails[i]) === -1) {
+                remainingEmails.push(currentEmails[i]);
+            }
+        }
+
+        $('#recipientEmails').val(remainingEmails.join(', '));
+        updateEmailCount();
+        return remainingEmails.length;
+    }
+
+    // Кнопка 1: Сравнить и перенести
+    $('#compareAndMoveBtn').on('click', function(e) {
+        e.preventDefault();
+        var recipients = parseEmails($('#recipientEmails').val());
+        var campaignStoplist = parseEmails($('#campaignStopList').val());
+
+        if (globalStoplistEmails.length === 0) {
+            showAlert('Глобальный стоп-лист пуст. Нечего переносить.', 'warning');
+            return;
+        }
+
+        var emailsToMove = [];
+        for (var i = 0; i < recipients.length; i++) {
+            if (globalStoplistEmails.indexOf(recipients[i]) !== -1) {
+                if (campaignStoplist.indexOf(recipients[i]) === -1) {
+                    emailsToMove.push(recipients[i]);
+                }
+            }
+        }
+
+        if (emailsToMove.length === 0) {
+            showAlert('Нет email-адресов из глобального стоп-листа в списке получателей.', 'info');
+            return;
+        }
+
+        var added = addToCampaignStoplist(emailsToMove);
+        var remainingCount = removeFromRecipients(emailsToMove);
+        showAlert('✅ Найдено и перенесено ' + added.length + ' email-адресов в стоп-лист кампании. Осталось получателей: ' + remainingCount, 'success');
+    });
+
+    // Кнопка 2: Перенести ВСЕ email
+    $('#moveAllToCampaignStoplistBtn').on('click', function(e) {
+        e.preventDefault();
+        var recipients = parseEmails($('#recipientEmails').val());
+
+        if (recipients.length === 0) {
+            showAlert('Нет email-адресов в списке получателей.', 'warning');
+            return;
+        }
+
+        if (!confirm('⚠️ ВНИМАНИЕ! Все ' + recipients.length + ' email-адресов будут перенесены в стоп-лист кампании. Продолжить?')) {
+            return;
+        }
+
+        var added = addToCampaignStoplist(recipients);
+        $('#recipientEmails').val('');
+        updateEmailCount();
+        showAlert('✅ Перенесено ' + added.length + ' email-адресов в стоп-лист кампании.', 'success');
+    });
+
+    // Кнопка 3: Применить стоп-лист
+    $('#applyStoplistBtn').on('click', function(e) {
+        e.preventDefault();
+        var recipients = parseEmails($('#recipientEmails').val());
+        var campaignStoplist = parseEmails($('#campaignStopList').val());
+        var allStoplist = [...new Set([...globalStoplistEmails, ...campaignStoplist])];
+
+        if (allStoplist.length === 0) {
+            showAlert('Стоп-лист пуст. Нечего удалять.', 'warning');
+            return;
+        }
+
+        var removedEmails = [];
+        var remainingEmails = [];
+
+        for (var i = 0; i < recipients.length; i++) {
+            if (allStoplist.indexOf(recipients[i]) !== -1) {
+                removedEmails.push(recipients[i]);
+            } else {
+                remainingEmails.push(recipients[i]);
+            }
+        }
+
+        if (removedEmails.length === 0) {
+            showAlert('Нет email-адресов из стоп-листа в списке получателей.', 'info');
+            return;
+        }
+
+        $('#recipientEmails').val(remainingEmails.join(', '));
+        updateEmailCount();
+        showAlert('✅ Удалено ' + removedEmails.length + ' email-адресов из стоп-листа. Осталось ' + remainingEmails.length + ' получателей.', 'success');
+    });
+
+    // ============ ЗАГРУЗКА ФАЙЛА ============
+    $('#recipientFile').on('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var content = e.target.result;
+            var currentText = $('#recipientEmails').val();
+            var newText = currentText ? currentText + '\n' + content : content;
+            $('#recipientEmails').val(newText);
+            updateEmailCount();
+            showAlert('Файл загружен. Добавлено ' + parseEmails(content).length + ' адресов.', 'success');
+        };
+        reader.readAsText(file);
+        $(this).val('');
+    });
+
+    // ============ SUMMERNOTE ИНИЦИАЛИЗАЦИЯ ============
+    $(document).ready(function() {
+        $('#message-text').summernote({
+            height: 400,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
+        });
+
+        $('#message-text').on('summernote.change', function() {
+            var html = $(this).summernote('code');
+            $('#email-preview').attr('srcdoc', html);
+        });
+
+        updateEmailCount();
+        updateCampaignStoplistCount();
+        $('#campaignStopList').on('input', updateCampaignStoplistCount);
+        $('#recipientEmails').on('input', updateEmailCount);
+    });
+
+    // ============ ШАБЛОНЫ (СТАРЫЙ РАБОЧИЙ КОД) ============
     $(document).on('click', '.btn-use-template', function(e) {
         e.preventDefault();
-
         var templateId = $(this).data('template-id');
 
         $.ajax({
             url: '/mail/get-template/' + templateId + '/',
             type: 'GET',
             success: function(response) {
-
                 if (response.success && response.mask) {
-
-                    // ✅ ПРОСТО вставляем
                     $('#message-text').val(response.mask);
-
-                    // ✅ preview
                     updatePreview(response.mask);
-
-                    // вкладка
                     $('#message-tab').tab('show');
+                    showAlert('Шаблон применен!', 'success');
                 }
             }
+        });
+    });
+
+    // Поиск шаблонов
+    $('#searchTemplates').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('.template-item').each(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
         });
     });
 </script>

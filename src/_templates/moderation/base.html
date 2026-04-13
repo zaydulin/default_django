@@ -133,6 +133,11 @@
                 <div>Шаблоны</div>
               </a>
             </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'stoplist' %}active{% endif %}">
+              <a href="{% url 'mail:stoplist' %}" class="menu-link">
+                <div>Стоп лист</div>
+              </a>
+            </li>
           </ul>
         </li>
       </ul>

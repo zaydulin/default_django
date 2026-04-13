@@ -503,6 +503,71 @@ class SmtpCheckLog(models.Model):
         return f"{self.smtp_settings.user.username} - {self.status} - {self.checked_at}"
 
 
+class StopList(models.Model):
+    list = models.TextField(verbose_name="Список стоп листа", blank=True, default='')
+
+    class Meta:
+        verbose_name = "Список стоп листа"
+        verbose_name_plural = "Список стоп листа"
+
+    def get_emails_list(self):
+        """Возвращает список email-адресов из текстового поля"""
+        if not self.list:
+            return []
+        # Разделяем по запятым и убираем пробелы
+        emails = [email.strip() for email in self.list.split(',') if email.strip()]
+        return emails
+
+    def add_email(self, email):
+        """Добавляет один email в стоп-лист"""
+        emails = self.get_emails_list()
+        if email not in emails:
+            emails.append(email)
+            self.list = ', '.join(emails)
+            self.save()
+            return True
+        return False
+
+    def add_emails_bulk(self, emails_list):
+        """Массовое добавление email-адресов"""
+        current_emails = self.get_emails_list()
+        new_emails = []
+        for email in emails_list:
+            email = email.strip()
+            if email and email not in current_emails and email not in new_emails:
+                new_emails.append(email)
+
+        if new_emails:
+            current_emails.extend(new_emails)
+            self.list = ', '.join(current_emails)
+            self.save()
+            return new_emails
+        return []
+
+    def remove_email(self, email):
+        """Удаляет email из стоп-листа"""
+        emails = self.get_emails_list()
+        if email in emails:
+            emails.remove(email)
+            self.list = ', '.join(emails)
+            self.save()
+            return True
+        return False
+
+    @classmethod
+    def get_instance(cls):
+        """Получает или создаёт единственный экземпляр стоп-листа"""
+        instance, created = cls.objects.get_or_create(id=1)
+        if created:
+            instance.list = ''
+            instance.save()
+        return instance
+
+    def __str__(self):
+        count = len(self.get_emails_list())
+        return f"Стоп-лист ({count} адресов)"
+
+
 class MassMailCampaign(models.Model):
     """Кампания массовой рассылки"""
     STATUS_CHOICES = (
@@ -512,33 +577,42 @@ class MassMailCampaign(models.Model):
         ('sent', 'Отправлена'),
         ('cancelled', 'Отменена'),
     )
+
     name = models.CharField(max_length=255, verbose_name="Название рассылки")
     subject = models.CharField(max_length=255, verbose_name="Тема письма")
     message = models.TextField(verbose_name="Текст письма")
+
     # Получатели
     recipient_emails = models.TextField(verbose_name="Email получателей", blank=True,
                                         help_text="Email адреса через запятую или по одному в строке")
+    stop_list = models.TextField(verbose_name="Список стоп листа", blank=True, default='')
+
     recipient_file = models.FileField(upload_to='mailing_lists/%Y/%m/', verbose_name="Файл со списком рассылки",
                                       blank=True, null=True)
-    # Настройки
-    message_count = models.IntegerField(default=0, verbose_name="Количество писем")
-    message_interval = models.IntegerField(default=0, verbose_name="Интервал писем")
 
-    use_smtp_settings = models.ForeignKey(UserSettingsSMTP, on_delete=models.SET_NULL,
+    # Настройки
+    message_count = models.IntegerField(default=50, verbose_name="Количество писем за раз")
+    message_interval = models.IntegerField(default=2, verbose_name="Интервал между письмами (сек)")
+
+    use_smtp_settings = models.ForeignKey('UserSettingsSMTP', on_delete=models.SET_NULL,
                                           null=True, blank=True, verbose_name="SMTP настройки")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft',
                               verbose_name="Статус")
+
     # Отправитель
     from_email = models.EmailField(verbose_name="Email отправителя", blank=True, null=True)
     from_name = models.CharField(max_length=255, verbose_name="Имя отправителя", blank=True, null=True)
+
     # Планирование
     scheduled_time = models.DateTimeField(verbose_name="Время отправки", blank=True, null=True)
+
     # Статистика
     total_recipients = models.IntegerField(default=0, verbose_name="Всего получателей")
     sent_count = models.IntegerField(default=0, verbose_name="Отправлено")
     failed_count = models.IntegerField(default=0, verbose_name="Ошибок")
     opened_count = models.IntegerField(default=0, verbose_name="Открыто")
     clicked_count = models.IntegerField(default=0, verbose_name="Переходов")
+
     # Метаданные
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              related_name='mass_mail_campaigns', verbose_name="Создатель")
@@ -555,19 +629,45 @@ class MassMailCampaign(models.Model):
         return f"{self.name} ({self.get_status_display()})"
 
     def get_recipients_list(self):
-        """Получить список email получателей"""
+        """Возвращает список email-адресов получателей"""
         emails = []
-
-        # Из текстового поля
         if self.recipient_emails:
-            for line in self.recipient_emails.split('\n'):
-                for email in line.split(','):
-                    email = email.strip()
-                    if email and '@' in email:
-                        emails.append(email)
+            import re
+            parts = re.split(r'[,\n\s]+', self.recipient_emails)
+            for part in parts:
+                part = part.strip()
+                if part and '@' in part:
+                    emails.append(part)
+        return emails
 
-        return list(set(emails))  # Убираем дубликаты
+    def get_stop_list_emails(self):
+        """Возвращает список email-адресов из стоп-листа кампании"""
+        if not self.stop_list:
+            return []
+        return [email.strip() for email in self.stop_list.split(',') if email.strip()]
 
+    def move_emails_to_stoplist(self, emails_to_move):
+        """
+        Перемещает указанные email-адреса в глобальный стоп-лист
+        и удаляет их из получателей
+        """
+        global_stoplist = StopList.get_instance()
+
+        # Добавляем в стоп-лист
+        added = global_stoplist.add_emails_bulk(emails_to_move)
+
+        # Удаляем из получателей
+        current_recipients = set(self.get_recipients_list())
+        updated_recipients = current_recipients - set(emails_to_move)
+        self.recipient_emails = ', '.join(updated_recipients)
+        self.total_recipients = len(updated_recipients)
+        self.save()
+
+        return {
+            'added_count': len(added),
+            'added_emails': added,
+            'remaining_count': len(updated_recipients)
+        }
 
 class MassMailLog(models.Model):
     """Лог отправки массовой рассылки"""
