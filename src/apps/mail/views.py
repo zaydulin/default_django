@@ -6,6 +6,8 @@ from django.db.models import Q
 from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+import requests
+from django.http import HttpResponse
 
 from .models import Message, MessageDir, MessageMask,StopList, MessageFile, MessageRm, UserSettingsSMTP, MassMailCampaign, MassMailLog, MessageTemplates
 from django.contrib.auth.models import User
@@ -329,6 +331,10 @@ class MassMailCampaignCreateView(LoginRequiredMixin, View):
             messages.error(request, f'Ошибка при создании: {str(e)}')
             return redirect('mail:mass_mail_create')
 
+def unlayer_proxy(request):
+    url = "https://editor.unlayer.com/embed.js"
+    r = requests.get(url)
+    return HttpResponse(r.content, content_type="application/javascript")
 
 class MassMailCampaignEditView(LoginRequiredMixin, View):
     """Редактирование кампании массовой рассылки"""
