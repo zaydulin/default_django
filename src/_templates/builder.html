@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Builder</title>
+
+    <link rel="stylesheet" href="http://builder.works-all.ru/dist/builder.css">
+    <script src="http://builder.works-all.ru/dist/builder.js"></script>
+</head>
+
+<body>
+
+<div id="app"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof Editor === "undefined") {
+        alert("BuilderJS не загрузился");
+        return;
+    }
+
+    window.editor = new Editor({
+        root: "http://builder.works-all.ru/dist/",
+        url: "http://builder.works-all.ru/templates/default/6037a0a8583a7",
+
+        saveUrl: "/builder/save/",
+        saveMethod: "POST",
+
+        data: {
+            type: "default",
+            template_id: "6037a0a8583a7"
+        }
+    });
+
+    editor.init();
+});
+</script>
+
+</body>
+</html>

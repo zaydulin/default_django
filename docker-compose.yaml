@@ -1,41 +1,41 @@
 version: "3.4"
 
 services:
-  cb-redis:
+  cb-mail-redis:
     image: redis:latest
-    container_name: cb-redis
+    container_name: cb-mail-redis
     restart: always
     ports:
       - "127.0.0.1:6379:6379"
     volumes:
-      - cb-redis-data:/data
+      - cb-mail-redis-data:/data
 
-  cb-db:
+  cb-mail-db:
     image: postgres:14-alpine
-    container_name: cb-db
+    container_name: cb-mail-db
     restart: always
     environment:
       PD_DATA: /var/lib/postgresql/data
     volumes:
-      - cb-db-data:/var/lib/postgresql/data
+      - cb-mail-db-data:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5432:5432"
     env_file:
       - .env
 
-  cb-app:
+  cb-mail-app:
     build:
       context: .
       dockerfile: _config/app/Dockerfile
-    container_name: cb-app
+    container_name: cb-mail-app
     command: bash run.sh
     env_file:
       - .env
     environment:
-      WAIT-HOSTS: cb-db, cb-redis
+      WAIT-HOSTS: cb-mail-db, cb-mail-redis
       # Добавьте переменные для Celery
-      CELERY_BROKER_URL: redis://cb-redis:6379/0
-      CELERY_RESULT_BACKEND: redis://cb-redis:6379/0
+      CELERY_BROKER_URL: redis://cb-mail-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://cb-mail-redis:6379/0
     volumes:
       - ./src:/app/marketplace
     ports:
@@ -44,32 +44,32 @@ services:
     tty: true
     restart: on-failure
     depends_on:
-      - cb-db
-      - cb-redis
+      - cb-mail-db
+      - cb-mail-redis
 
-  cb-celery:
+  cb-mail-celery:
     build:
       context: .
       dockerfile: _config/app/Dockerfile
-    container_name: cb-celery
+    container_name: cb-mail-celery
     command: celery --app _project worker --beat -l info --concurrency=1
     env_file:
       - .env
     environment:
-      WAIT-HOSTS: cb-db, cb-redis
-      # Исправляем адрес Redis - используем имя сервиса cb-redis, а не redis
-      CELERY_BROKER_URL: redis://cb-redis:6379/0
-      CELERY_RESULT_BACKEND: redis://cb-redis:6379/0
+      WAIT-HOSTS: cb-mail-db, cb-mail-redis
+      # Исправляем адрес Redis - используем имя сервиса cb-mail-redis, а не redis
+      CELERY_BROKER_URL: redis://cb-mail-redis:6379/0
+      CELERY_RESULT_BACKEND: redis://cb-mail-redis:6379/0
     volumes:
       - ./src:/app/marketplace
     restart: always
     depends_on:
-      - cb-db
-      - cb-redis
+      - cb-mail-db
+      - cb-mail-redis
 
 volumes:
-  cb-db-data:
-  cb-redis-data:
+  cb-mail-db-data:
+  cb-mail-redis-data:
 
 networks:
   default:
