@@ -108,19 +108,87 @@
           </a>
         </li>
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' or request.resolver_match.url_name == 'moderation_client_list' %}active open{% endif %}">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <a href="{% url 'useraccount:moderation_users_list' %}" class="menu-link ">
             <i class="menu-icon icon-base bx bx-group"></i>
-            <div>Пользователи</div>
+            <div>Клиенты</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' %}active{% endif %}">
               <a href="{% url 'useraccount:moderation_users_list' %}" class="menu-link">
-                <div>Сотрудники</div>
+                <div>Все</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
               <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
-                <div>Клиенты</div>
+                <div>Новые</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Неактивные</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Без записи</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Неявка</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>День рождения</div>
+              </a>
+            </li>
+          </ul>
+        </li>
+         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' or request.resolver_match.url_name == 'moderation_client_list' %}active open{% endif %}">
+          <a href="{% url 'useraccount:moderation_users_list' %}" class="menu-link ">
+            <i class="menu-icon icon-base bx bx-group"></i>
+            <div>Персонал</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_users_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_users_list' %}" class="menu-link">
+                <div>Персонал</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Объекты</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>График смен</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Ресурсы</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Права доступа</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Отделы</div>
+              </a>
+            </li>
+                <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Обзор зарплат</div>
+              </a>
+            </li>
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_client_list' %}active{% endif %}">
+              <a href="{% url 'useraccount:moderation_client_list' %}" class="menu-link">
+                <div>Схемы зарплат</div>
               </a>
             </li>
           </ul>
@@ -182,7 +250,7 @@
           </a>
         </li>
         <!-- e-commerce-app menu start -->
-        <li class="menu-item ">
+        <li class="menu-item d-none">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-cart-alt"></i>
             <div>Магазин</div>
@@ -257,7 +325,7 @@
         </li>
         <!-- e-commerce-app menu end -->
         <!-- e-commerce-app menu start -->
-        <li class="menu-item ">
+        <li class="menu-item d-none">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-cart-alt"></i>
             <div>Объявления</div>
@@ -340,12 +408,12 @@
           <ul class="menu-sub">
             <li class="menu-item {% if request.resolver_match.url_name == 'moderation_course_dashboard_list' %}active{% endif %}">
               <a href="{% url 'course:moderation_course_dashboard_list' %}" class="menu-link">
-                <div>Дашбоард</div>
+                <div>Ученики и аналитика</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'my_courses_list' %}active{% endif %}">
               <a href="{% url 'course:my_courses_list' %}" class="menu-link">
-                <div>Мои курсы</div>
+                <div>Каталог курсов</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'completed_courses_list' %}active{% endif %}">
@@ -366,32 +434,26 @@
           </ul>
         </li>
         <!-- Academy menu end -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_appeals_list' %}active{% endif %}">
-          <a href="{% url 'moderation:moderation_appeals_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-support"></i>
-            <div>Обращение</div>
-          </a>
-        </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_tickets_list' %}active{% endif %}">
-          <a href="{% url 'ticket:moderation_tickets_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-task"></i>
-            <div>Тикеты</div>
+           <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Услуги</div>
           </a>
         </li>
         <!-- Components -->
-        <li class="menu-header small">
-          <span class="menu-header-text">Интеграции</span>
+        <li class=" d-none menu-header small">
+          <span class="menu-header-text d-none">Интеграции</span>
         </li>
         <!-- Cards -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_social_list' %}active{% endif %}">
+        <li class=" menu-item {% if request.resolver_match.url_name == 'moderation_social_list' %}active{% endif %} d-none">
           <a href="{% url 'integrations:moderation_social_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-like"></i>
+            <i class="menu-icon icon-base bx bx-like "></i>
             <div>Соц-сети</div>
           </a>
 
         </li>
         <!-- User interface -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_telephony_list' %}active{% endif %} d-none">
           <a href="{% url 'integrations:moderation_telephony_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-phone"></i>
             <div>Телефония</div>
@@ -399,20 +461,20 @@
 
         </li>
         <!-- Extended components -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_payments_list' %}active{% endif %} d-none">
           <a href="{% url 'integrations:moderation_payments_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-credit-card"></i>
             <div >Плат-системы</div>
           </a>
 
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_dopservice_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_dopservice_list' %}active{% endif %} d-none">
           <a href="{% url 'integrations:moderation_dopservice_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Доп. Сервисы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %}">
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_neiro_list' %}active{% endif %} d-none">
           <a href="{% url 'integrations:moderation_neiro_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-like"></i>
             <div>Нейронки</div>
@@ -424,8 +486,8 @@
           <span class="menu-header-text">Бухгалтерия</span>
         </li>
         <!-- Forms -->
-        <li class="menu-item {% if request.resolver_match.url_name == 'settlements_list' or request.resolver_match.url_name == 'daily_calculation_list' or request.resolver_match.url_name == 'period_calculation_list' or request.resolver_match.url_name == 'calculation_rules_list' or request.resolver_match.url_name == 'calculation_criteria_list' or request.resolver_match.url_name == 'calculation_schemes_list' or request.resolver_match.url_name == 'bonuses_and_fines_list' %}active open{% endif %}">
-          <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <li class="menu-item {% if request.resolver_match.url_name == 'settlements_list' or request.resolver_match.url_name == 'daily_calculation_list' or request.resolver_match.url_name == 'period_calculation_list' or request.resolver_match.url_name == 'calculation_rules_list' or request.resolver_match.url_name == 'calculation_criteria_list' or request.resolver_match.url_name == 'calculation_schemes_list' or request.resolver_match.url_name == 'bonuses_and_fines_list' %}active open{% endif %} d-none">
+          <a href="javascript:void(0);" class="menu-link menu-toggle d-none">
             <i class="menu-icon icon-base bx bx-stats"></i>
             <div>Расчет зарплат</div>
           </a>
@@ -470,56 +532,127 @@
         <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' or request.resolver_match.url_name == 'online_cashdesks_list' or request.resolver_match.url_name == 'counterparties_list' or request.resolver_match.url_name == 'payment_articles_list' or request.resolver_match.url_name == 'financial_operations_list' or request.resolver_match.url_name == 'payment_documents_list' or request.resolver_match.url_name == 'ccm_operations_list' or request.resolver_match.url_name == 'payment_reception_list' or request.resolver_match.url_name == 'payment_reports_list' or request.resolver_match.url_name == 'payment_settings_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-wallet"></i>
-            <div>Финансы</div>
+            <div>Касса</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' %}active{% endif %}">
               <a href="{% url 'payment:accounts_and_cashdesks_list' %}" class="menu-link">
-                <div>Счета и кассы</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'online_cashdesks_list' %}active{% endif %}">
-              <a href="{% url 'payment:online_cashdesks_list' %}" class="menu-link">
-                <div>Онлайн-кассы</div>
+                <div>Заказы</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'counterparties_list' %}active{% endif %}">
               <a href="{% url 'payment:counterparties_list' %}" class="menu-link">
-                <div>Контрагенты</div>
+                <div>Счета</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'payment_articles_list' %}active{% endif %}">
               <a href="{% url 'payment:payment_articles_list' %}" class="menu-link">
-                <div>Статьи платежей</div>
+                <div>Финансы</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'financial_operations_list' %}active{% endif %}">
               <a href="{% url 'payment:financial_operations_list' %}" class="menu-link">
-                <div>Финансовые операции</div>
+                <div>Транзакции</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
               <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
-                <div>Документы</div>
+                <div>Кассы</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'ccm_operations_list' %}active{% endif %}">
-              <a href="{% url 'payment:ccm_operations_list' %}" class="menu-link">
-                <div>Операции с ККМ</div>
+             <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
+                <div>Онлайн-платежи</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'payment_reception_list' %}active{% endif %}">
-              <a href="{% url 'payment:payment_reception_list' %}" class="menu-link">
-                <div>Прием платежей</div>
+             <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
+                <div>Налоговые ставки</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'payment_reports_list' %}active{% endif %}">
-              <a href="{% url 'payment:payment_reports_list' %}" class="menu-link">
-                <div>Отчеты</div>
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
+                <div>Настройки счета</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'payment_settings_list' %}active{% endif %}">
-              <a href="{% url 'payment:payment_settings_list' %}" class="menu-link">
+             <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
+                <div>Статьи платежей</div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' or request.resolver_match.url_name == 'products_list' or request.resolver_match.url_name == 'technological_maps_list' or request.resolver_match.url_name == 'warehouse_operations_list' or request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'price_tags_print_list' or request.resolver_match.url_name == 'storage_reports_list' or request.resolver_match.url_name == 'storage_settings_list' or request.resolver_match.url_name == 'product_labeling_list' %}active open{% endif %}">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon icon-base bx bx-package"></i>
+            <div>Товары</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' %}active{% endif %}">
+              <a href="{% url 'storage:warehouses_list' %}" class="menu-link">
+                <div>Каталог</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'products_list' %}active{% endif %}">
+              <a href="{% url 'storage:products_list' %}" class="menu-link">
+                <div>Категории</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'warehouse_operations_list' %}active{% endif %}">
+              <a href="{% url 'storage:warehouse_operations_list' %}" class="menu-link ">
+                <div>Журнал</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
+              <a href="{% url 'storage:inventory_list' %}" class="menu-link ">
+                <div>Тех. карты</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'storage_reports_list' %}active{% endif %}">
+              <a href="{% url 'storage:storage_reports_list' %}" class="menu-link ">
+                <div>Поставщики</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'storage_reports_list' %}active{% endif %}">
+              <a href="{% url 'storage:storage_reports_list' %}" class="menu-link ">
+                <div>Бренды</div>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <!-- Tables -->
+         <li class="menu-header small">
+          <span class="menu-header-text">МАРКЕТИНГ</span>
+        </li>
+        <!-- Forms -->
+        <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' or request.resolver_match.url_name == 'online_cashdesks_list' or request.resolver_match.url_name == 'counterparties_list' or request.resolver_match.url_name == 'payment_articles_list' or request.resolver_match.url_name == 'financial_operations_list' or request.resolver_match.url_name == 'payment_documents_list' or request.resolver_match.url_name == 'ccm_operations_list' or request.resolver_match.url_name == 'payment_reception_list' or request.resolver_match.url_name == 'payment_reports_list' or request.resolver_match.url_name == 'payment_settings_list' %}active open{% endif %}">
+          <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon icon-base bx bx-wallet"></i>
+            <div>Напоминания</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item {% if request.resolver_match.url_name == 'accounts_and_cashdesks_list' %}active{% endif %}">
+              <a href="{% url 'payment:accounts_and_cashdesks_list' %}" class="menu-link">
+                <div>Email</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'counterparties_list' %}active{% endif %}">
+              <a href="{% url 'payment:counterparties_list' %}" class="menu-link">
+                <div>SMS</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_articles_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_articles_list' %}" class="menu-link">
+                <div>WhatsApp</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'financial_operations_list' %}active{% endif %}">
+              <a href="{% url 'payment:financial_operations_list' %}" class="menu-link">
+                <div>История</div>
+              </a>
+            </li>
+            <li class="menu-item {% if request.resolver_match.url_name == 'payment_documents_list' %}active{% endif %}">
+              <a href="{% url 'payment:payment_documents_list' %}" class="menu-link">
                 <div>Настройки</div>
               </a>
             </li>
@@ -528,36 +661,90 @@
         <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' or request.resolver_match.url_name == 'products_list' or request.resolver_match.url_name == 'technological_maps_list' or request.resolver_match.url_name == 'warehouse_operations_list' or request.resolver_match.url_name == 'inventory_list' or request.resolver_match.url_name == 'price_tags_print_list' or request.resolver_match.url_name == 'storage_reports_list' or request.resolver_match.url_name == 'storage_settings_list' or request.resolver_match.url_name == 'product_labeling_list' %}active open{% endif %}">
           <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon icon-base bx bx-package"></i>
-            <div>Склад</div>
+            <div>Сертификаты</div>
           </a>
           <ul class="menu-sub">
             <li class="menu-item {% if request.resolver_match.url_name == 'warehouses_list' %}active{% endif %}">
               <a href="{% url 'storage:warehouses_list' %}" class="menu-link">
-                <div>Склады</div>
+                <div>Обзор</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'products_list' %}active{% endif %}">
               <a href="{% url 'storage:products_list' %}" class="menu-link">
-                <div>Товары</div>
+                <div>Проданные</div>
               </a>
             </li>
             <li class="menu-item {% if request.resolver_match.url_name == 'warehouse_operations_list' %}active{% endif %}">
-              <a href="{% url 'storage:warehouse_operations_list' %}" class="menu-link">
-                <div>Складские операции</div>
+              <a href="{% url 'storage:warehouse_operations_list' %}" class="menu-link ">
+                <div>История</div>
               </a>
             </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
-              <a href="{% url 'storage:inventory_list' %}" class="menu-link">
-                <div>Инвентаризация</div>
-              </a>
-            </li>
-            <li class="menu-item {% if request.resolver_match.url_name == 'storage_reports_list' %}active{% endif %}">
-              <a href="{% url 'storage:storage_reports_list' %}" class="menu-link">
-                <div>Отчеты</div>
-              </a>
-            </li>
-          </ul>
+               </ul>
         </li>
+
+           <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Отзывы</div>
+          </a>
+        </li>
+  <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Промокоды</div>
+          </a>
+        </li>
+         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>QR-коды</div>
+          </a>
+        </li>
+
+  <li class="menu-header small">
+          <span class="menu-header-text">Аналитика</span>
+        </li>
+        <!-- Forms -->
+           <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Статистика</div>
+          </a>
+        </li>
+  <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Отчет P&L</div>
+          </a>
+        </li>
+         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Источники записей</div>
+          </a>
+        </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>UTM-метки</div>
+          </a>
+        </li>
+          <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Клиенты</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
+          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-briefcase"></i>
+            <div>Финансы</div>
+          </a>
+        </li>
+
+
+
+
         <!-- Tables -->
         <!-- Charts & Maps -->
         <li class="menu-header small">
@@ -629,12 +816,7 @@
             <div>Страницы</div>
           </a>
         </li>
-        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_services_list' %}active{% endif %}">
-          <a href="{% url 'services:moderation_services_list' %}" class="menu-link">
-            <i class="menu-icon icon-base bx bx-briefcase"></i>
-            <div>Услуги</div>
-          </a>
-        </li>
+
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_projects_list' %}active{% endif %}">
           <a href="{% url 'projects:moderation_projects_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-task"></i>
@@ -653,6 +835,19 @@
             <div>Галереи</div>
           </a>
         </li>
+         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_appeals_list' %}active{% endif %}">
+          <a href="{% url 'moderation:moderation_appeals_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-support"></i>
+            <div>Обращение</div>
+          </a>
+        </li>
+        <li class="menu-item {% if request.resolver_match.url_name == 'moderation_tickets_list' %}active{% endif %}">
+          <a href="{% url 'ticket:moderation_tickets_list' %}" class="menu-link">
+            <i class="menu-icon icon-base bx bx-task"></i>
+            <div>Тикеты</div>
+          </a>
+        </li>
+
         <li class="menu-item {% if request.resolver_match.url_name == 'moderation_prices_list' %}active{% endif %}">
           <a href="{% url 'prices:moderation_prices_list' %}" class="menu-link">
             <i class="menu-icon icon-base bx bx-money"></i>
