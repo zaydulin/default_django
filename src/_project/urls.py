@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('connects.urls', namespace='connects')),
     path('', include('course.urls', namespace='course')),
     path('', include('crm.urls', namespace='crm')),
+    path('', include('demo.urls', namespace='demo')),
     path('', include('documentations.urls', namespace='documentations')),
     path('', include('integrations.urls', namespace='integrations')),
     path('', include('jobs.urls', namespace='jobs')),
